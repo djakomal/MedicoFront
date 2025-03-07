@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Login</title>
+ 
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="./assets\img\logo.png" alt="Login Icon">
+        </div>
+        <div class="login-container">
+            <h2>Connexion</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+                <input type="email" class="input-field" name="email" placeholder="Email" formControlName="email" required>
+                <input type="password" class="input-field" name="password" placeholder="Mot de passe" formControlName="password" required>
+                <div class="login-buttons">
+                    <button type="submit" class="login-button">Se connecter</button>
+                </div>
+            </form>
+            <a href="regis" class="register-link">Créer un compte</a>
+        </div>
+    </div>
+</body>
+</html>

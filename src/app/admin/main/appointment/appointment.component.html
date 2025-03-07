@@ -1,0 +1,38 @@
+<div class="col-lg-12">
+  <div class="card mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Prise de rendez vous </h6>
+    </div>
+    <div class="table-responsive p-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">NOM</th>
+            <th scope="col">DATE</th>
+            <th scope="col">HEURE</th>
+            <th scope="col">DESCRIPTION</th>
+            <th scope="col">ACTION</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let app of this.tableauClasse" class="table-group-divider">
+          <tr>
+
+            <td>{{app.id}}</td>
+            <td>{{app.name}}</td>
+            <td>{{app.date}}</td>
+            <td>{{app.time}}</td>
+            <td>{{app.description}}</td>
+             <td>{{app.statut || 'Non défini'}}</td>
+            <td>
+              <button type="submit" class="btn btn-success btn-circle btn-sm" (click)="validerRendezVous(app.id)">Vaider Rendez-Vous</button>
+              <button type="submit" class="btn btn-danger btn-circle btn-sm" (click)=" rejeterRendezVous(app.id)">Rejeter Rendez-Vous</button>
+              <button type="submit" class="btn btn-primary btn-circle btn-sm" (click)="redirection()" (click)="debuterRendezVous(app.id)">Debuter
+                Rendez-Vous</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

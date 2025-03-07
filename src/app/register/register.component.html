@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>medical</title>
+
+</head>
+
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <label>Inscription</label>
+            <!-- <div [ngClass]="active == 'register' ? 'tab-pane fade show active' : 'tab-pane fade'"> -->
+            <form  class="login-form" [formGroup]="registerForm"
+               (ngSubmit)=Register()
+
+                >
+                <!-- <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div> -->
+
+                <input type="text"  name="username" placeholder="nom d'utilisateur" 
+                formControlName="username">
+                
+                <input type="email"  name="email" placeholder="email"  formControlName="email" 
+                >
+
+                <input type="password"  name="Password" placeholder="password"   
+                    controlname="password" formControlName="password" >
+
+                <input type="password"  name="Password" placeholder="confirmation du password"   
+                    controlname="password" formControlName="confirmPassword" >
+                
+
+                <select id="gender" name="gender"  formControlName="gender"  placeholder="Sexe" >
+                        <option  selected >Sexe</option>
+                        <option value="8 AM TO 10AM">Masculin</option>
+                        <option value="10 AM TO 12PM">Feminin</option>
+                </select> 
+
+                <div class="login-buttons">
+                    <button type="submit" class="login-button" ><a href="connex" class="login-button">Login</a></button>
+                    <button type="submit" class="register-button"  >Register</button>
+                </div>
+            </form>
+       
+    </div>
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="login-form">
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Formulaire de Consultation Médicale</h1>
+                <form class="row g-3 needs-validation" novalidate>
+
+                    <!-- Symptômes Principaux -->
+                    <div class="col-md-12">
+                        <label for="symptoms" class="form-label">Quels sont vos symptômes principaux ?</label>
+                        <textarea class="form-control" id="symptoms" rows="4" required></textarea>
+                        <div class="invalid-feedback">
+                            Veuillez décrire vos symptômes principaux.
+                        </div>
+                    </div>
+
+                    <!-- Durée des Symptômes -->
+                    <div class="col-md-6">
+                        <label for="symptomDuration" class="form-label">Depuis combien de temps avez-vous ces symptômes ?</label>
+                        <input type="text" class="form-control" id="symptomDuration" required>
+                        <div class="invalid-feedback">
+                            Veuillez indiquer la durée des symptômes.
+                        </div>
+                    </div>
+
+                    <!-- Symptômes Associés -->
+                    <div class="col-md-6">
+                        <label for="associatedSymptoms" class="form-label">Avez-vous des symptômes associés ? (fièvre, fatigue, etc.)</label>
+                        <input type="text" class="form-control" id="associatedSymptoms">
+                    </div>
+
+                    <!-- Antécédents Médicaux -->
+                    <div class="col-md-12">
+                        <label for="medicalHistory" class="form-label">Avez-vous des antécédents médicaux pertinents ?</label>
+                        <textarea class="form-control" id="medicalHistory" rows="4" placeholder="Décrivez vos antécédents médicaux si nécessaire."></textarea>
+                    </div>
+
+                    <!-- Médicaments Actuels -->
+                    <div class="col-md-12">
+                        <label for="currentMedications" class="form-label">Prenez-vous actuellement des médicaments ?</label>
+                        <textarea class="form-control" id="currentMedications" rows="4" placeholder="Indiquez les médicaments que vous prenez actuellement."></textarea>
+                    </div>
+
+                    <!-- Allergies -->
+                    <div class="col-md-12">
+                        <label for="allergies" class="form-label">Avez-vous des allergies ?</label>
+                        <input type="text" class="form-control" id="allergies">
+                    </div>
+
+                    <!-- Habitudes de Vie -->
+                    <div class="col-md-12">
+                        <label for="lifestyle" class="form-label">Pouvez-vous décrire vos habitudes de vie ? (alimentation, exercice, tabagisme, etc.)</label>
+                        <textarea class="form-control" id="lifestyle" rows="4"></textarea>
+                    </div>
+
+                    <!-- Consentement -->
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="consentCheck" required>
+                            <label class="form-check-label" for="consentCheck">
+                                J'accepte les termes et conditions
+                            </label>
+                            <div class="invalid-feedback">
+                                Vous devez accepter les termes et conditions avant de soumettre le formulaire.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bouton de Soumission -->
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit">Soumettre le formulaire</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

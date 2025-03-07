@@ -1,0 +1,40 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>medical</title>
+
+</head>
+
+        <body>
+        
+    <!-- breadcrumb start-->
+    <section class="breadcrumb_part breadcrumb_bg">
+        <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+            <div class="breadcrumb_iner">
+                <div class="breadcrumb_iner_item">
+                <h2>Details </h2>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <div *ngFor="let app of tableauClasse" class="notification-container">
+        <div class="notification-message">Mr ou Mme {{ app.name }}</div><br>
+        <!-- <p class="notification-details">
+            Vous avez pris un rendez-vous le {{ app.date }} à {{ app.time }}
+        </p> -->
+        <div class="notification-date">
+            Votre rendez-vous a été accepté, veuillez passer le {{ app.date }}<br>
+            à {{ app.time }} comme  consigné
+        </div>
+    </div>
+        </body>    
