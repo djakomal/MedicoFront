@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { User } from '../../../models/user';
+
 
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RegisterServiceService } from '../../../_helps/register-service.service';
+import { User } from '../../../../models/user';
+import { RegisterServiceService } from '../../../../_helps/register-service.service';
+
 
 @Component({
   selector: 'app-registe-det',
@@ -20,7 +22,7 @@ export class RegisteDetComponent {
   constructor( 
     private router :Router
     ,
-    private registerService:RegisterServiceService
+    // private registerService:RegisterServiceService
   ){
 
   }

@@ -1,8 +1,9 @@
 import { Component,  Injectable,  OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { JwtService } from '../_helps/jwt.service';
+
 import { Router } from '@angular/router';
+import { JwtService } from '../../_helps/jwt.service';
 
 
 @Injectable({
@@ -33,20 +34,22 @@ export class RegisterComponent implements OnInit {
       gender:['',[Validators.required]],
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-    }, { validator: this.passwordMathValidator })
+    }, { validator: this.passwordMatchValidator })
   }
 
-  passwordMathValidator(formGroup: FormGroup) {
+  passwordMatchValidator(formGroup: AbstractControl): ValidationErrors | null {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
-    if (password != confirmPassword) {
-      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
-    } else {
-      formGroup.get('confirmPassword')?.setErrors(null);
-    }
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
+    // Vérificateur d'e-mail
+    emailValidator(control: AbstractControl): ValidationErrors | null {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(control.value) ? null : { invalidEmail: true };
+    }
+  
 
   
   // submitForm() {

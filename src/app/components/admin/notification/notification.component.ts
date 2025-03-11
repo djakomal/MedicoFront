@@ -1,18 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { NotificationService } from '../../_helps/notification.service';
+
 import { AppointmentComponent } from '../main/appointment/appointment.component';
 
 import { Router } from '@angular/router';
-import { AppointementService } from '../../_helps/appointement.service';
-import { Appoitement } from '../../models/appoitement';
-import { JwtService } from '../../_helps/jwt.service';
+import { Appoitement } from '../../../models/appoitement';
+import { NotificationService } from '../../../_helps/notification.service';
+import { JwtService } from '../../../_helps/jwt.service';
+import { AppointementService } from '../../../_helps/appointement.service';
+
 
 @Component({
   selector: 'app-notification',
   standalone: true,
-  imports: [CommonModule,AppointmentComponent],
+  imports: [CommonModule],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.css'
 })

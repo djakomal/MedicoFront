@@ -3,9 +3,9 @@ import { FormBuilder, FormsModule } from '@angular/forms';
 // Ensure ConnexionComponent is standalone
 import { Router, RouterOutlet } from '@angular/router';
 
-import { NotificationService } from '../_helps/notification.service';
-import { JwtService } from '../_helps/jwt.service';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../_helps/notification.service';
+import { JwtService } from '../../_helps/jwt.service';
 
 @Component({
   selector: 'app-header',

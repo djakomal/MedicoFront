@@ -14,15 +14,17 @@
             <h2>Inscription</h2>
             <form class="login-form" [formGroup]="registerForm" (ngSubmit)="Register()">
                 <input type="text" class="input-field" name="username" placeholder="Nom d'utilisateur" formControlName="username">
-                <input type="email" class="input-field" name="email" placeholder="Email" formControlName="email">
+                <input type="email" class="input-field" placeholder="Email" formControlName="email">
+                <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                    <small style="color: red;">Veuillez entrer un email valide.</small>
+                </div>
                 <input type="password" class="input-field" name="password" placeholder="Mot de passe" formControlName="password">
                 <input type="password" class="input-field" name="confirmPassword" placeholder="Confirmation du mot de passe" formControlName="confirmPassword">
-                <div id="gender" name="gender" class="input-field" formControlName="gender" >
-                    <input type="radio" id="Masculin" name="gender" value="Masculin"  >
-                    <label for="Masculin">Homme</label><br>
-                    <input type="radio" id="Féminin" name="gender"  value="Féminin"  >
-                     <label for="Féminin">Femme</label><br>
-                </div>
+                <select id="gender" name="gender" class="input-field" formControlName="gender">
+                    <option selected disabled>Sexe</option>
+                    <option value="Masculin">Masculin</option>
+                    <option value="Feminin">Féminin</option>
+                </select>
                
                 <div class="login-buttons">
                     <button type="submit" class="register-button">S'inscrire</button>

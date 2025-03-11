@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Appoitement } from '../models/appoitement';
 import { Router } from '@angular/router';
-import { AppointementService } from '../_helps/appointement.service';
+
 
 import { CommonModule } from '@angular/common';
-import { AppointmentComponent } from '../admin/main/appointment/appointment.component';
 
-import { User } from '../models/user';
+
+import { AppointementService } from '../../_helps/appointement.service';
+import { AppointmentComponent } from '../admin/main/appointment/appointment.component';
+import { Appoitement } from '../../models/appoitement';
 
 @Component({
   selector: 'app-note-confirmation',
   standalone: true,
-  imports: [  CommonModule,AppointmentComponent ],
+  imports: [CommonModule,],
   templateUrl: './note-confirmation.component.html',
   styleUrl: './note-confirmation.component.css'
 })

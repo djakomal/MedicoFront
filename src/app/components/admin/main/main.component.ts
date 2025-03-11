@@ -10,7 +10,7 @@ import { RegisteDetComponent } from './registe-det/registe-det.component';
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [HeaderComponent, BodyComponent, RouterOutlet, SidbarComponent,AppointmentComponent,RegisteDetComponent],
+  imports: [HeaderComponent, BodyComponent, RouterOutlet, SidbarComponent,AppointmentComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css'
 })

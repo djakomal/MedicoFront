@@ -12,7 +12,7 @@ import { FormulaireComponent } from './formulaire/formulaire.component';
   selector: 'app-admin',
   standalone: true,
   imports: [SidbarComponent,MainComponent,BodyComponent,HeaderComponent,MainComponent,
-    RegisteDetComponent,AppointmentComponent,RouterOutlet,FormulaireComponent
+    AppointmentComponent,RouterOutlet,FormulaireComponent
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'

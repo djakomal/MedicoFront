@@ -1,10 +1,11 @@
 import { Component, Injectable, NgModule, OnInit } from '@angular/core';
 
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators,} from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { JwtService } from '../_helps/jwt.service';
+import { JwtService } from '../../_helps/jwt.service';
+
 
 
 
@@ -62,6 +63,10 @@ export class ConnexionComponent implements OnInit {
       }
     );
   }
+    emailValidator(control: AbstractControl): ValidationErrors | null {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(control.value) ? null : { invalidEmail: true };
+      }
   
   
 	showComponent(componentToShow: string): void {

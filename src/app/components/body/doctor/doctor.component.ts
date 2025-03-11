@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { AppointementService } from '../../_helps/appointement.service';
-import { Appoitement } from '../../models/appoitement';
+
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AppointementInsertService } from '../../_helps/appointement-insert.service';
+
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../../header/header.component";
+import { Appoitement } from '../../../models/appoitement';
+import { AppointementInsertService } from '../../../_helps/appointement-insert.service';
+import { AppointementService } from '../../../_helps/appointement.service';
 
 @Component({
   selector: 'app-doctor',

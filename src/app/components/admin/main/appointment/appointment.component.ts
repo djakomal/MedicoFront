@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Appoitement } from '../../../models/appoitement';
 import { Router } from '@angular/router';
-import { AppointementService } from '../../../_helps/appointement.service';
+
 import { CommonModule } from '@angular/common';
 
-import { NotificationService } from '../../../_helps/notification.service';
+
 import { NotificationComponent } from '../../notification/notification.component';
 import { FormulaireComponent } from '../../formulaire/formulaire.component';
+import { Appoitement } from '../../../../models/appoitement';
+import { AppointementService } from '../../../../_helps/appointement.service';
+import { NotificationService } from '../../../../_helps/notification.service';
 
 
 
@@ -14,7 +16,7 @@ import { FormulaireComponent } from '../../formulaire/formulaire.component';
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [CommonModule ,FormulaireComponent,NotificationComponent],
+  imports: [CommonModule ,FormulaireComponent],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })

@@ -1,31 +1,33 @@
 import { Component, Injectable, NgModule } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { HeaderComponent } from './header/header.component';
-
-import { DoctorComponent } from './body/doctor/doctor.component';
-import { BlogComponent } from './body/blog/blog.component';
-import { ServiceComponent } from './body/service/service.component';
-import { AboutComponent } from './body/about/about.component';
-import { DepartementComponent } from './body/departement/departement.component';
-import { ElementsComponent } from './body/elements/elements.component';
-import { BodyComponent } from './body/body.component';
-import { FooterComponent } from './footer/footer.component';
-import { ConnexionComponent } from './connexion/connexion.component';
-import { SingleBlogComponent } from './single-blog/single-blog.component';
-import { DashboardComponent } from './body/dashboard/dashboard.component';
-import { ContactComponent } from './body/contact/contact.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { AdminComponent } from './admin/admin.component';
+
 // import { RegisteDetComponent } from './admin/main/registe-det/registe-det.component';
-import { AppointmentComponent } from './admin/main/appointment/appointment.component';
+
 // import { NotificationComponent } from './admin/notification/notification.component';
-import { FormulaireComponent } from './admin/formulaire/formulaire.component';
-import { NoteConfirmationComponent } from './note-confirmation/note-confirmation.component';
-import { UpdateComponent } from './body/register/update/update.component';
-import { RegisterComponent } from './register/register.component';
+
 import { CommonModule } from '@angular/common';
+import { NoteConfirmationComponent } from './components/note-confirmation/note-confirmation.component';
+import { ConnexionComponent } from './components/connexion/connexion.component';
+import { SingleBlogComponent } from './components/single-blog/single-blog.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from './components/header/header.component';
+import { DoctorComponent } from './components/body/doctor/doctor.component';
+import { BodyComponent } from './components/body/body.component';
+import { AboutComponent } from './components/body/about/about.component';
+import { DepartementComponent } from './components/body/departement/departement.component';
+import { ElementsComponent } from './components/body/elements/elements.component';
+import { ServiceComponent } from './components/body/service/service.component';
+import { BlogComponent } from './components/body/blog/blog.component';
+import { DashboardComponent } from './components/body/dashboard/dashboard.component';
+import { ContactComponent } from './components/body/contact/contact.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { AppointmentComponent } from './components/admin/main/appointment/appointment.component';
+import { FormulaireComponent } from './components/admin/formulaire/formulaire.component';
+import { UpdateComponent } from './components/body/register/update/update.component';
+import { RegisterComponent } from './components/register/register.component';
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +59,7 @@ import { CommonModule } from '@angular/common';
     NoteConfirmationComponent,
     UpdateComponent,
     RegisterComponent,
-    CommonModule
+    CommonModule,
   ],
 })
 export class AppComponent {
