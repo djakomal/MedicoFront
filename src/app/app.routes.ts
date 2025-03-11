@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './_helps/auth.guard';
-import { RegisterComponent } from './components/register/register.component';
+
 import { NoteConfirmationComponent } from './components/note-confirmation/note-confirmation.component';
 import { DashboardComponent } from './components/body/dashboard/dashboard.component';
 import { AboutComponent } from './components/body/about/about.component';
@@ -17,6 +17,7 @@ import { ContactComponent } from './components/body/contact/contact.component';
 import { ConnexionComponent } from './components/connexion/connexion.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { BodyComponent } from './components/body/body.component';
+import { RegisterComponent } from './components/body/register/register.component';
 
 
 

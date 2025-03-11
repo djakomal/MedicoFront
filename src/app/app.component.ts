@@ -27,7 +27,7 @@ import { AdminComponent } from './components/admin/admin.component';
 import { AppointmentComponent } from './components/admin/main/appointment/appointment.component';
 import { FormulaireComponent } from './components/admin/formulaire/formulaire.component';
 import { UpdateComponent } from './components/body/register/update/update.component';
-import { RegisterComponent } from './components/register/register.component';
+import { RegisterComponent } from './components/body/register/register.component';
 
 @Injectable({
   providedIn: 'root',
