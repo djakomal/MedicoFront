@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Register</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="image-container">
+        <img src="./assets\img\logo.png" alt="Login Icon" />
+      </div>
+      <div class="login-container">
+        <h2>Prise de Rendez-vous</h2>
+        <div class="banner">
+            <p>ℹ️ Votre rendez-vous sera confirmé par le médecin. Vous recevrez une notification une fois validé.</p>
+          </div>
+          
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="patientName">Nom du Patient</label>
+            <input
+              id="patientName"
+              type="text"
+              class="form-control"
+              formControlName="patientName"
+            />
+            <div
+              *ngIf="
+                appointmentForm.get('patientName')?.invalid &&
+                appointmentForm.get('patientName')?.touched
+              "
+              class="text-danger"
+            >
+              Le nom du patient est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="date">Date du Rendez-vous</label>
+            <input
+              id="date"
+              type="date"
+              class="form-control"
+              formControlName="date"
+            />
+            <div
+              *ngIf="
+                appointmentForm.get('date')?.invalid &&
+                appointmentForm.get('date')?.touched
+              "
+              class="text-danger"
+            >
+              La date est requise
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type de Rendez-vous</label>
+            <select id="type" class="form-control" formControlName="type">
+              <option value="">Sélectionner</option>
+              <option value="GENERAL">Général</option>
+              <option value="SPECIALIST">Spécialiste</option>
+              <option value="FOLLOW_UP">Suivi</option>
+            </select>
+            <div
+              *ngIf="
+                appointmentForm.get('type')?.invalid &&
+                appointmentForm.get('type')?.touched
+              "
+              class="text-danger"
+            >
+              Le type est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              rows="3"
+              formControlName="description"
+            ></textarea>
+            <div
+              *ngIf="
+                appointmentForm.get('description')?.invalid &&
+                appointmentForm.get('description')?.touched
+              "
+              class="text-danger"
+            >
+              La description doit contenir au moins 1000caractères
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            
+          >
+            Prendre Rendez-vous
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

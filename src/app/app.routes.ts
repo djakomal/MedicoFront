@@ -17,7 +17,9 @@ import { ContactComponent } from './components/body/contact/contact.component';
 import { ConnexionComponent } from './components/connexion/connexion.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { BodyComponent } from './components/body/body.component';
-import { RegisterComponent } from './components/body/register/register.component';
+import { RegisterComponent } from './components/register/register.component';
+import { AppointComponent } from './components/body/appoint/appoint.component';
+
 
 
 
@@ -63,6 +65,10 @@ export const routes: Routes = [
     },
     {
         path: 'Elem', component: ElementsComponent
+
+    },
+    {
+        path: 'Ap', component: AppointComponent
 
     },
     {
