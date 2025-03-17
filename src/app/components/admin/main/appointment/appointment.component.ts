@@ -9,6 +9,8 @@ import { FormulaireComponent } from '../../formulaire/formulaire.component';
 import { Appoitement } from '../../../../models/appoitement';
 import { AppointementService } from '../../../../_helps/appointement.service';
 import { NotificationService } from '../../../../_helps/notification.service';
+import { AppoitementType } from '../../../../models/appoitementType';
+import { AppointTypeServiceService } from '../../../../_helps/appoint-type-service.service';
 
 
 
@@ -21,20 +23,24 @@ import { NotificationService } from '../../../../_helps/notification.service';
   styleUrl: './appointment.component.css'
 })
 export class AppointmentComponent  implements OnInit{
-  tableauClasse!:Appoitement[]
+  tableauClasse!:AppoitementType[]
 
   constructor( private router :Router
     ,
-    private appointementService:AppointementService,
+    private appointementService:AppointTypeServiceService,
     private notificationService: NotificationService
   ){
 
   }
  ngOnInit(): void {
-     this.getAppointment()
+  
+     this.appointementService.getAllAppointmentType()
+     this.appointementService.refreshNeeded.subscribe(() => {
+     
+    });
  }
  getAppointment() {
-  this.appointementService.getAllAppointment().subscribe(
+  this.appointementService.getAllAppointmentType().subscribe(
     (data) => {
       this.tableauClasse = data;
       console.log(data)

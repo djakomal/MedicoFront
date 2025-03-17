@@ -28,18 +28,20 @@ export class JwtService {
     ) ;
   }
   //  // Sauvegarder le token après connexion
-  saveToken(token: string) {
-    window.localStorage.setItem('jwtToken', token);
+  saveToken(jwt: string) {
+    window.localStorage.setItem('jwtToken', jwt);
   }
 
   // Récupérer le token pour les requêtes protégées
   getToken(): string | null {
-    return localStorage.getItem('authotoken');
+    const token = localStorage.getItem('jwtToken');
+    console.log("🔍 Token récupéré :", token);
+    return token;
   }
-
-  setToken(token: string) {
-    if (token == null) {
-      localStorage.setItem('jwtToken', token);
+ 
+  setToken(jwt: string|null) {
+    if (jwt) {
+      localStorage.setItem('jwtToken', jwt);
     } else {
       localStorage.removeItem('jwtToken');
     }

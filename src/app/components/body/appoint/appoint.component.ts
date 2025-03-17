@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppointTypeServiceService } from '../../../_helps/appoint-type-service.service';
+import { JwtService } from '../../../_helps/jwt.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-appoint',
@@ -16,6 +18,7 @@ export class AppointComponent {
   constructor(private fb : FormBuilder,
     private router: Router,
     private appointTypeServiceService: AppointTypeServiceService,
+    private jwtService: JwtService,
   ) { 
     }
     ngOnInit(): void {
@@ -30,19 +33,26 @@ export class AppointComponent {
     onSubmit(): void {
       const formData = this.appointmentForm.value;
       this.appointTypeServiceService.addAppoitementType(formData).subscribe(
-        Response => {
+        response => {
+          console.log(response); 
+          this.appointmentForm.reset();
           alert('Rendez-vous soumis avec succès');
           this.router.navigateByUrl('dash');
         },
         error => {
-          if (error.status === 400) {
-            alert(error.error.message); // Affiche le message d'erreur du backend
-          } 
-        }
-        
-
+          console.log(error); 
+        },
+      // Affiche la réponse complète
+ 
       )
-   
+      // if (formData) {
+      //   console.log('Rendez-vous soumis avec succès', formData);
+      //   this.router.navigateByUrl('dash');
+
+      // } else {
+      //   console.log('Formulaire invalide');
+      
+      // }
     }
     
 

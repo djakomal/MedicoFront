@@ -14,6 +14,7 @@ export class AppoitementType {
   type!:string;
   date!: string;
   description!: string;
+  statut!: string;
  
 
   // constructor(emails:string, dates :Date ,times :Time, descriptions:string, regimes:string){

@@ -50,8 +50,10 @@ export class ConnexionComponent implements OnInit {
         console.log("reponse du backend ",response);  // Affiche la réponse complète
         if (response && response.jwt) {
           this.jwtService.saveToken(response.jwt);
-          this.userName = this.jwtService.getUserName();  // Sauvegarde le token
+          this.userName = this.jwtService.getUserName();
+          console.log("🔑 Token stocké après connexion:", localStorage.getItem('jwtToken'));  // Sauvegarde le token
           alert('Connexion réussie !');
+          localStorage.setItem('token', response.jwt);
           this.router.navigateByUrl("/Dash");
         } else {
           alert("Erreur : Aucun token reçu !");
