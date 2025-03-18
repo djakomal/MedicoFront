@@ -23,28 +23,27 @@ export class AppointComponent {
     }
     ngOnInit(): void {
       this.appointmentForm = this.fb.group({
-        patientName: ['', [Validators.required]],
+        name: ['', [Validators.required]],
         date: ['', [Validators.required]],
+        heure: ['', [Validators.required]],
         type: ['', [Validators.required]],
         description: ['', [Validators.required]]
       });
+      this.appointmentForm.get('type')?.setValue('GENERAL'); 
+
     }
+    
     
     onSubmit(): void {
       const formData = this.appointmentForm.value;
-      this.appointTypeServiceService.addAppoitementType(formData).subscribe(
-        response => {
-          console.log(response); 
-          this.appointmentForm.reset();
+      this.appointTypeServiceService.addAppoitementType(formData).subscribe({
+        next: response =>{
           alert('Rendez-vous soumis avec succès');
+          console.log("✅ Succès:", response),
           this.router.navigateByUrl('dash');
-        },
-        error => {
-          console.log(error); 
-        },
-      // Affiche la réponse complète
- 
-      )
+        } ,
+        error: err => console.error("❌ Erreur:", err)
+      });
       // if (formData) {
       //   console.log('Rendez-vous soumis avec succès', formData);
       //   this.router.navigateByUrl('dash');
@@ -53,6 +52,9 @@ export class AppointComponent {
       //   console.log('Formulaire invalide');
       
       // }
+    }
+    onTypeChange(event: any) {
+      console.log("📌 Type sélectionné :", event.target.value);
     }
     
 

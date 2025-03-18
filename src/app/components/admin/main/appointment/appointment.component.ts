@@ -34,22 +34,25 @@ export class AppointmentComponent  implements OnInit{
   }
  ngOnInit(): void {
   
-     this.appointementService.getAllAppointmentType()
-     this.appointementService.refreshNeeded.subscribe(() => {
-     
-    });
+  this.getAppointment();
  }
  getAppointment() {
-  this.appointementService.getAllAppointmentType().subscribe(
-    (data) => {
-      this.tableauClasse = data;
-      console.log(data)
+  this.appointementService.getAllAppointmentType().subscribe({
+    next: (data) => {
+      console.log("📌 Données reçues :", data);
+      
+      if (Array.isArray(data)) {
+        this.tableauClasse = data;
+      } else {
+        console.error("❌ Format des données incorrect :", data);
+      }
     },
-    (error) => {
-      console.log(error);
+    error: (error) => {
+      console.error("❌ Erreur API :", error);
     }
-  )
+  });
 }
+
 redirection(){
   this.router.navigateByUrl("Admin/form")
 }

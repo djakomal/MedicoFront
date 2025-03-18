@@ -13,6 +13,7 @@ export class AppoitementType {
   name!: string;
   type!:string;
   date!: string;
+  heure!: string;
   description!: string;
   statut!: string;
  

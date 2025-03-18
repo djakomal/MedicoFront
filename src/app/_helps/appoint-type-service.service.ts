@@ -23,14 +23,21 @@ export class AppointTypeServiceService {
       console.error("Token is missing");
       throw new Error("Token is required");
     }
+    if (!appoitement.type || appoitement.type.trim() === "") {
+      console.warn("⚠️ Type vide, définition d'une valeur par défaut...");
+      appoitement.type = "GENERAL"; // Remplace par une valeur valide de ton Enum
+    }
+    
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.post<AppoitementType>(this.matiereUrl, appoitement, { headers })
       .pipe(
         catchError(error => {
+          console.log("donnee:", appoitement);
           console.error('Erreur lors de l\'ajout du type de rendez-vous:', error);
           throw error; // Lance l'erreur pour que le composant appelant puisse la gérer
+          
         })
       );
   
