@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppointTypeServiceService } from '../../../_helps/appoint-type-service.service';
-import { JwtService } from '../../../_helps/jwt.service';
+
 import { HttpHeaders } from '@angular/common/http';
+import { AppointTypeServiceService } from '../../../_helps/appointment/appoint-type-service.service';
+import { JwtService } from '../../../_helps/jwt/jwt.service';
 
 @Component({
   selector: 'app-appoint',

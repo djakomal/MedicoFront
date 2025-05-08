@@ -5,8 +5,9 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../../header/header.component";
 import { Appoitement } from '../../../models/appoitement';
-import { AppointementInsertService } from '../../../_helps/appointement-insert.service';
-import { AppointementService } from '../../../_helps/appointement.service';
+import { AppointementInsertService } from '../../../_helps/appointment/appointement-insert.service';
+import { AppointementService } from '../../../_helps/appointment/appointement.service';
+
 
 @Component({
   selector: 'app-doctor',

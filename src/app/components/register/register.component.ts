@@ -3,7 +3,8 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 import { CommonModule } from '@angular/common';
 
 import { Router } from '@angular/router';
-import { JwtService } from '../../_helps/jwt.service';
+import { JwtService } from '../../_helps/jwt/jwt.service';
+
 
 
 

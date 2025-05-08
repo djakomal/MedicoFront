@@ -1,22 +1,18 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
-// Ensure ConnexionComponent is standalone
-import { Router, RouterOutlet } from '@angular/router';
-
-import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../_helps/notification.service';
-import { JwtService } from '../../_helps/jwt/jwt.service';
-
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { NotificationService } from '../../../../_helps/notification.service';
+import { Router } from '@angular/router';
+import { JwtService } from '../../../../_helps/jwt/jwt.service';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-user-dashboard',
   standalone: true,
-  imports: [FormsModule, RouterOutlet, CommonModule], // Remove ConnexionComponent if it's not standalone
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  imports: [],
+  templateUrl: './user-dashboard.component.html',
+  styleUrl: './user-dashboard.component.css'
 })
-export class HeaderComponent {
-  userName: string | null = null; // Stocke le nom de l'utilisateur
+export class UserDashboardComponent {
+userName: string | null = null; // Stocke le nom de l'utilisateur
 
   notifications: string[] = [];
 
@@ -59,14 +55,4 @@ export class HeaderComponent {
     this.router.navigateByUrl('/connex'); // Redirection vers la page de connexion
   }
 
- 
-
-  //  switchOnAll() {
-
-  //   if(this.altern!=false){
-  //      this.status="LogOut"
-
-  //   }
-
-  //  }
 }

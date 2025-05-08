@@ -4,7 +4,8 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { JwtService } from '../../_helps/jwt.service';
+import { JwtService } from '../../_helps/jwt/jwt.service';
+
 
 
 
@@ -54,7 +55,7 @@ export class ConnexionComponent implements OnInit {
           console.log("🔑 Token stocké après connexion:", localStorage.getItem('jwtToken'));  // Sauvegarde le token
           alert('Connexion réussie !');
           localStorage.setItem('token', response.jwt);
-          this.router.navigateByUrl("/Dash");
+          this.router.navigateByUrl("/UserDah");
         } else {
           alert("Erreur : Aucun token reçu !");
         }

@@ -5,9 +5,10 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 
-import { AppointementService } from '../../_helps/appointement.service';
+
 import { AppointmentComponent } from '../admin/main/appointment/appointment.component';
 import { Appoitement } from '../../models/appoitement';
+import { AppointementService } from '../../_helps/appointment/appointement.service';
 
 @Component({
   selector: 'app-note-confirmation',

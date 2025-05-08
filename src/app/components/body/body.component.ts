@@ -25,7 +25,7 @@ import { NoteConfirmationComponent } from "../note-confirmation/note-confirmatio
     styleUrl: './body.component.css',
     imports: [DashboardComponent, ContactComponent,
     AboutComponent, SingleBlogComponent,
-    ElementsComponent, DoctorComponent, BlogComponent,
+    DoctorComponent,
     ServiceComponent, DepartementComponent, SingleBlogComponent, RouterOutlet, HeaderComponent, NoteConfirmationComponent]
 })
 export class BodyComponent {

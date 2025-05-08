@@ -7,8 +7,9 @@ import { AppointmentComponent } from '../main/appointment/appointment.component'
 import { Router } from '@angular/router';
 import { Appoitement } from '../../../models/appoitement';
 import { NotificationService } from '../../../_helps/notification.service';
-import { JwtService } from '../../../_helps/jwt.service';
-import { AppointementService } from '../../../_helps/appointement.service';
+import { JwtService } from '../../../_helps/jwt/jwt.service';
+import { AppointementService } from '../../../_helps/appointment/appointement.service';
+
 
 
 @Component({

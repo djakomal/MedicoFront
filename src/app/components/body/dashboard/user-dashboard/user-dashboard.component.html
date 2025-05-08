@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medico - Espace Patient</title>
+
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">+</div>
+      <div class="logo-text">Medico</div>
+    </div>
+    <div class="user-actions">
+      <div class="notification">
+        <i>🔔</i>
+        <div class="notification-badge">2</div>
+      </div>
+      <div class="user-profile">
+        
+  
+        <div class="cnav-item dropdown">
+            <img src="../../../assets/img/author/profil.png" alt="Profil" class="profile-img" href="Blog" id="navbarDropdown" role="button"
+            data-toggle="dropdown" aria-haspopup="true"  (click)="toggleMenu()">
+            
+            <div class="dropdown-menu" *ngIf="menuOpen" >
+                <p>Bienvenue, <strong>{{ userName }}</strong></p>
+                <button (click)="logout()">Déconnexion</button>
+            </div>
+        </div> --> 
+       
+      </div>
+    </div>
+  </div>
+  
+  <div class="nav">
+    <ul class="nav-items">
+      <li><a href="#" class="active">Tableau de bord</a></li>
+      <li><a href="#">Services</a></li>
+      <li><a href="#">Mes rendez-vous</a></li>
+      <li><a href="#">Conseils</a></li>
+      <li><a href="#">Dossier médical</a></li>
+    </ul>
+  </div>
+  
+  <div class="main-content">
+    <div class="welcome-section">
+      <div class="welcome-text">
+        <p>Bienvenue, <strong>{{ userName }}</strong></p>
+        <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
+        <button class="appointment-btn">Prendre rendez-vous avec un médecin</button>
+      </div>
+      <div class="illustration">
+        <div class="doctor-image">
+          <svg width="200" height="300" viewBox="0 0 200 300">
+            <rect x="50" y="50" width="100" height="150" fill="#1e88e5" rx="10" />
+            <circle cx="100" cy="75" r="25" fill="#90caf9" />
+            <rect x="75" y="110" width="50" height="70" fill="#white" rx="5" />
+            <text x="100" y="145" font-size="12" text-anchor="middle" fill="#1e88e5">Medico</text>
+            <circle cx="100" cy="250" r="30" fill="#bbdefb" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-cards">
+      <div class="card">
+        <div class="card-icon">
+          <i>📅</i>
+        </div>
+        <h3>Rendez-vous</h3>
+        <p>Prochain RDV: 12 Mai</p>
+        <p>Dr. Martin - Généraliste</p>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">
+          <i>💊</i>
+        </div>
+        <h3>Mes médicaments</h3>
+        <p>2 prescriptions actives</p>
+        <p>Dernière mise à jour: 30 avril</p>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">
+          <i>📋</i>
+        </div>
+        <h3>Résultats</h3>
+        <p>3 analyses récentes</p>
+        <p>Voir mes résultats</p>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">
+          <i>📝</i>
+        </div>
+        <h3>Suivi santé</h3>
+        <p>Mises à jour régulières</p>
+        <p>Ajouter des données</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

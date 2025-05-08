@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { NotificationComponent } from '../../notification/notification.component';
 import { FormulaireComponent } from '../../formulaire/formulaire.component';
 import { Appoitement } from '../../../../models/appoitement';
-import { AppointementService } from '../../../../_helps/appointement.service';
+
 import { NotificationService } from '../../../../_helps/notification.service';
 import { AppoitementType } from '../../../../models/appoitementType';
-import { AppointTypeServiceService } from '../../../../_helps/appoint-type-service.service';
+import { AppointTypeServiceService } from '../../../../_helps/appointment/appoint-type-service.service';
+
 
 
 
@@ -18,7 +19,7 @@ import { AppointTypeServiceService } from '../../../../_helps/appoint-type-servi
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [CommonModule ,FormulaireComponent],
+  imports: [CommonModule],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })

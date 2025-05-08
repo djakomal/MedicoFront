@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AppoitementType } from '../models/appoitementType';
+
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, Observable, Subject, tap, throwError } from 'rxjs';
-import { JwtService } from './jwt.service';
+import { AppoitementType } from '../../models/appoitementType';
+import { JwtService } from '../jwt/jwt.service';
+
 
 @Injectable({
   providedIn: 'root'

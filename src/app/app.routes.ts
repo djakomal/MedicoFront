@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './_helps/auth.guard';
+
 
 import { NoteConfirmationComponent } from './components/note-confirmation/note-confirmation.component';
 import { DashboardComponent } from './components/body/dashboard/dashboard.component';
@@ -19,6 +19,9 @@ import { AdminComponent } from './components/admin/admin.component';
 import { BodyComponent } from './components/body/body.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AppointComponent } from './components/body/appoint/appoint.component';
+import { authGuard } from './_helps/Guard/auth.guard';
+import { ConseilComponent } from './components/body/conseil/conseil.component';
+import { UserDashboardComponent } from './components/body/dashboard/user-dashboard/user-dashboard.component';
 
 
 
@@ -36,8 +39,8 @@ export const routes: Routes = [
     },
 
     {
-        path: 'connex',
-        redirectTo: 'connex',
+        path: 'Dash',
+        redirectTo: 'Dash',
         pathMatch: 'full'
     },
     {
@@ -99,24 +102,40 @@ export const routes: Routes = [
         path: 'Cont', component: ContactComponent
 
     },
+    {
+        path: 'connex', component: ConnexionComponent
 
+    },
+    {
+        path: 'conseil', component: ConseilComponent
+
+    },
+    {
+        path: 'UserDah', component: UserDashboardComponent
+
+    },
 
 
     {
         path: "**",
-        component: ConnexionComponent,
+        component: DashboardComponent,
         pathMatch: "full"
     },
-    {
-        path: 'Dash',
-        component: BodyComponent,
-        canActivate: [authGuard], data: { role: 'USER' }
-    },
+    // {
+    //     path: 'Dash',
+    //     component: BodyComponent,
+    //     canActivate: [authGuard], data: { role: 'USER' }
+    // },
     {
         path: 'Admin', component: AdminComponent,
         canActivate: [authGuard],
         data: { role: 'ADMIN' }
     },
+    // {
+    //     path: 'UserDah', component: UserDashboardComponent,
+    //     canActivate: [authGuard],
+       
+    // },
 
 
 ];
