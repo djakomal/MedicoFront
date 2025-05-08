@@ -18,89 +18,350 @@
         <div class="notification-badge">2</div>
       </div>
       <div class="user-profile">
-        
-  
-        <div class="cnav-item dropdown">
-            <img src="../../../assets/img/author/profil.png" alt="Profil" class="profile-img" href="Blog" id="navbarDropdown" role="button"
-            data-toggle="dropdown" aria-haspopup="true"  (click)="toggleMenu()">
-            
-            <div class="dropdown-menu" *ngIf="menuOpen" >
-                <p>Bienvenue, <strong>{{ userName }}</strong></p>
-                <button (click)="logout()">Déconnexion</button>
-            </div>
-        </div> --> 
-       
+        <div class="profile-img"></div>
       </div>
     </div>
   </div>
-  
+ 
   <div class="nav">
     <ul class="nav-items">
-      <li><a href="#" class="active">Tableau de bord</a></li>
-      <li><a href="#">Services</a></li>
-      <li><a href="#">Mes rendez-vous</a></li>
-      <li><a href="#">Conseils</a></li>
-      <li><a href="#">Dossier médical</a></li>
-    </ul>
+        <li><a href="#" [class.active]="isSectionActive('dashboard')" (click)="showSection('dashboard', $event)">Tableau de bord</a></li>
+        <li><a href="#" [class.active]="isSectionActive('services')" (click)="showSection('services', $event)">Services</a></li>
+        <li><a href="#" [class.active]="isSectionActive('appointments')" (click)="showSection('appointments', $event)">Mes rendez-vous</a></li>
+        <li><a href="#" [class.active]="isSectionActive('advice')" (click)="showSection('advice', $event)">Conseils</a></li>
+        <li><a href="#" [class.active]="isSectionActive('medical-file')" (click)="showSection('medical-file', $event)">Dossier médical</a></li>
+      </ul>
   </div>
-  
+ 
   <div class="main-content">
-    <div class="welcome-section">
-      <div class="welcome-text">
-        <p>Bienvenue, <strong>{{ userName }}</strong></p>
-        <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
-        <button class="appointment-btn">Prendre rendez-vous avec un médecin</button>
+    <!-- Dashboard content - visible by default -->
+    <div id="dashboard-content" [style.display]="isSectionActive('dashboard') ? 'block' : 'none'">
+
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <p>Bienvenue, <strong>{{userName}}</strong></p>
+          <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
+          <button class="appointment-btn">Prendre rendez-vous avec un médecin</button>
+        </div>
+        <div class="illustration">
+          <div class="doctor-image">
+            <svg width="200" height="300" viewBox="0 0 200 300">
+              <rect x="50" y="50" width="100" height="150" fill="#1e88e5" rx="10" />
+              <circle cx="100" cy="75" r="25" fill="#90caf9" />
+              <rect x="75" y="110" width="50" height="70" fill="white" rx="5" />
+              <text x="100" y="145" font-size="12" text-anchor="middle" fill="#1e88e5">Medico</text>
+              <circle cx="100" cy="250" r="30" fill="#bbdefb" />
+            </svg>
+          </div>
+        </div>
       </div>
-      <div class="illustration">
-        <div class="doctor-image">
-          <svg width="200" height="300" viewBox="0 0 200 300">
-            <rect x="50" y="50" width="100" height="150" fill="#1e88e5" rx="10" />
-            <circle cx="100" cy="75" r="25" fill="#90caf9" />
-            <rect x="75" y="110" width="50" height="70" fill="#white" rx="5" />
-            <text x="100" y="145" font-size="12" text-anchor="middle" fill="#1e88e5">Medico</text>
-            <circle cx="100" cy="250" r="30" fill="#bbdefb" />
-          </svg>
+     
+      <div class="dashboard-cards">
+        <div class="card">
+          <div class="card-icon">
+            <i>📅</i>
+          </div>
+          <h3>Rendez-vous</h3>
+          <p>Prochain RDV: 12 Mai</p>
+          <p>Dr. Martin - Généraliste</p>
+        </div>
+       
+        <div class="card">
+          <div class="card-icon">
+            <i>💊</i>
+          </div>
+          <h3>Mes médicaments</h3>
+          <p>2 prescriptions actives</p>
+          <p>Dernière mise à jour: 30 avril</p>
+        </div>
+       
+        <div class="card">
+          <div class="card-icon">
+            <i>📋</i>
+          </div>
+          <h3>Résultats</h3>
+          <p>3 analyses récentes</p>
+          <p>Voir mes résultats</p>
+        </div>
+       
+        <div class="card">
+          <div class="card-icon">
+            <i>📝</i>
+          </div>
+          <h3>Suivi santé</h3>
+          <p>Mises à jour régulières</p>
+          <p>Ajouter des données</p>
         </div>
       </div>
     </div>
     
-    <div class="dashboard-cards">
-      <div class="card">
-        <div class="card-icon">
-          <i>📅</i>
+    <!-- Services content - hidden by default -->
+    <div id="services-content" [style.display]="isSectionActive('services') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <p>Nos services médicaux</p>
+          <p>Découvrez l'ensemble des services proposés par notre plateforme et nos partenaires de santé</p>
         </div>
-        <h3>Rendez-vous</h3>
-        <p>Prochain RDV: 12 Mai</p>
-        <p>Dr. Martin - Généraliste</p>
       </div>
       
-      <div class="card">
-        <div class="card-icon">
-          <i>💊</i>
+      <div class="service-categories">
+        <div class="service-category">
+          <h3>Consultations</h3>
+          <p>Consultations en présentiel ou en téléconsultation</p>
         </div>
-        <h3>Mes médicaments</h3>
-        <p>2 prescriptions actives</p>
-        <p>Dernière mise à jour: 30 avril</p>
+        <div class="service-category">
+          <h3>Prévention</h3>
+          <p>Bilans de santé et dépistages préventifs</p>
+        </div>
+        <div class="service-category">
+          <h3>Soins spécialisés</h3>
+          <p>Accès à un réseau de spécialistes</p>
+        </div>
       </div>
       
-      <div class="card">
-        <div class="card-icon">
-          <i>📋</i>
+      <div class="service-list">
+        <div class="service-item">
+          <div class="service-icon">👨‍⚕️</div>
+          <div class="service-details">
+            <h4>Consultation médicale</h4>
+            <p>Consultation avec un médecin généraliste pour tout problème de santé ou suivi régulier.</p>
+            <button class="service-btn">Prendre rendez-vous</button>
+          </div>
         </div>
-        <h3>Résultats</h3>
-        <p>3 analyses récentes</p>
-        <p>Voir mes résultats</p>
-      </div>
-      
-      <div class="card">
-        <div class="card-icon">
-          <i>📝</i>
+        
+        <div class="service-item">
+          <div class="service-icon">🖥️</div>
+          <div class="service-details">
+            <h4>Téléconsultation</h4>
+            <p>Consultation vidéo avec un professionnel de santé sans vous déplacer.</p>
+            <button class="service-btn">Démarrer une téléconsultation</button>
+          </div>
         </div>
-        <h3>Suivi santé</h3>
-        <p>Mises à jour régulières</p>
-        <p>Ajouter des données</p>
+        
+        <div class="service-item">
+          <div class="service-icon">💉</div>
+          <div class="service-details">
+            <h4>Vaccination</h4>
+            <p>Service de vaccination pour adultes et enfants, incluant les vaccins saisonniers.</p>
+            <button class="service-btn">Voir les disponibilités</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">🧠</div>
+          <div class="service-details">
+            <h4>Suivi psychologique</h4>
+            <p>Consultations avec des psychologues et psychiatres qualifiés.</p>
+            <button class="service-btn">En savoir plus</button>
+          </div>
+        </div>
       </div>
     </div>
+    
+    <!-- Appointments content -->
+    <div id="appointments-content" [style.display]="isSectionActive('appointments') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <p>Mes rendez-vous</p>
+          <p>Consultez et gérez l'ensemble de vos rendez-vous médicaux</p>
+          <button class="appointment-btn">Nouveau rendez-vous</button>
+        </div>
+      </div>
+      
+      <div class="service-list">
+        <div class="service-item">
+          <div class="service-icon">📅</div>
+          <div class="service-details">
+            <h4>Dr. Martin - Médecin généraliste</h4>
+            <p><strong>Date:</strong> 12 mai 2025 à 14h30</p>
+            <p><strong>Adresse:</strong> 15 rue de la Santé, 75013 Paris</p>
+            <div style="display: flex; gap: 10px;">
+              <button class="service-btn">Modifier</button>
+              <button class="service-btn" style="background-color: #f44336;">Annuler</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">📅</div>
+          <div class="service-details">
+            <h4>Dr. Dubois - Cardiologue</h4>
+            <p><strong>Date:</strong> 20 mai 2025 à 09h15</p>
+            <p><strong>Adresse:</strong> 23 boulevard Haussmann, 75009 Paris</p>
+            <div style="display: flex; gap: 10px;">
+              <button class="service-btn">Modifier</button>
+              <button class="service-btn" style="background-color: #f44336;">Annuler</button>
+            </div>
+          </div>
+        </div>
+        
+        <h3 style="margin-top: 30px;">Historique des rendez-vous</h3>
+        
+        <div class="service-item" style="opacity: 0.7;">
+          <div class="service-icon">✓</div>
+          <div class="service-details">
+            <h4>Dr. Martin - Médecin généraliste</h4>
+            <p><strong>Date:</strong> 15 avril 2025 à 10h00</p>
+            <button class="service-btn">Voir le compte-rendu</button>
+          </div>
+        </div>
+        
+        <div class="service-item" style="opacity: 0.7;">
+          <div class="service-icon">✓</div>
+          <div class="service-details">
+            <h4>Dr. Petit - Ophtalmologue</h4>
+            <p><strong>Date:</strong> 3 mars 2025 à 16h45</p>
+            <button class="service-btn">Voir le compte-rendu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Advice content -->
+    <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <p>Conseils santé</p>
+          <p>Retrouvez des conseils personnalisés pour maintenir et améliorer votre santé</p>
+        </div>
+      </div>
+      
+      <div class="service-categories">
+        <div class="service-category">
+          <h3>Nutrition</h3>
+          <p>Alimentation équilibrée et diététique</p>
+        </div>
+        <div class="service-category">
+          <h3>Activité physique</h3>
+          <p>Exercices et activités recommandés</p>
+        </div>
+        <div class="service-category">
+          <h3>Bien-être mental</h3>
+          <p>Gestion du stress et relaxation</p>
+        </div>
+        <div class="service-category">
+          <h3>Prévention</h3>
+          <p>Conseils préventifs et de dépistage</p>
+        </div>
+      </div>
+      
+      <div class="service-list">
+        <div class="service-item">
+          <div class="service-icon">🥗</div>
+          <div class="service-details">
+            <h4>Maintenir une alimentation équilibrée</h4>
+            <p>Découvrez comment adopter une alimentation saine et adaptée à vos besoins spécifiques.</p>
+            <button class="service-btn">Lire l'article</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">🧘</div>
+          <div class="service-details">
+            <h4>Techniques de relaxation contre le stress</h4>
+            <p>Apprenez des exercices simples à pratiquer quotidiennement pour réduire votre niveau de stress.</p>
+            <button class="service-btn">Voir les exercices</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">🏃</div>
+          <div class="service-details">
+            <h4>Programme d'activité physique adapté</h4>
+            <p>Un programme personnalisé pour rester actif selon votre condition physique.</p>
+            <button class="service-btn">Découvrir le programme</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">💤</div>
+          <div class="service-details">
+            <h4>Améliorer la qualité de votre sommeil</h4>
+            <p>Conseils pratiques pour un sommeil réparateur et des nuits plus paisibles.</p>
+            <button class="service-btn">Lire l'article</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Medical File content -->
+    <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <p>Mon dossier médical</p>
+          <p>Accédez à l'ensemble de vos informations médicales en toute sécurité</p>
+          <button class="appointment-btn">Télécharger mon dossier complet</button>
+        </div>
+      </div>
+      
+      <div class="service-categories">
+        <div class="service-category">
+          <h3>Antécédents</h3>
+          <p>Historique médical complet</p>
+        </div>
+        <div class="service-category">
+          <h3>Analyses</h3>
+          <p>Résultats d'examens récents</p>
+        </div>
+        <div class="service-category">
+          <h3>Traitements</h3>
+          <p>Médicaments et prescriptions</p>
+        </div>
+        <div class="service-category">
+          <h3>Allergies</h3>
+          <p>Allergies et intolérances</p>
+        </div>
+      </div>
+      
+      <div class="service-list">
+        <h3>Derniers documents médicaux</h3>
+        
+        <div class="service-item">
+          <div class="service-icon">📄</div>
+          <div class="service-details">
+            <h4>Analyse de sang</h4>
+            <p><strong>Date:</strong> 25 avril 2025</p>
+            <p><strong>Laboratoire:</strong> BioMed Paris</p>
+            <button class="service-btn">Consulter</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">📄</div>
+          <div class="service-details">
+            <h4>Ordonnance médicale</h4>
+            <p><strong>Date:</strong> 15 avril 2025</p>
+            <p><strong>Médecin:</strong> Dr. Martin</p>
+            <button class="service-btn">Consulter</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">📄</div>
+          <div class="service-details">
+            <h4>Radiographie pulmonaire</h4>
+            <p><strong>Date:</strong> 10 mars 2025</p>
+            <p><strong>Centre d'imagerie:</strong> Radiopole</p>
+            <button class="service-btn">Consulter</button>
+          </div>
+        </div>
+        
+        <div class="service-item">
+          <div class="service-icon">📄</div>
+          <div class="service-details">
+            <h4>Compte-rendu ophtalmologique</h4>
+            <p><strong>Date:</strong> 3 mars 2025</p>
+            <p><strong>Médecin:</strong> Dr. Petit</p>
+            <button class="service-btn">Consulter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+     
   </div>
+
+  
 </body>
 </html>

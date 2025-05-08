@@ -12,11 +12,12 @@ import { FormBuilder } from '@angular/forms';
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent {
-userName: string | null = null; // Stocke le nom de l'utilisateur
-
+  userName: string | null = null; // Stocke le nom de l'utilisateur
   notifications: string[] = [];
-
   menuOpen: boolean = false;
+  
+  // Propriété pour suivre la section active
+  activeSection: string = 'dashboard';
 
   constructor(
     private notificationService: NotificationService,
@@ -34,9 +35,25 @@ userName: string | null = null; // Stocke le nom de l'utilisateur
     this.loadUserName();
   }
 
+  // Méthode pour changer de section
+  showSection(section: string, event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+    
+    this.activeSection = section;
+    this.cdr.detectChanges(); // Force la mise à jour de l'affichage
+  }
+
+  // Méthode pour vérifier si une section est active
+  isSectionActive(section: string): boolean {
+    return this.activeSection === section;
+  }
+
   clearNotifications() {
     this.notificationService.clearNotifications();
   }
+  
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
     this.cdr.detectChanges(); // Force la mise à jour de l'affichage
@@ -54,5 +71,4 @@ userName: string | null = null; // Stocke le nom de l'utilisateur
     this.menuOpen = false; // Ferme le menu
     this.router.navigateByUrl('/connex'); // Redirection vers la page de connexion
   }
-
 }
