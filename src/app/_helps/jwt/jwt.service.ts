@@ -21,7 +21,7 @@ export class JwtService {
   }
 
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(this.baseURL + '/login', credentials,
+    return this.http.post(this.baseURL + '/login/login', credentials,
       {headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
       tap((response: any) =>console.log ("reponse du serveur :", response))
@@ -48,15 +48,17 @@ export class JwtService {
   }
   getUserName(): string | null {
     const token = this.getToken();
-    if (!token) return null;
-
-    try {
-      const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Décoder le payload du JWT
-      return tokenPayload.sub; // "sub" contient souvent l'email ou le nom d'utilisateur
-    } catch (error) {
-      console.error("Erreur lors du décodage du token :", error);
-      return null;
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        // Vérifie plusieurs champs possibles pour le username
+        return decodedToken.preferred_username  || decodedToken.userName || decodedToken.name || decodedToken.sub || null;
+      } catch (error) {
+        console.error('Erreur lors du décodage du token JWT:', error);
+        return null;
+      }
     }
+    return null;
   }
 
   // }
@@ -92,4 +94,24 @@ export class JwtService {
       headers: headers,
     });
   }
+
+
+  getDecodedToken(): any | null {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        console.log('Contenu du token JWT:', decodedToken);
+        return decodedToken;
+      } catch (error) {
+        console.error('Erreur lors du décodage du token JWT:', error);
+        return null;
+      }
+    }
+    return null;
+  }
 }
+function jwtDecode(token: string): any {
+  throw new Error('Function not implemented.');
+}
+

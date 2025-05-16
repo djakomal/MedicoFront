@@ -9,19 +9,44 @@ import { Injectable } from "@angular/core";
 
 export class Appoitement {
 
-  id!: number;
-  name!: string;
+ id?: number; // Optionnel, généré par le backend
+  firstname!: string;
+  lastname!: string;
+  birthdate!: string; // Format YYYY-MM-DD
+  gender!: 'male' | 'female' | 'other';
   email!: string;
-  date!: string;
-  time!: string;
-  statut!: string;
-  description!: string;
-  regtime?: string;
-
-  // constructor(emails:string, dates :Date ,times :Time, descriptions:string, regimes:string){
-  //   this._name =names;
-  //   this._email=emails;
-  //   this._date=dates;
-  //   this._time=times;
+  phone!: string;
+  insurance?: string; // Optionnel
+  
+  // Détails du rendez-vous (Étape 2)
+  doctorType!: string;
+  otherSpecialist?: string; // Optionnel, uniquement si doctorType === 'other'
+  doctor?: string; // Optionnel, préférence de médecin
+  appointmentType?: 'in-person' | 'video';
+  preferredDate!: string; // Format YYYY-MM-DD
+  preferredTime!: 'morning' | 'afternoon' | 'evening';
+  
+  // Disponibilités alternatives
+  altAvailability?: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
+  
+  // Informations médicales
+  reason?: string;
+  symptoms?: string; // Optionnel
+  firstVisit?: 'yes' | 'no'; // Optionnel
+  allergies?: string; // Optionnel
+  medications?: string; // Optionnel
+  
+  // Informations complémentaires
+  additionalInfo?: string; // Optionnel
+  consent?: boolean;
+  
+  // Champs potentiellement ajoutés par le backend
+  status?: 'pending' | 'confirmed' | 'cancelled';
+  createdAt?: string;
+  updatedAt?: string;
 
 }

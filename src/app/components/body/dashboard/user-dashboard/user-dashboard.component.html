@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Medico - Espace Patient</title>
 
 </head>
+
 <body>
   <div class="header">
     <div class="logo">
@@ -22,17 +24,22 @@
       </div>
     </div>
   </div>
- 
+
   <div class="nav">
     <ul class="nav-items">
-        <li><a href="#" [class.active]="isSectionActive('dashboard')" (click)="showSection('dashboard', $event)">Tableau de bord</a></li>
-        <li><a href="#" [class.active]="isSectionActive('services')" (click)="showSection('services', $event)">Services</a></li>
-        <li><a href="#" [class.active]="isSectionActive('appointments')" (click)="showSection('appointments', $event)">Mes rendez-vous</a></li>
-        <li><a href="#" [class.active]="isSectionActive('advice')" (click)="showSection('advice', $event)">Conseils</a></li>
-        <li><a href="#" [class.active]="isSectionActive('medical-file')" (click)="showSection('medical-file', $event)">Dossier médical</a></li>
-      </ul>
+      <li><a href="#" [class.active]="isSectionActive('dashboard')" (click)="showSection('dashboard', $event)">Tableau
+          de bord</a></li>
+      <li><a href="#" [class.active]="isSectionActive('services')"
+          (click)="showSection('services', $event)">Services</a></li>
+      <li><a href="#" [class.active]="isSectionActive('appointments')" (click)="showSection('appointments', $event)">Mes
+          rendez-vous</a></li>
+      <li><a href="#" [class.active]="isSectionActive('advice')" (click)="showSection('advice', $event)">Conseils</a>
+      </li>
+      <li><a href="#" [class.active]="isSectionActive('medical-file')"
+          (click)="showSection('medical-file', $event)">Dossier médical</a></li>
+    </ul>
   </div>
- 
+
   <div class="main-content">
     <!-- Dashboard content - visible by default -->
     <div id="dashboard-content" [style.display]="isSectionActive('dashboard') ? 'block' : 'none'">
@@ -55,7 +62,7 @@
           </div>
         </div>
       </div>
-     
+
       <div class="dashboard-cards">
         <div class="card">
           <div class="card-icon">
@@ -65,7 +72,7 @@
           <p>Prochain RDV: 12 Mai</p>
           <p>Dr. Martin - Généraliste</p>
         </div>
-       
+
         <div class="card">
           <div class="card-icon">
             <i>💊</i>
@@ -74,7 +81,7 @@
           <p>2 prescriptions actives</p>
           <p>Dernière mise à jour: 30 avril</p>
         </div>
-       
+
         <div class="card">
           <div class="card-icon">
             <i>📋</i>
@@ -83,7 +90,7 @@
           <p>3 analyses récentes</p>
           <p>Voir mes résultats</p>
         </div>
-       
+
         <div class="card">
           <div class="card-icon">
             <i>📝</i>
@@ -94,7 +101,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Services content - hidden by default -->
     <div id="services-content" [style.display]="isSectionActive('services') ? 'block' : 'none'">
       <div class="welcome-section">
@@ -103,7 +110,7 @@
           <p>Découvrez l'ensemble des services proposés par notre plateforme et nos partenaires de santé</p>
         </div>
       </div>
-      
+
       <div class="service-categories">
         <div class="service-category">
           <h3>Consultations</h3>
@@ -118,7 +125,7 @@
           <p>Accès à un réseau de spécialistes</p>
         </div>
       </div>
-      
+
       <div class="service-list">
         <div class="service-item">
           <div class="service-icon">👨‍⚕️</div>
@@ -128,7 +135,7 @@
             <button class="service-btn">Prendre rendez-vous</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">🖥️</div>
           <div class="service-details">
@@ -137,7 +144,7 @@
             <button class="service-btn">Démarrer une téléconsultation</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">💉</div>
           <div class="service-details">
@@ -146,7 +153,7 @@
             <button class="service-btn">Voir les disponibilités</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">🧠</div>
           <div class="service-details">
@@ -157,23 +164,24 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Appointments content -->
     <div id="appointments-content" [style.display]="isSectionActive('appointments') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
           <p>Mes rendez-vous</p>
           <p>Consultez et gérez l'ensemble de vos rendez-vous médicaux</p>
-          <button class="appointment-btn">Nouveau rendez-vous</button>
+          <button class="appointment-btn" (click)="showSection('forms-file', $event)">Nouveau
+            rendez-vous</button>
         </div>
       </div>
-      
-      <div class="service-list">
+
+      <div class="service-list" *ngFor="let app of this.tableauClasse">
         <div class="service-item">
           <div class="service-icon">📅</div>
           <div class="service-details">
-            <h4>Dr. Martin - Médecin généraliste</h4>
-            <p><strong>Date:</strong> 12 mai 2025 à 14h30</p>
+            <h4>Dr. Martin - Médecin {{app.type}}</h4>
+            <p><strong>Date:</strong>{{app.date}} à {{app.heure}}</p>
             <p><strong>Adresse:</strong> 15 rue de la Santé, 75013 Paris</p>
             <div style="display: flex; gap: 10px;">
               <button class="service-btn">Modifier</button>
@@ -181,42 +189,42 @@
             </div>
           </div>
         </div>
-        
-        <div class="service-item">
-          <div class="service-icon">📅</div>
-          <div class="service-details">
-            <h4>Dr. Dubois - Cardiologue</h4>
-            <p><strong>Date:</strong> 20 mai 2025 à 09h15</p>
-            <p><strong>Adresse:</strong> 23 boulevard Haussmann, 75009 Paris</p>
-            <div style="display: flex; gap: 10px;">
-              <button class="service-btn">Modifier</button>
-              <button class="service-btn" style="background-color: #f44336;">Annuler</button>
+        <!--         
+          <div class="service-item">
+            <div class="service-icon">📅</div>
+            <div class="service-details">
+              <h4>Dr. Dubois - Cardiologue</h4>
+              <p><strong>Date:</strong> 20 mai 2025 à 09h15</p>
+              <p><strong>Adresse:</strong> 23 boulevard Haussmann, 75009 Paris</p>
+              <div style="display: flex; gap: 10px;">
+                <button class="service-btn">Modifier</button>
+                <button class="service-btn" style="background-color: #f44336;">Annuler</button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <h3 style="margin-top: 30px;">Historique des rendez-vous</h3>
-        
-        <div class="service-item" style="opacity: 0.7;">
+          
+          <h3 style="margin-top: 30px;">Historique des rendez-vous</h3> -->
+
+        <!-- <div class="service-item" style="opacity: 0.7;">
           <div class="service-icon">✓</div>
           <div class="service-details">
             <h4>Dr. Martin - Médecin généraliste</h4>
             <p><strong>Date:</strong> 15 avril 2025 à 10h00</p>
             <button class="service-btn">Voir le compte-rendu</button>
           </div>
-        </div>
-        
-        <div class="service-item" style="opacity: 0.7;">
+        </div> -->
+
+        <!-- <div class="service-item" style="opacity: 0.7;">
           <div class="service-icon">✓</div>
           <div class="service-details">
             <h4>Dr. Petit - Ophtalmologue</h4>
             <p><strong>Date:</strong> 3 mars 2025 à 16h45</p>
             <button class="service-btn">Voir le compte-rendu</button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
-    
+
     <!-- Advice content -->
     <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
       <div class="welcome-section">
@@ -225,7 +233,7 @@
           <p>Retrouvez des conseils personnalisés pour maintenir et améliorer votre santé</p>
         </div>
       </div>
-      
+
       <div class="service-categories">
         <div class="service-category">
           <h3>Nutrition</h3>
@@ -244,7 +252,7 @@
           <p>Conseils préventifs et de dépistage</p>
         </div>
       </div>
-      
+
       <div class="service-list">
         <div class="service-item">
           <div class="service-icon">🥗</div>
@@ -254,7 +262,7 @@
             <button class="service-btn">Lire l'article</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">🧘</div>
           <div class="service-details">
@@ -263,7 +271,7 @@
             <button class="service-btn">Voir les exercices</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">🏃</div>
           <div class="service-details">
@@ -272,7 +280,7 @@
             <button class="service-btn">Découvrir le programme</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">💤</div>
           <div class="service-details">
@@ -283,7 +291,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Medical File content -->
     <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
       <div class="welcome-section">
@@ -293,7 +301,7 @@
           <button class="appointment-btn">Télécharger mon dossier complet</button>
         </div>
       </div>
-      
+
       <div class="service-categories">
         <div class="service-category">
           <h3>Antécédents</h3>
@@ -312,10 +320,10 @@
           <p>Allergies et intolérances</p>
         </div>
       </div>
-      
+
       <div class="service-list">
         <h3>Derniers documents médicaux</h3>
-        
+
         <div class="service-item">
           <div class="service-icon">📄</div>
           <div class="service-details">
@@ -325,7 +333,7 @@
             <button class="service-btn">Consulter</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">📄</div>
           <div class="service-details">
@@ -335,7 +343,7 @@
             <button class="service-btn">Consulter</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">📄</div>
           <div class="service-details">
@@ -345,7 +353,7 @@
             <button class="service-btn">Consulter</button>
           </div>
         </div>
-        
+
         <div class="service-item">
           <div class="service-icon">📄</div>
           <div class="service-details">
@@ -358,10 +366,14 @@
       </div>
     </div>
 
-    
-     
+    <!--formaulaire fille contents-->
+    <div id="forms-file-content" [style.display]="isSectionActive('forms-file') ? 'block' : 'none'">
+      <div class="welcome-text">
+        <app-appoint></app-appoint>
+      </div>
+      
+    </div>
   </div>
-
-  
 </body>
+
 </html>

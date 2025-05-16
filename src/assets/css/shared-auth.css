@@ -1,0 +1,34 @@
+/* shared-auth.css */
+.left-panel {
+    width: 55%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem 4rem;
+    color: white;
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.85), rgba(0, 170, 255, 0.85)), url('/api/placeholder/800/1200') center/cover no-repeat;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+    z-index: 1;
+  }
+  
+  .right-panel {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow: auto;
+  }
+  
+  /* Puis dans les fichiers spécifiques */
+  /* connexion.component.css */
+  @import './shared-auth.css';
+  
+  /* Styles spécifiques à la connexion */
+  
+  /* register.component.css */
+  @import './shared-auth.css';
+  
+  /* Styles spécifiques à l'inscription */

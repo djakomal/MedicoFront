@@ -7,7 +7,7 @@ import { AuthRoutingModule } from '../authrouting.module';
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule,AuthRoutingModule
+    CommonModule
   ]
 })
 export class LoginModule { }

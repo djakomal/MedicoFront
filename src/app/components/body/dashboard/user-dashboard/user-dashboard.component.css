@@ -177,7 +177,7 @@ body {
 }
 
 /* Services section styles */
-#services-content, #appointments-content, #advice-content, #medical-file-content {
+#services-content, #appointments-content, #advice-content, #medical-file-content,#forms-file-content {
   display: none; /* Hidden by default */
 }
 .service-categories {
@@ -247,3 +247,5 @@ body {
   cursor: pointer;
   font-weight: 500;
 }
+/* Appointments section styles */
+
