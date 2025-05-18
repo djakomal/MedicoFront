@@ -28,13 +28,13 @@
     </section>
 
     <div *ngFor="let app of tableauClasse" class="notification-container">
-        <div class="notification-message">Mr ou Mme {{ app.name }}</div><br>
+        <div class="notification-message">Mr ou Mme {{ app.firstname }}</div><br>
         <!-- <p class="notification-details">
             Vous avez pris un rendez-vous le {{ app.date }} à {{ app.time }}
         </p> -->
         <div class="notification-date">
-            Votre rendez-vous a été accepté, veuillez passer le {{ app.date }}<br>
-            à {{ app.time }} comme  consigné
+            Votre rendez-vous a été accepté, veuillez passer le {{ app.preferredDate }}<br>
+            à {{ app.preferredTime }} comme  consigné
         </div>
     </div>
         </body>    

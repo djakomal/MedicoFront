@@ -16,37 +16,37 @@ export class Appoitement {
   gender!: 'male' | 'female' | 'other';
   email!: string;
   phone!: string;
-  insurance?: string; // Optionnel
+  insurance!: string; // Optionnel
   
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
-  otherSpecialist?: string; // Optionnel, uniquement si doctorType === 'other'
-  doctor?: string; // Optionnel, préférence de médecin
-  appointmentType?: 'in-person' | 'video';
+  otherSpecialist!: string; // Optionnel, uniquement si doctorType === 'other'
+  doctor!: string; // Optionnel, préférence de médecin
+  appointmentType!: 'in-person' | 'video';
   preferredDate!: string; // Format YYYY-MM-DD
   preferredTime!: 'morning' | 'afternoon' | 'evening';
   
   // Disponibilités alternatives
-  altAvailability?: {
+  altAvailability!: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;
   };
   
   // Informations médicales
-  reason?: string;
-  symptoms?: string; // Optionnel
-  firstVisit?: 'yes' | 'no'; // Optionnel
-  allergies?: string; // Optionnel
-  medications?: string; // Optionnel
+  reason!: string;
+  symptoms!: string; // Optionnel
+  firstVisit!: 'yes' | 'no'; // Optionnel
+  allergies!: string; // Optionnel
+  medications!: string; // Optionnel
   
   // Informations complémentaires
-  additionalInfo?: string; // Optionnel
-  consent?: boolean;
+  additionalInfo!: string; // Optionnel
+  consent!: boolean;
   
   // Champs potentiellement ajoutés par le backend
-  status?: 'pending' | 'confirmed' | 'cancelled';
-  createdAt?: string;
-  updatedAt?: string;
+  status!: 'pending' | 'confirmed' | 'cancelled';
+  createdAt!: string;
+  updatedAt!: string;
 
 }
