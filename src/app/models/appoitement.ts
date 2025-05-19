@@ -1,5 +1,6 @@
 import { Time } from "@angular/common";
 import { Injectable } from "@angular/core";
+import { Docteur } from "./docteur";
 
 
 
@@ -21,7 +22,7 @@ export class Appoitement {
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
   otherSpecialist!: string; // Optionnel, uniquement si doctorType === 'other'
-  doctor!: string; // Optionnel, préférence de médecin
+  doctor!: Docteur;  // Optionnel, préférence de médecin
   appointmentType!: 'in-person' | 'video';
   preferredDate!: string; // Format YYYY-MM-DD
   preferredTime!: 'morning' | 'afternoon' | 'evening';

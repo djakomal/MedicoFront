@@ -22,6 +22,9 @@ import { AppointComponent } from './components/body/appoint/appoint.component';
 import { authGuard } from './_helps/Guard/auth.guard';
 import { ConseilComponent } from './components/body/conseil/conseil.component';
 import { UserDashboardComponent } from './components/body/dashboard/user-dashboard/user-dashboard.component';
+import { DocRegisterComponent } from './components/docteurAuth/doc-register/doc-register.component';
+import { DocLoginComponent } from './components/docteurAuth/doc-login/doc-login.component';
+import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
 
 
 
@@ -111,7 +114,21 @@ export const routes: Routes = [
 
     },
     {
-        path: 'UserDah', component: UserDashboardComponent
+        path: 'UserDah', component: UserDashboardComponent,canActivate: [authGuard],
+
+    },
+
+        {
+        path: 'DocRegist', component: DocRegisterComponent
+
+    },
+
+        {
+        path: 'DocLogin', component: DocLoginComponent
+
+    },
+        {
+        path: 'DocDash', component: DocDashboardComponent,canActivate: [authGuard],
 
     },
 
