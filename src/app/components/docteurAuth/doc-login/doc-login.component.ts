@@ -67,7 +67,7 @@ export class DocLoginComponent  implements OnInit {
     logout(): void {
       this.jwtService.removeToken();
       this.userName = null; // Supprime le nom affiché
-      this.router.navigateByUrl("/connex"); // Redirection vers la page de connexion
+      this.router.navigateByUrl("/DocDash"); // Redirection vers la page de connexion
     }
   
 

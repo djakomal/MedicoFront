@@ -201,7 +201,7 @@ export class DocRegisterComponent implements OnInit{
     const registerData = this.registerForm.value;
     
     // Envoyer les données au service
-    this.jwtService.register(registerData).subscribe({
+    this.jwtService.registerDoc(registerData).subscribe({
       next: (response) => {
         alert('Inscription réussie ! Un email de confirmation vous a été envoyé.');
         this.router.navigateByUrl('login');

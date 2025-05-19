@@ -27,6 +27,18 @@ export class JwtService {
       tap((response: any) =>console.log ("reponse du serveur :", response))
     ) ;
   }
+// docteur 
+  loginDoc(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post(this.baseURL + '/docteur/login', credentials,
+      {headers: new HttpHeaders({'Content-Type': 'application/json'})
+    }).pipe(
+      tap((response: any) =>console.log ("reponse du serveur :", response))
+    ) ;
+  }
+
+  registerDoc(signRequest: any): Observable<any> {
+    return this.http.post(this.baseURL + '/signup/docteur/add', signRequest);
+  }
   //  // Sauvegarder le token après connexion
   saveToken(jwt: string) {
     window.localStorage.setItem('jwtToken', jwt);
