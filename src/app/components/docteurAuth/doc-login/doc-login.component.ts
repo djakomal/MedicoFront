@@ -35,7 +35,7 @@ export class DocLoginComponent  implements OnInit {
     submitForm(): void {
       const credentials = this.loginForm.value;
     
-      this.jwtService.login(credentials).subscribe(
+      this.jwtService.loginDoc(credentials).subscribe(
         (response: any) => {
           console.log("reponse du backend ",response);  // Affiche la réponse complète
           if (response && response.jwt) {

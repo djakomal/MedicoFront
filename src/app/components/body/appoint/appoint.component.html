@@ -2,89 +2,98 @@
 <div class="dashboard-container">
   <div class="dashboard-header">
     <h2>Demande de rendez-vous médical</h2>
-    <p>Veuillez remplir ce formulaire pour prendre rendez-vous avec un professionnel de santé. Les champs marqués d'un * sont obligatoires.</p>
+    <p>Veuillez remplir ce formulaire pour prendre rendez-vous avec un professionnel de santé. Les champs marqués d'un *
+      sont obligatoires.</p>
   </div>
-  
+
   <div class="dashboard-content">
     <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="form-style">
       <!-- Étape 1 -->
       <div *ngIf="currentStep === 1" class="form-step">
         <h3 class="section-title">Étape 1 : Informations personnelles</h3>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="firstname" class="required">Prénom</label>
             <input type="text" id="firstname" formControlName="firstname">
-            <div *ngIf="appointmentForm.get('firstname')?.invalid && appointmentForm.get('firstname')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('firstname')?.invalid && appointmentForm.get('firstname')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="lastname" class="required">Nom</label>
             <input type="text" id="lastname" formControlName="lastname">
-            <div *ngIf="appointmentForm.get('lastname')?.invalid && appointmentForm.get('lastname')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('lastname')?.invalid && appointmentForm.get('lastname')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="birthdate" class="required">Date de naissance</label>
             <input type="date" id="birthdate" formControlName="birthdate">
-            <div *ngIf="appointmentForm.get('birthdate')?.invalid && appointmentForm.get('birthdate')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('birthdate')?.invalid && appointmentForm.get('birthdate')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="gender" class="required">Sexe</label>
-            <select id="gender" formControlName="gender">
-              <option value="">Sélectionner</option>
+            <select id="gender" formControlName="gender" (change)="onGenderChange($event)">
+              <option [ngValue]="null">Sélectionner</option>
               <option value="male">Homme</option>
               <option value="female">Femme</option>
               <option value="other">Autre</option>
             </select>
-            <div *ngIf="appointmentForm.get('gender')?.invalid && appointmentForm.get('gender')?.touched" class="error-message">
+            <div *ngIf="hasError('gender', 'required') && appointmentForm.get('gender')?.touched" class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="email" class="required">Email</label>
           <input type="email" id="email" formControlName="email">
-          <div *ngIf="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched" class="error-message">
-            Veuillez saisir une adresse email valide.
+          <div *ngIf="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched"
+            class="error-message">
+            <span *ngIf="appointmentForm.get('email')?.errors?.['required']">Ce champ est obligatoire.</span>
+            <span *ngIf="appointmentForm.get('email')?.errors?.['email']">Veuillez saisir une adresse email
+              valide.</span>
+
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="phone" class="required">Téléphone</label>
           <input type="tel" id="phone" formControlName="phone">
-          <div *ngIf="appointmentForm.get('phone')?.invalid && appointmentForm.get('phone')?.touched" class="error-message">
+          <div *ngIf="appointmentForm.get('phone')?.invalid && appointmentForm.get('phone')?.touched"
+            class="error-message">
             Ce champ est obligatoire.
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="insurance">Numéro de sécurité sociale</label>
           <input type="text" id="insurance" formControlName="insurance">
         </div>
-        
+
         <div class="form-group">
-          <button type="button" class="btn btn-primary" (click)="nextStep()" >Suivant</button>
+          <button type="button" class="btn btn-primary" (click)="nextStep()">Suivant</button>
         </div>
       </div>
-      
+
       <!-- Étape 2 -->
       <div *ngIf="currentStep === 2" class="form-step">
         <h3 class="section-title">Étape 2 : Détails du rendez-vous et informations médicales</h3>
-        
+
         <div class="form-section">
           <h3 class="section-title">Détails du rendez-vous</h3>
-          
+
           <div class="form-group">
             <label for="doctorType" class="required">Type de médecin</label>
             <select id="doctorType" formControlName="doctorType">
@@ -99,16 +108,17 @@
               <option value="orthopedics">Orthopédiste</option>
               <option value="other">Autre spécialiste</option>
             </select>
-            <div *ngIf="appointmentForm.get('doctorType')?.invalid && appointmentForm.get('doctorType')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('doctorType')?.invalid && appointmentForm.get('doctorType')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group" *ngIf="showOtherSpecialist()">
             <label for="otherSpecialist">Précisez le spécialiste</label>
             <input type="text" id="otherSpecialist" formControlName="otherSpecialist">
           </div>
-          
+
           <div class="form-group">
             <label for="doctor">Médecin (si vous avez une préférence)</label>
             <select id="doctor" formControlName="doctor">
@@ -119,7 +129,7 @@
               <option value="any">N'importe quel médecin disponible</option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="appointmentType" class="required">Type de consultation</label>
             <select id="appointmentType" formControlName="appointmentType">
@@ -127,20 +137,23 @@
               <option value="in-person">En présentiel</option>
               <option value="video">Téléconsultation (vidéo)</option>
             </select>
-            <div *ngIf="appointmentForm.get('appointmentType')?.invalid && appointmentForm.get('appointmentType')?.touched" class="error-message">
+            <div
+              *ngIf="appointmentForm.get('appointmentType')?.invalid && appointmentForm.get('appointmentType')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="preferredDate" class="required">Date souhaitée</label>
             <input type="date" id="preferredDate" formControlName="preferredDate">
             <p class="hint">Veuillez sélectionner une date à partir de demain</p>
-            <div *ngIf="appointmentForm.get('preferredDate')?.invalid && appointmentForm.get('preferredDate')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('preferredDate')?.invalid && appointmentForm.get('preferredDate')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="preferredTime" class="required">Créneau horaire préféré</label>
             <select id="preferredTime" formControlName="preferredTime">
@@ -149,11 +162,12 @@
               <option value="afternoon">Après-midi (13h-17h)</option>
               <option value="evening">Soirée (17h-20h)</option>
             </select>
-            <div *ngIf="appointmentForm.get('preferredTime')?.invalid && appointmentForm.get('preferredTime')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('preferredTime')?.invalid && appointmentForm.get('preferredTime')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label>Disponibilité alternative</label>
             <div formGroupName="altAvailability">
@@ -172,11 +186,11 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Informations médicales -->
         <div class="form-section">
           <h3 class="section-title">Informations médicales</h3>
-          
+
           <div class="form-group">
             <label for="reason" class="required">Motif de la consultation</label>
             <select id="reason" formControlName="reason">
@@ -188,16 +202,18 @@
               <option value="results">Résultats d'examens</option>
               <option value="other">Autre</option>
             </select>
-            <div *ngIf="appointmentForm.get('reason')?.invalid && appointmentForm.get('reason')?.touched" class="error-message">
+            <div *ngIf="appointmentForm.get('reason')?.invalid && appointmentForm.get('reason')?.touched"
+              class="error-message">
               Ce champ est obligatoire.
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="symptoms">Description des symptômes ou du problème</label>
-            <textarea id="symptoms" formControlName="symptoms" placeholder="Veuillez décrire vos symptômes, leur durée, leur intensité et tout autre élément pertinent..."></textarea>
+            <textarea id="symptoms" formControlName="symptoms"
+              placeholder="Veuillez décrire vos symptômes, leur durée, leur intensité et tout autre élément pertinent..."></textarea>
           </div>
-          
+
           <div class="form-group">
             <label>Est-ce votre première visite ?</label>
             <div class="radio-group">
@@ -209,38 +225,42 @@
               <label for="first-visit-no">Non</label>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="allergies">Allergies connues</label>
             <input type="text" id="allergies" formControlName="allergies" placeholder="Médicaments, aliments, etc.">
           </div>
-          
+
           <div class="form-group">
             <label for="medications">Médicaments actuellement pris</label>
-            <textarea id="medications" formControlName="medications" placeholder="Nom du médicament, dosage, fréquence..."></textarea>
+            <textarea id="medications" formControlName="medications"
+              placeholder="Nom du médicament, dosage, fréquence..."></textarea>
           </div>
         </div>
-        
+
         <!-- Informations complémentaires -->
         <div class="form-section">
           <h3 class="section-title">Informations complémentaires</h3>
-          
+
           <div class="form-group">
             <label for="additionalInfo">Informations supplémentaires</label>
-            <textarea id="additionalInfo" formControlName="additionalInfo" placeholder="Toute information que vous jugez utile de communiquer au médecin..."></textarea>
+            <textarea id="additionalInfo" formControlName="additionalInfo"
+              placeholder="Toute information que vous jugez utile de communiquer au médecin..."></textarea>
           </div>
-          
+
           <div class="form-group">
             <div class="checkbox-group">
               <input type="checkbox" id="consent" formControlName="consent">
-              <label for="consent" class="required">Je consens au traitement de mes données de santé conformément à la politique de confidentialité de Medico</label>
-              <div *ngIf="appointmentForm.get('consent')?.invalid && appointmentForm.get('consent')?.touched" class="error-message">
+              <label for="consent" class="required">Je consens au traitement de mes données de santé conformément à la
+                politique de confidentialité de Medico</label>
+              <div *ngIf="appointmentForm.get('consent')?.invalid && appointmentForm.get('consent')?.touched"
+                class="error-message">
                 Vous devez accepter les conditions pour continuer.
               </div>
             </div>
           </div>
         </div>
-        
+
         <div class="button-group">
           <button type="button" class="btn btn-secondary" (click)="previousStep()">Précédent</button>
           <button type="submit" class="btn btn-primary" [disabled]="appointmentForm.invalid">Envoyer la demande</button>

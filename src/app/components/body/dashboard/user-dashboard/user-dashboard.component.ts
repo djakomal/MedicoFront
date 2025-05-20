@@ -7,11 +7,12 @@ import { AppointTypeServiceService } from '../../../../_helps/appointment/appoin
 import { AppoitementType } from '../../../../models/appoitementType';
 import { AppointmentComponent } from "../../../admin/main/appointment/appointment.component";
 import { AppointComponent } from "../../appoint/appoint.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [UserDashboardComponent, AppointmentComponent, AppointComponent],
+  imports: [ AppointComponent,CommonModule],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })

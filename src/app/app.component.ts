@@ -29,6 +29,7 @@ import { FormulaireComponent } from './components/admin/formulaire/formulaire.co
 
 import { RegisterComponent } from './components/register/register.component';
 import { UpdateComponent } from './components/register/update/update.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -61,6 +62,7 @@ import { UpdateComponent } from './components/register/update/update.component';
     UpdateComponent,
     RegisterComponent,
     CommonModule,
+    ReactiveFormsModule
   ],
 })
 export class AppComponent {
