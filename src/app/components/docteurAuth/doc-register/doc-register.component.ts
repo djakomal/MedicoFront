@@ -223,7 +223,7 @@ export class DocRegisterComponent implements OnInit {
     this.jwtService.registerDoc(registerData).subscribe({
       next: (response) => {
         alert('Inscription réussie ! Un email de confirmation vous a été envoyé.');
-        this.router.navigateByUrl('login');
+        this.router.navigateByUrl('DocLogin');
       },
       error: (error) => {
         if (error.status === 400) {
