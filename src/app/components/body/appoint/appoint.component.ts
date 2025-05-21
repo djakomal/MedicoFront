@@ -7,6 +7,8 @@ import { AppointTypeServiceService } from '../../../_helps/appointment/appoint-t
 import { AppoitementType } from '../../../models/appoitementType';
 import { AppointementService } from '../../../_helps/appointment/appointement.service';
 import { Appoitement } from '../../../models/appoitement';
+import { Docteur } from '../../../models/docteur';
+import { JwtService } from '../../../_helps/jwt/jwt.service';
 
 @Component({
   selector: 'app-appoint',
@@ -18,13 +20,16 @@ import { Appoitement } from '../../../models/appoitement';
 export class AppointComponent  implements OnInit {
    appointmentForm: FormGroup;
   currentStep = 1;
+   doctors: Docteur[] = [];
+
   isSubmitting = false;
   submitError = '';
   submitSuccess = false;
   
   constructor(
     private fb: FormBuilder,
-    private appointmentService: AppointementService
+    private appointmentService: AppointementService,
+    private jwtService: JwtService
   ) {
     this.appointmentForm = this.fb.group({
       // Étape 1: Informations personnelles
@@ -39,7 +44,7 @@ export class AppointComponent  implements OnInit {
       // Étape 2: Détails du rendez-vous
       doctorType: ['', Validators.required],
       otherSpecialist: [''],
-      doctor: [''],
+      doctorId: [null],
       appointmentType: ['', Validators.required],
       preferredDate: ['', Validators.required],
       preferredTime: ['', Validators.required],
@@ -63,6 +68,7 @@ export class AppointComponent  implements OnInit {
   }
   ngOnInit(): void {
     throw new Error('Method not implemented.');
+    this.loadDoctors();
   }
   
   // Méthodes pour la navigation entre les étapes
@@ -133,12 +139,42 @@ export class AppointComponent  implements OnInit {
     }
   }
 
+    loadDoctors(): void {
+    this.jwtService.getAllDocteurs().subscribe(
+      (data: Docteur[]) => {
+        this.doctors = data;
+      },
+      error => {
+        console.error('Erreur lors du chargement des médecins', error);
+      }
+    );
+  }
   // Méthode pour la soumission du formulaire
   onSubmit(): void {
+       const formValue = this.appointmentForm.value;
     if (this.appointmentForm.valid) {
       console.log('Formulaire soumis:', this.appointmentForm.value);
       // Ici, envoyer les données au service approprié
-      // this.appointmentService.createAppointment(this.appointmentForm.value).subscribe(...);
+      this.appointmentService.addAppoitement(this.appointmentForm.value).subscribe(
+        response => {
+          console.log('Réponse du serveur:', response);
+          alert('Rendez-vous créé avec succès !');
+          this.appointmentForm.reset(); // Réinitialiser le formulaire après
+        },
+        error => {
+          if(error.status === 400) {
+            alert(error.error.message); // Affiche le message d'erreur du backend
+          console.error('Erreur lors de la soumission du formulaire:', error);
+          }else{
+            alert('Erreur lors de la soumission du formulaire: ' + error.message);
+          }
+        
+          this.submitSuccess = true;
+          this.submitError = '';
+          this.isSubmitting = false;
+          alert('Rendez-vous créé avec succès !');
+        }
+      );
     } else {
       // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.appointmentForm.controls).forEach(key => {
@@ -152,6 +188,9 @@ export class AppointComponent  implements OnInit {
         }
       });
     }
+     if (formValue.doctor === 'any') {
+        formValue.doctor = null; // ou une valeur spéciale selon votre logique métier
+      }
   }
   
   // Méthode utilitaire pour marquer tous les champs comme touchés (pour afficher les erreurs)

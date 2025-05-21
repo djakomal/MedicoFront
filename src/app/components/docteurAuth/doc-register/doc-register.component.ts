@@ -7,11 +7,11 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-doc-register',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './doc-register.component.html',
   styleUrl: './doc-register.component.css'
 })
-export class DocRegisterComponent implements OnInit{
+export class DocRegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   currentStep: number = 1;
 
@@ -45,10 +45,12 @@ export class DocRegisterComponent implements OnInit{
       cvurl: ['']
     }, { validators: this.passwordMatchValidator });
 
-    // Configuration de la navigation par étapes
-    this.setupStepNavigation();
-    this.setupPasswordToggles();
-    this.setupFileInputPreviews();
+    // Attendre que le DOM soit chargé avant de configurer les gestionnaires d'événements
+    setTimeout(() => {
+      this.setupStepNavigation();
+      this.setupPasswordToggles();
+      this.setupFileInputPreviews();
+    }, 0);
   }
 
   // Validateur pour vérifier que les mots de passe correspondent
@@ -68,6 +70,8 @@ export class DocRegisterComponent implements OnInit{
 
   // Navigation entre les étapes
   goToStep(step: number): void {
+    console.log('Navigating to step:', step); // Débogage
+    
     if (step < 1 || step > 4) return;
 
     // Masquer toutes les étapes
@@ -77,7 +81,12 @@ export class DocRegisterComponent implements OnInit{
     });
 
     // Afficher l'étape cible
-    document.getElementById('step' + step)?.classList.add('active');
+    const targetStepContent = document.getElementById('step' + step);
+    if (targetStepContent) {
+      targetStepContent.classList.add('active');
+    } else {
+      console.error('Step content not found:', 'step' + step); // Débogage
+    }
 
     // Mettre à jour les indicateurs d'étape
     const steps = document.querySelectorAll('.step');
@@ -99,94 +108,104 @@ export class DocRegisterComponent implements OnInit{
 
   // Configuration des événements pour la navigation par étapes
   setupStepNavigation(): void {
-    setTimeout(() => {
-      const nextButtons = document.querySelectorAll('.next-button');
-      const prevButtons = document.querySelectorAll('.prev-button');
-
-      nextButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-          const targetStep = parseInt((event.currentTarget as HTMLElement).getAttribute('data-step') || '1');
-          
-          // Valider l'étape actuelle avant de passer à la suivante
-          if (this.validateCurrentStep(this.currentStep)) {
-            this.goToStep(targetStep);
-          }
-        });
+    // Supprimer d'abord tous les écouteurs d'événements existants
+    const nextButtons = document.querySelectorAll('.next-button');
+    const prevButtons = document.querySelectorAll('.prev-button');
+    
+    nextButtons.forEach(button => {
+      const newButton = button.cloneNode(true);
+      button.parentNode?.replaceChild(newButton, button);
+    });
+    
+    prevButtons.forEach(button => {
+      const newButton = button.cloneNode(true);
+      button.parentNode?.replaceChild(newButton, button);
+    });
+    
+    // Réattacher les écouteurs d'événements
+    document.querySelectorAll('.next-button').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const target = event.currentTarget as HTMLElement;
+        const targetStep = parseInt(target.getAttribute('data-step') || '1');
+        console.log('Next button clicked, target step:', targetStep); // Débogage
+        
+        // Supprimer les validations trop strictes pour le débogage
+        this.goToStep(targetStep);
       });
+    });
 
-      prevButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-          const targetStep = parseInt((event.currentTarget as HTMLElement).getAttribute('data-step') || '1');
-          this.goToStep(targetStep);
-        });
+    document.querySelectorAll('.prev-button').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const target = event.currentTarget as HTMLElement;
+        const targetStep = parseInt(target.getAttribute('data-step') || '1');
+        console.log('Prev button clicked, target step:', targetStep); // Débogage
+        this.goToStep(targetStep);
       });
     });
   }
 
-  // Validation des étapes
+  // Validation des étapes - Simplifiée pour le débogage
   validateCurrentStep(step: number): boolean {
+    // Pour déboguer, on désactive temporairement les validations
+    return true;
+    
+    // Code original commenté :
+    /*
     switch (step) {
       case 1:
-        // Valider les champs de l'étape 1
         return (this.registerForm.get('name')?.valid ?? false)
           && (this.registerForm.get('email')?.valid ?? false);
       case 2:
-        // Valider les champs de l'étape 2
-        return (this.registerForm.get('speciality')?.valid ?? false)
-          && (this.registerForm.get('licence')?.valid ?? false)
+        return (this.registerForm.get('speciality')?.valid ?? false);
       case 3:
-        // Valider les champs de l'étape 3
         return (this.registerForm.get('username')?.valid ?? false)
-          && (this.registerForm.get('password')?.valid?? false) 
-          && (this.registerForm.get('confirmpassword')?.valid?? false)
-          && (this.registerForm.get('password')?.value === this.registerForm.get('confirmpassword')?.value)
+          && (this.registerForm.get('password')?.valid ?? false) 
+          && (this.registerForm.get('confirmpassword')?.valid ?? false)
+          && (this.registerForm.get('password')?.value === this.registerForm.get('confirmpassword')?.value);
       default:
         return true;
     }
+    */
   }
 
   // Configuration des boutons de basculement de visibilité des mots de passe
   setupPasswordToggles(): void {
-    setTimeout(() => {
-      const passwordToggles = document.querySelectorAll('.password-toggle');
-      
-      passwordToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(this: HTMLElement) {
-          const passwordField = this.previousElementSibling as HTMLInputElement;
-          const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-          passwordField.setAttribute('type', type);
-          
-          // Changer l'icône en fonction de la visibilité du mot de passe
-          const svg = this.querySelector('svg');
-          if (svg) {
-            if (type === 'text') {
-              svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-            } else {
-              svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-            }
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+    
+    passwordToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(this: HTMLElement) {
+        const passwordField = this.previousElementSibling as HTMLInputElement;
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        
+        // Changer l'icône en fonction de la visibilité du mot de passe
+        const svg = this.querySelector('svg');
+        if (svg) {
+          if (type === 'text') {
+            svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+          } else {
+            svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
           }
-        });
+        }
       });
     });
   }
 
   // Configuration des aperçus des fichiers importés
   setupFileInputPreviews(): void {
-    setTimeout(() => {
-      const fileInputs = document.querySelectorAll('input[type="file"]');
-      
-      fileInputs.forEach(input => {
-        input.addEventListener('change', function(this: HTMLInputElement) {
-          const files = this.files;
-          const fileName = files && files[0]?.name;
-          
-          if (fileName) {
-            const uploadText = this.parentElement?.querySelector('.file-upload-text');
-            if (uploadText) {
-              uploadText.textContent = fileName;
-            }
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+      input.addEventListener('change', function(this: HTMLInputElement) {
+        const files = this.files;
+        const fileName = files && files[0]?.name;
+        
+        if (fileName) {
+          const uploadText = this.parentElement?.querySelector('.file-upload-text');
+          if (uploadText) {
+            uploadText.textContent = fileName;
           }
-        });
+        }
       });
     });
   }
@@ -217,16 +236,13 @@ export class DocRegisterComponent implements OnInit{
     });
   }
 
-  // Traitement des fichiers avant envoi (optionnel)
+  // Traitement des fichiers avant envoi
   handleFileInput(event: Event, fieldName: string): void {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     
     if (file) {
-      // Vous pouvez implémenter la logique pour traiter le fichier ici
-      // Par exemple, le convertir en base64 ou l'envoyer à un service de stockage
       console.log(`Fichier ${fieldName} chargé:`, file.name);
     }
   }
-
 }

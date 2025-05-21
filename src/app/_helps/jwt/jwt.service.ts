@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import axios, { Axios } from 'axios';
+import { Docteur } from '../../models/docteur';
 
 // const BASE_URL = "http://localhost:8080/tickets/"
 
@@ -38,6 +39,9 @@ export class JwtService {
 
   registerDoc(signRequest: any): Observable<any> {
     return this.http.post(this.baseURL + '/signup/docteur/add', signRequest);
+  }
+    getAllDocteurs(): Observable<Docteur[]> {
+    return this.http.get<Docteur[]>(this.baseURL + '/all', );
   }
   //  // Sauvegarder le token après connexion
   saveToken(jwt: string) {
