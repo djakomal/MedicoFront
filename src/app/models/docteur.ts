@@ -1,12 +1,16 @@
+import { Speciality } from "./speciality";
+
 export class Docteur {
       id?: number;
   name!: string;
   hollyDays?: string;
-  email!: string;
+  email?: string;
   tel?: string;
   professionalAddress?: string;
   licence?: string;
-//   specialite!: AppointmentTypeEnum;
+
+  //   specialite?: string;
+ speciality?: Speciality;
   numeroLicence?: string;
   anneesExperience?: string;
   photoUrl?: string;
