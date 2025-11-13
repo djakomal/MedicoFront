@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Contact - Medico</title>
+
+</head>
+
+<body>
+    <!-- Header Navigation -->
+    <header class="main_header">
+        <div class="header_content">
+            <app-header></app-header>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero_section">
+        <div class="hero_content">
+            <div class="hero_text">
+                <h1>Contactez-Nous</h1>
+                <p>Nous sommes là pour vous écouter</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact_section">
+        <div class="container">
+            <h2 class="section_title">Envoyez-nous un message</h2>
+            <p class="section_subtitle">Notre équipe vous répondra dans les plus brefs délais</p>
+
+            <div class="contact_grid">
+                <!-- Contact Form -->
+                <div class="contact_form">
+                    <form id="contactForm">
+                        <div class="form_group">
+                            <label class="form_label">Votre message</label>
+                            <textarea class="form_textarea" name="message" placeholder="Décrivez votre demande..."></textarea>
+                        </div>
+
+                        <div class="form_grid">
+                            <div class="form_group">
+                                <label class="form_label">Nom complet</label>
+                                <input type="text" class="form_input" name="name" placeholder="Jean Dupont">
+                            </div>
+                            <div class="form_group">
+                                <label class="form_label">Email</label>
+                                <input type="email" class="form_input" name="email" placeholder="jean@exemple.com">
+                            </div>
+                        </div>
+
+                        <div class="form_group">
+                            <label class="form_label">Sujet</label>
+                            <input type="text" class="form_input" name="subject" placeholder="Sujet de votre message">
+                        </div>
+
+                        <button type="submit" class="btn_submit">Envoyer le message</button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact_info">
+                    <div class="info_card">
+                        <div class="info_icon">📍</div>
+                        <div class="info_content">
+                            <h3>Notre adresse</h3>
+                            <p>123 Avenue de la Santé<br>75015 Paris, France</p>
+                        </div>
+                    </div>
+
+                    <div class="info_card">
+                        <div class="info_icon">📞</div>
+                        <div class="info_content">
+                            <h3>Téléphone</h3>
+                            <p>+33 1 23 45 67 89<br>Lun - Ven : 9h - 18h</p>
+                        </div>
+                    </div>
+
+                    <div class="info_card">
+                        <div class="info_icon">✉️</div>
+                        <div class="info_content">
+                            <h3>Email</h3>
+                            <p>contactmedico.fr<br>Réponse sous 24h</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map_section">
+        <div class="container">
+            <div class="map_container">
+                <div class="map_placeholder">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#0066ff">
+                        <path d="M50 10 C35 10 25 20 25 35 C25 55 50 90 50 90 C50 90 75 55 75 35 C75 20 65 10 50 10 Z M50 45 C44 45 39 40 39 34 C39 28 44 23 50 23 C56 23 61 28 61 34 C61 40 56 45 50 45 Z"/>
+                    </svg>
+                    <h3>Carte interactive</h3>
+                    <p>Intégrez votre emplacement Google Maps ici</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Simple validation
+            if (!data.name || !data.email || !data.message) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            // Simulate form submission
+            alert('Merci pour votre message ! Nous vous répondrons bientôt.');
+            this.reset();
+        });
+    </script>
+
+</body>
+
+</html>

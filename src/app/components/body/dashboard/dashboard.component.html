@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>medical</title>
+</head>
+
+<body>
+
+    <!-- Header part end-->
+    <header class="main_header">
+        <div class="header_content">
+            <app-header></app-header>
+        </div>
+    </header>
+    
+    <!-- banner part start-->
+    <section class="banner_part">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 col-xl-5">
+                    <div class="banner_text">
+                        <div class="banner_text_iner">
+                            <h1>Votre Santé Entre Vos Mains </h1>
+                            <h4>Votre partenaire numérique de santé. 
+                                Plateforme innovante qui facilite le suivi médical rapide et
+                                 efficace des patients, offrant aux médecins des diagnostics 
+                                 précis et accessibles 24h/24, 7j/7</h4>
+
+                            <a href="connex" class="btn_2">Patient</a>
+                            <a href="DocLogin" class="btn_2">Docteur</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="banner_img">
+                        <img src="assets/img/docteurs.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- banner part end-->
+
+    <!-- about us part start-->
+    <section class="about_us padding_top">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-md-6 col-lg-6">
+                    <div class="about_us_img">
+                        <!--Image a changer -->
+                        <img src="assets/img/about.png " alt="">
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-5">
+                    <div class="about_us_text">
+                        <h4>A propos de nous </h4>
+                        <p>Medico est une solution de santé numerique , mettant l'accent sur 
+                            le bien-etre des patients.Notre plateforme offre aux aux medecins les outils
+                            nécessaires pour prodiguer des soins exceptionnels,poser des diagnostics precis et intervenir rapidement.
+                            Elle permet egalement aux patients d'accéder facilement à leurs informations medicales, de revoir des soins personnalisé et de
+                                beneficier d'un suivi
+                        </p>
+                        <a class="btn_2 " href="#">Plus</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- about us part end-->
+
+    <!-- feature_part start-->
+    <section class="feature_part single_feature_page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-xl-5">
+                    <div class="section_tittle text-center blue">
+                        <h4>Nos Service</h4>
+                    </div>
+                    <div class="text-center fs-3 fw-bold">
+                        <h1>Nos Services qui repondent à vos besoins quotidiens</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="single_feature">
+                        <div class="single_feature_part">
+                            <span class="single_feature_icon"><img src="assets/fonts/phone.svg" alt=""></span>
+                            <h4>Téléconsultation</h4>
+                            <p> Depuis vos terminaux, Prenez rendez-vous et consultez en toute sécurité avec nos praticiens disponibles en ligne...</p>
+                        </div>
+                    </div>
+                    <div class="single_feature">
+                        <div class="single_feature_part">
+                            <span class="single_feature_icon"><img src="assets/fonts/medical.svg" alt=""></span>
+                            <h4>Dossier Médical Partagé</h4>
+                            <p>Toutes les informations de santé d'un patient sont contenues dans un dossier sécurisé. Il...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="single_feature_img">
+                        <img src="assets/img/service.png" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="single_feature">
+                        <div class="single_feature_part">
+                            <span class="single_feature_icon"><img src="assets/fonts/notification.svg" alt=""></span>
+                            <h4>Alertes médicamenteuses</h4>
+                            <p>Medico vous envoie des alertes ou notifications pour ne pas rater vos heures de traitements et les dosages...</p>
+                        </div>
+                    </div>
+                    <div class="single_feature">
+                        <div class="single_feature_part">
+                            <span class="single_feature_icon"><img src="assets/img/icon/feature_2.svg" alt=""></span>
+                            <h4>Rhumatologie</h4>
+                            <p>Service qui traite les maladies des articulations, des os, des muscles et des tissus
+                                mous, comme l'arthrite, l'ostéoporose et les maladies auto-immunes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- feature_part end-->
+
+    <!-- Map section start-->
+    <section class="feature_part single_feature_page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-xl-5">
+                    <div class="section_tittle text-center blue">
+                        <h4>Contactez-nous</h4>
+                    </div>
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-lg-12 col-sm-12">
+                            <div id="map" style="height: 80px;"></div>
+                            <script>
+                            function initMap() {
+                                var uluru = {
+                                    lat: -25.363,
+                                    lng: 131.044
+                                };
+                                var grayStyles = [{
+                                    featureType: "all",
+                                    stylers: [{
+                                        saturation: -90
+                                    },
+                                    {
+                                        lightness: 50
+                                    }
+                                    ]
+                                },
+                                {
+                                    elementType: 'labels.text.fill',
+                                    stylers: [{
+                                        color: '#ccdee9'
+                                    }]
+                                }
+                                ];
+                                var map = new google.maps.Map(document.getElementById('map'), {
+                                    center: {
+                                        lat: -31.197,
+                                        lng: 150.744
+                                    },
+                                    zoom: 9,
+                                    styles: grayStyles,
+                                    scrollwheel: false
+                                });
+                            }
+                            </script>
+                            <script
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpfS1oRGreGSBU5HHjMmQ3o5NLw7VdJ6I&callback=initMap">
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Map section end-->
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <h2>Contactez-nous</h2>
+            <p>Restez informé régulièrement</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-form">
+                <h3 style="margin-bottom: 2rem;">Envoyez-nous un message</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <input type="text" id="name" placeholder="Entrez votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="votre.email@exemple.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Sujet</label>
+                        <input type="text" id="subject" placeholder="Sujet de votre message">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" placeholder="Votre message..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer le message</button>
+                </form>
+            </div>
+            <div class="contact-info">
+                <div class="info-card">
+                    <div class="info-icon">📍</div>
+                    <div class="info-text">
+                        <h4>Adresse</h4>
+                        <p>Lomé, Togo</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📞</div>
+                    <div class="info-text">
+                        <h4>Téléphone</h4>
+                        <p>00 (440) 9865 562</p>
+                        <p style="font-size: 0.9rem;">Disponible 24h/24</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">✉️</div>
+                    <div class="info-text">
+                        <h4>Email</h4>
+                        <p>supportmedico.com</p>
+                        <p style="font-size: 0.9rem;">Réponse sous 24h</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <app-footer></app-footer>
+
+</body>
+
+</html>
