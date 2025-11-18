@@ -196,6 +196,10 @@ body {
   top: 2.5rem;
   color: var(--text-muted);
 }
+.password-toggle:hover svg {
+  stroke: var(--primary) !important;
+  transition: stroke 0.2s ease;
+}
 
 .error-message {
   font-size: 0.8rem;
@@ -250,8 +254,9 @@ body {
 }
 
 .register-button:hover {
-  background-color: var(--primary-dark);
+  background-color: #ffffffff;
   transform: translateY(-2px);
+  color:blue;
   box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
 }
 

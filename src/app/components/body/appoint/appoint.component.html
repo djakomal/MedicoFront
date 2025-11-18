@@ -114,21 +114,21 @@
             </div>
           </div>
 
-          <div class="form-group" *ngIf="showOtherSpecialist()">
-            <label for="otherSpecialist">Précisez le spécialiste</label>
-            <input type="text" id="otherSpecialist" formControlName="otherSpecialist">
-          </div>
+                <div class="form-group" *ngIf="showOtherSpecialist()">
+                  <label for="otherSpecialist">Précisez le spécialiste</label>
+                  <input type="text" id="otherSpecialist" formControlName="otherSpecialist">
+                </div>
 
-        <div class="form-group">
-  <label for="doctor">Médecin (si vous avez une préférence)</label>
-  <select id="doctor" formControlName="doctorId">
-    <option [ngValue]="null">Sélectionner</option>
-    <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-      Dr. {{ doctor.name }}
-    </option>
-    <option [ngValue]="null">N'importe quel médecin disponible</option>
-  </select>
-</div>>
+              <div class="form-group">
+        <label for="doctor">Médecin (si vous avez une préférence)</label>
+        <select id="doctor" formControlName="doctorId">
+          <option [ngValue]="null">Sélectionner</option>
+          <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+            Dr. {{ doctor.name }}
+          </option>
+          <option [ngValue]="null">N'importe quel médecin disponible</option>
+        </select>
+      </div>>
 
           <div class="form-group">
             <label for="appointmentType" class="required">Type de consultation</label>

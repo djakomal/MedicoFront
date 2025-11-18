@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>📄 Publications & Références</h1>
+  <div class="publications-list">
+    <div *ngFor="let publication of publications" class="publication-card">
+      <div class="publication-titre">{{ publication.titre }}</div>
+      <div class="publication-journal">{{ publication.journal }}</div>
+      <div class="publication-annee">{{ publication.annee }}</div>
+    </div>
+  </div>
+</div>

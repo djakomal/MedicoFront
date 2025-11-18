@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 // Ensure ConnexionComponent is standalone
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../_helps/notification.service';
@@ -11,7 +11,7 @@ import { JwtService } from '../../_helps/jwt/jwt.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [FormsModule, RouterOutlet, CommonModule], // Remove ConnexionComponent if it's not standalone
+  imports: [FormsModule, CommonModule, RouterLink], // Remove ConnexionComponent if it's not standalone
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })

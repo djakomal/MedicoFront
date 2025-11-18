@@ -24,6 +24,11 @@ export class UserDashboardComponent {
   
   // Propriété pour suivre la section active
   activeSection: string = 'dashboard';
+  
+  // Gestion des popups
+  showPopup: boolean = false;
+  popupType: string = '';
+  popupContent: any = {};
 
   constructor(
     private notificationService: NotificationService,
@@ -108,5 +113,102 @@ export class UserDashboardComponent {
         console.error("❌ Erreur API :", error);
       }
     });
+  }
+
+  // Méthodes pour gérer les popups
+  openPopup(type: string) {
+    this.popupType = type;
+    this.showPopup = true;
+    this.cdr.detectChanges();
+    
+    // Définir le contenu selon le type de popup
+    switch(type) {
+      case 'nutrition':
+        this.popupContent = {
+          title: 'Maintenir une alimentation équilibrée',
+          content: `
+            <h3>Guide nutritionnel</h3>
+            <p>Une alimentation équilibrée est essentielle pour votre santé. Voici les principes clés :</p>
+            <ul>
+              <li><strong>Fruits et légumes :</strong> 5 portions par jour minimum</li>
+              <li><strong>Protéines :</strong> Viande maigre, poisson, œufs ou légumineuses</li>
+              <li><strong>Glucides complexes :</strong> Riz complet, pâtes complètes, pain complet</li>
+              <li><strong>Produits laitiers :</strong> Pour le calcium et le phosphore</li>
+              <li><strong>Hydratation :</strong> 1.5 à 2 litres d'eau par jour</li>
+            </ul>
+            <p><strong>Conseil :</strong> Consultez un nutritionniste pour un plan personnalisé adapté à vos besoins spécifiques.</p>
+          `
+        };
+        break;
+        
+      case 'relaxation':
+        this.popupContent = {
+          title: 'Techniques de relaxation contre le stress',
+          content: `
+            <h3>Exercices de relaxation</h3>
+            <p>Pratiquez ces exercices quotidiennement pour réduire votre stress :</p>
+            <h4>1. Respiration profonde (5 minutes)</h4>
+            <ul>
+              <li>Inspirez lentement pendant 4 secondes</li>
+              <li>Retenez votre respiration pendant 4 secondes</li>
+              <li>Expirez lentement pendant 4 secondes</li>
+              <li>Répétez 10 fois</li>
+            </ul>
+            <h4>2. Scan corporel (10 minutes)</h4>
+            <p>Allongé, focalisez-vous sur chaque partie de votre corps de haut en bas, en relâchant les tensions.</p>
+            <h4>3. Méditation (10 minutes)</h4>
+            <p>Trouvez un endroit calme et concentrez-vous sur vos pensées sans les juger.</p>
+          `
+        };
+        break;
+        
+      case 'activite':
+        this.popupContent = {
+          title: 'Programme d\'activité physique adapté',
+          content: `
+            <h3>Programme d'activité physique</h3>
+            <p>L'activité physique régulière est cruciale pour votre santé. Voici un programme adapté :</p>
+            <h4>Semaine Type</h4>
+            <ul>
+              <li><strong>Lundi :</strong> 30 min marche rapide ou jogging léger</li>
+              <li><strong>Mardi :</strong> 30 min musculation légère</li>
+              <li><strong>Mercredi :</strong> Repos ou activité douce (yoga)</li>
+              <li><strong>Jeudi :</strong> 30 min marche rapide ou jogging léger</li>
+              <li><strong>Vendredi :</strong> 30 min musculation légère</li>
+              <li><strong>Samedi :</strong> 45 min activité récréative (sport, danse, vélo)</li>
+              <li><strong>Dimanche :</strong> Repos</li>
+            </ul>
+            <p><strong>Important :</strong> Commencez progressivement et consultez votre médecin avant tout nouveau programme.</p>
+          `
+        };
+        break;
+        
+      case 'sommeil':
+        this.popupContent = {
+          title: 'Améliorer la qualité de votre sommeil',
+          content: `
+            <h3>Conseils pour un meilleur sommeil</h3>
+            <p>Suivez ces recommandations pour un sommeil réparateur :</p>
+            <h4>Hygiène du sommeil</h4>
+            <ul>
+              <li>Maintenez une routine régulière (coucher/lever à heures fixes)</li>
+              <li>Évitez les écrans 1 heure avant le coucher</li>
+              <li>Gardez votre chambre fraîche (16-19°C) et sombre</li>
+              <li>Évitez la caféine après 14h</li>
+              <li>Pratiquez une activité relaxante avant le coucher</li>
+              <li>Limitez les siestes à 20 minutes maximum</li>
+            </ul>
+            <h4>Environnement optimal</h4>
+            <p>Investissez dans un bon matelas et des oreillers confortables. La qualité de votre lit affecte directement votre sommeil.</p>
+          `
+        };
+        break;
+    }
+  }
+
+  closePopup() {
+    this.showPopup = false;
+    this.popupType = '';
+    this.cdr.detectChanges();
   }
 }

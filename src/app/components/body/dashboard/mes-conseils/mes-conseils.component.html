@@ -1,0 +1,9 @@
+<div class="container">
+  <h1>📝 Mes Conseils</h1>
+  <div class="conseils-list">
+    <div *ngFor="let conseil of conseils" class="conseil-card">
+      <div class="conseil-titre">{{ conseil.titre }}</div>
+      <div class="conseil-description">{{ conseil.description }}</div>
+    </div>
+  </div>
+</div>

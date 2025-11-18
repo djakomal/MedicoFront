@@ -1,77 +1,330 @@
-<div class="row">
-    <div class="col-lg-12">
-        <div class="login-form">
-            <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Formulaire de Consultation Médicale</h1>
-                <form class="row g-3 needs-validation" novalidate>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Consultation Médicale</title>
 
-                    <!-- Symptômes Principaux -->
-                    <div class="col-md-12">
-                        <label for="symptoms" class="form-label">Quels sont vos symptômes principaux ?</label>
-                        <textarea class="form-control" id="symptoms" rows="4" required></textarea>
-                        <div class="invalid-feedback">
-                            Veuillez décrire vos symptômes principaux.
-                        </div>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="medical-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M12 2v20M17 7H7M17 17H7"></path>
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                </div>
+                <h1>Formulaire de Consultation Médicale</h1>
+                <p>Veuillez remplir ce formulaire avec précision pour une meilleure prise en charge</p>
+            </div>
+
+            <div class="form-body">
+                <div class="progress-indicator">
+                    <div class="progress-step active" data-step="0">
+                        <div class="progress-step-circle">1</div>
+                        <div class="progress-step-label">Symptômes</div>
                     </div>
-
-                    <!-- Durée des Symptômes -->
-                    <div class="col-md-6">
-                        <label for="symptomDuration" class="form-label">Depuis combien de temps avez-vous ces symptômes ?</label>
-                        <input type="text" class="form-control" id="symptomDuration" required>
-                        <div class="invalid-feedback">
-                            Veuillez indiquer la durée des symptômes.
-                        </div>
+                    <div class="progress-step" data-step="1">
+                        <div class="progress-step-circle">2</div>
+                        <div class="progress-step-label">Antécédents</div>
                     </div>
-
-                    <!-- Symptômes Associés -->
-                    <div class="col-md-6">
-                        <label for="associatedSymptoms" class="form-label">Avez-vous des symptômes associés ? (fièvre, fatigue, etc.)</label>
-                        <input type="text" class="form-control" id="associatedSymptoms">
+                    <div class="progress-step" data-step="2">
+                        <div class="progress-step-circle">3</div>
+                        <div class="progress-step-label">Mode de vie</div>
                     </div>
-
-                    <!-- Antécédents Médicaux -->
-                    <div class="col-md-12">
-                        <label for="medicalHistory" class="form-label">Avez-vous des antécédents médicaux pertinents ?</label>
-                        <textarea class="form-control" id="medicalHistory" rows="4" placeholder="Décrivez vos antécédents médicaux si nécessaire."></textarea>
+                    <div class="progress-step" data-step="3">
+                        <div class="progress-step-circle">4</div>
+                        <div class="progress-step-label">Validation</div>
                     </div>
+                </div>
 
-                    <!-- Médicaments Actuels -->
-                    <div class="col-md-12">
-                        <label for="currentMedications" class="form-label">Prenez-vous actuellement des médicaments ?</label>
-                        <textarea class="form-control" id="currentMedications" rows="4" placeholder="Indiquez les médicaments que vous prenez actuellement."></textarea>
-                    </div>
-
-                    <!-- Allergies -->
-                    <div class="col-md-12">
-                        <label for="allergies" class="form-label">Avez-vous des allergies ?</label>
-                        <input type="text" class="form-control" id="allergies">
-                    </div>
-
-                    <!-- Habitudes de Vie -->
-                    <div class="col-md-12">
-                        <label for="lifestyle" class="form-label">Pouvez-vous décrire vos habitudes de vie ? (alimentation, exercice, tabagisme, etc.)</label>
-                        <textarea class="form-control" id="lifestyle" rows="4"></textarea>
-                    </div>
-
-                    <!-- Consentement -->
-                    <div class="col-12">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="consentCheck" required>
-                            <label class="form-check-label" for="consentCheck">
-                                J'accepte les termes et conditions
-                            </label>
-                            <div class="invalid-feedback">
-                                Vous devez accepter les termes et conditions avant de soumettre le formulaire.
+                <form id="consultationForm" novalidate>
+                    <!-- Section 1: Symptômes -->
+                    <div class="form-section active" data-section="0">
+                        <h3 class="section-title">Vos Symptômes</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="symptoms" class="form-label">
+                                    Quels sont vos symptômes principaux ? <span class="required">*</span>
+                                </label>
+                                <textarea class="form-control" id="symptoms" rows="4" placeholder="Décrivez vos symptômes en détail..." required></textarea>
+                                <div class="invalid-feedback">
+                                    Veuillez décrire vos symptômes principaux.
+                                </div>
                             </div>
                         </div>
+
+                        <div class="form-row two-cols">
+                            <div class="form-group">
+                                <label for="symptomDuration" class="form-label">
+                                    Depuis combien de temps ? <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="symptomDuration" placeholder="Ex: 3 jours, 1 semaine..." required>
+                                <div class="invalid-feedback">
+                                    Veuillez indiquer la durée des symptômes.
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="associatedSymptoms" class="form-label">
+                                    Symptômes associés
+                                </label>
+                                <input type="text" class="form-control" id="associatedSymptoms" placeholder="Fièvre, fatigue, douleurs...">
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-next" onclick="nextSection()">
+                                Suivant
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Bouton de Soumission -->
-                    <div class="col-12">
-                        <button class="btn btn-primary" type="submit">Soumettre le formulaire</button>
+                    <!-- Section 2: Antécédents -->
+                    <div class="form-section" data-section="1">
+                        <h3 class="section-title">Antécédents Médicaux</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="medicalHistory" class="form-label">
+                                    Antécédents médicaux pertinents
+                                </label>
+                                <textarea class="form-control" id="medicalHistory" rows="4" placeholder="Maladies chroniques, interventions chirurgicales, hospitalisations..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="currentMedications" class="form-label">
+                                    Médicaments actuels
+                                </label>
+                                <textarea class="form-control" id="currentMedications" rows="4" placeholder="Listez les médicaments que vous prenez actuellement avec leur dosage..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="allergies" class="form-label">
+                                    Allergies connues
+                                </label>
+                                <input type="text" class="form-control" id="allergies" placeholder="Allergies médicamenteuses, alimentaires...">
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-previous" onclick="previousSection()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="button" class="btn btn-next" onclick="nextSection()">
+                                Suivant
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Habitudes de Vie -->
+                    <div class="form-section" data-section="2">
+                        <h3 class="section-title">Habitudes de Vie</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lifestyle" class="form-label">
+                                    Description de vos habitudes
+                                </label>
+                                <textarea class="form-control" id="lifestyle" rows="4" placeholder="Alimentation, activité physique, consommation de tabac/alcool, qualité du sommeil..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-previous" onclick="previousSection()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="button" class="btn btn-next" onclick="nextSection()">
+                                Suivant
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Consentement -->
+                    <div class="form-section" data-section="3">
+                        <h3 class="section-title">Consentement</h3>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="consentCheck" required>
+                            <label class="form-check-label" for="consentCheck">
+                                Je consens au traitement de mes données médicales et j'accepte que les informations fournies soient utilisées dans le cadre de ma consultation médicale. Je certifie que les informations communiquées sont exactes.
+                            </label>
+                        </div>
+                        <div class="invalid-feedback" style="display: none;" id="consentError">
+                            Vous devez accepter les termes et conditions avant de soumettre le formulaire.
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-previous" onclick="previousSection()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Précédent
+                            </button>
+                            <button type="submit" class="btn btn-submit">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                Soumettre le formulaire
+                            </button>
+                        </div>
                     </div>
                 </form>
+
+                <div class="success-message" id="successMessage">
+                    <div class="success-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                            <path d="M20 6L9 17l-5-5"></path>
+                        </svg>
+                    </div>
+                    <h2 style="color: var(--success); margin-bottom: 1rem;">Formulaire envoyé avec succès !</h2>
+                    <p style="color: var(--text-muted);">Votre consultation a été enregistrée. Un professionnel de santé vous contactera prochainement.</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 4;
+        const form = document.getElementById('consultationForm');
+        const successMessage = document.getElementById('successMessage');
+
+        function validateCurrentSection() {
+            const section = document.querySelector(`.form-section[data-section="${currentSection}"]`);
+            const requiredInputs = section.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    if (!input.checked) {
+                        isValid = false;
+                        document.getElementById('consentError').style.display = 'block';
+                    } else {
+                        document.getElementById('consentError').style.display = 'none';
+                    }
+                } else {
+                    if (!input.value.trim()) {
+                        input.classList.add('invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('invalid');
+                    }
+                }
+            });
+
+            return isValid;
+        }
+
+        function updateProgress() {
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index < currentSection) {
+                    step.classList.add('completed');
+                } else if (index === currentSection) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function showSection(sectionIndex) {
+            const sections = document.querySelectorAll('.form-section');
+            sections.forEach((section, index) => {
+                if (index === sectionIndex) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+            updateProgress();
+            
+            // Scroll vers le haut du formulaire
+            document.querySelector('.form-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function nextSection() {
+            if (validateCurrentSection()) {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            } else {
+                const firstInvalid = document.querySelector('.form-section.active .invalid');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        // Validation en temps réel
+        const inputs = form.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.classList.contains('invalid') && input.value.trim()) {
+                    input.classList.remove('invalid');
+                }
+            });
+        });
+
+        // Soumission du formulaire
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!validateCurrentSection()) {
+                return;
+            }
+
+            // Animation de chargement
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Envoi en cours...</span>';
+
+            // Simulation d'envoi
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Afficher le message de succès
+            form.style.display = 'none';
+            document.querySelector('.progress-indicator').style.display = 'none';
+            successMessage.classList.add('show');
+
+            // Marquer toutes les étapes comme complétées
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach(step => {
+                step.classList.remove('active');
+                step.classList.add('completed');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+.container {
+  padding: 20px;
+}
+
+h1 {
+  color: #1976d2;
+  margin-bottom: 20px;
+}
+
+.consultations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.consultation-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid #1976d2;
+}
+
+.consultation-nom {
+  font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+.consultation-info {
+  color: #666;
+  margin-bottom: 5px;
+}

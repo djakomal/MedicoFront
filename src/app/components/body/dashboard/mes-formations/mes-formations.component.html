@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>📚 Mes Formations</h1>
+  <div class="formations-list">
+    <div *ngFor="let formation of formations" class="formation-card">
+      <div class="formation-titre">{{ formation.titre }}</div>
+      <div class="formation-universite">{{ formation.universite }}</div>
+      <div class="formation-annee">{{ formation.annee }}</div>
+    </div>
+  </div>
+</div>

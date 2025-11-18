@@ -64,7 +64,7 @@
                             Elle permet egalement aux patients d'accéder facilement à leurs informations medicales, de revoir des soins personnalisé et de
                                 beneficier d'un suivi
                         </p>
-                        <a class="btn_2 " href="#">Plus</a>
+                        <button class="btn_2" (click)="openPopup('About')" >Plus</button>
                     </div>
                 </div>
             </div>
@@ -140,40 +140,6 @@
                     <div class="row justify-content-between align-items-center">
                         <div class="col-lg-12 col-sm-12">
                             <div id="map" style="height: 80px;"></div>
-                            <script>
-                            function initMap() {
-                                var uluru = {
-                                    lat: -25.363,
-                                    lng: 131.044
-                                };
-                                var grayStyles = [{
-                                    featureType: "all",
-                                    stylers: [{
-                                        saturation: -90
-                                    },
-                                    {
-                                        lightness: 50
-                                    }
-                                    ]
-                                },
-                                {
-                                    elementType: 'labels.text.fill',
-                                    stylers: [{
-                                        color: '#ccdee9'
-                                    }]
-                                }
-                                ];
-                                var map = new google.maps.Map(document.getElementById('map'), {
-                                    center: {
-                                        lat: -31.197,
-                                        lng: 150.744
-                                    },
-                                    zoom: 9,
-                                    styles: grayStyles,
-                                    scrollwheel: false
-                                });
-                            }
-                            </script>
                             <script
                             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpfS1oRGreGSBU5HHjMmQ3o5NLw7VdJ6I&callback=initMap">
                             </script>
@@ -243,7 +209,13 @@
     </section>
 
     <app-footer></app-footer>
-
+    <div class="popup-overlay" *ngIf="showPopup" (click)="closePopup()">
+        <div class="popup-content" (click)="$event.stopPropagation()">
+          <button class="popup-close" (click)="closePopup()">&times;</button>
+          <h2>{{ popupContent.title }}</h2>
+          <div [innerHTML]="popupContent.content"></div>
+        </div>
+      </div>
 </body>
 
 </html>

@@ -1,0 +1,9 @@
+<div class="container">
+  <h1>🤝 Associations</h1>
+  <div class="associations-list">
+    <div *ngFor="let association of associations" class="association-card">
+      <div class="association-nom">{{ association.nom }}</div>
+      <div class="association-role">Rôle: {{ association.role }}</div>
+    </div>
+  </div>
+</div>

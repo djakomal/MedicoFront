@@ -12,7 +12,7 @@
   <div class="header">
     <div class="logo">
       <div class="logo-icon">+</div>
-      <div class="logo-text">Medico</div>
+      <div class="logo-text" href="#">Medico</div>
     </div>
     <div class="user-actions">
       <div class="notification">
@@ -50,7 +50,7 @@
           <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
           <button class="appointment-btn">Prendre rendez-vous avec un médecin</button>
         </div>
-        <div class="illustration">
+        <!-- <div class="illustration">
           <div class="doctor-image">
             <svg width="200" height="300" viewBox="0 0 200 300">
               <rect x="50" y="50" width="100" height="150" fill="#1e88e5" rx="10" />
@@ -60,7 +60,7 @@
               <circle cx="100" cy="250" r="30" fill="#bbdefb" />
             </svg>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="dashboard-cards">
@@ -259,7 +259,7 @@
           <div class="service-details">
             <h4>Maintenir une alimentation équilibrée</h4>
             <p>Découvrez comment adopter une alimentation saine et adaptée à vos besoins spécifiques.</p>
-            <button class="service-btn">Lire l'article</button>
+            <button class="service-btn" (click)="openPopup('nutrition')">Lire l'article</button>
           </div>
         </div>
 
@@ -268,7 +268,7 @@
           <div class="service-details">
             <h4>Techniques de relaxation contre le stress</h4>
             <p>Apprenez des exercices simples à pratiquer quotidiennement pour réduire votre niveau de stress.</p>
-            <button class="service-btn">Voir les exercices</button>
+            <button class="service-btn" (click)="openPopup('relaxation')">Voir les exercices</button>
           </div>
         </div>
 
@@ -277,7 +277,7 @@
           <div class="service-details">
             <h4>Programme d'activité physique adapté</h4>
             <p>Un programme personnalisé pour rester actif selon votre condition physique.</p>
-            <button class="service-btn">Découvrir le programme</button>
+            <button class="service-btn" (click)="openPopup('activite')">Découvrir le programme</button>
           </div>
         </div>
 
@@ -286,7 +286,7 @@
           <div class="service-details">
             <h4>Améliorer la qualité de votre sommeil</h4>
             <p>Conseils pratiques pour un sommeil réparateur et des nuits plus paisibles.</p>
-            <button class="service-btn">Lire l'article</button>
+            <button class="service-btn" (click)="openPopup('sommeil')">Lire l'article</button>
           </div>
         </div>
       </div>
@@ -372,6 +372,20 @@
         <app-appoint></app-appoint>
       </div>
       
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" *ngIf="showPopup" (click)="closePopup()">
+      <div class="popup-modal" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>{{ popupContent.title }}</h2>
+          <button class="popup-close" (click)="closePopup()">✕</button>
+        </div>
+        <div class="popup-content" [innerHTML]="popupContent.content"></div>
+        <div class="popup-footer">
+          <button class="popup-btn-close" (click)="closePopup()">Fermer</button>
+        </div>
+      </div>
     </div>
   </div>
 </body>

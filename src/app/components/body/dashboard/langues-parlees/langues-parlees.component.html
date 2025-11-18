@@ -1,0 +1,9 @@
+<div class="container">
+  <h1>🌐 Langues Parlées</h1>
+  <div class="langues-list">
+    <div *ngFor="let langue of langues" class="langue-card">
+      <div class="langue-nom">{{ langue.nom }}</div>
+      <div class="langue-niveau">Niveau: {{ langue.niveau }}</div>
+    </div>
+  </div>
+</div>

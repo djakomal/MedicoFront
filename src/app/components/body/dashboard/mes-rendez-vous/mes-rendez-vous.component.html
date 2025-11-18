@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>📅 Mes Rendez-vous</h1>
+  <div class="rendez-vous-list">
+    <div *ngFor="let rdv of rendezVous" class="rendez-vous-card">
+      <div class="rdv-date">{{ rdv.date }} à {{ rdv.heure }}</div>
+      <div class="rdv-patient">Patient: {{ rdv.patient }}</div>
+      <div class="rdv-motif">Motif: {{ rdv.motif }}</div>
+    </div>
+  </div>
+</div>

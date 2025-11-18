@@ -1,0 +1,32 @@
+.container {
+  padding: 20px;
+}
+
+h1 {
+  color: #1976d2;
+  margin-bottom: 20px;
+}
+
+.associations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.association-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #00bcd4;
+}
+
+.association-nom {
+  font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+.association-role {
+  color: #666;
+}

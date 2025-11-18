@@ -4,15 +4,495 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDICO - Connexion</title>
- 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #9bc9f7;
+            --primary-light: #4d94ff;
+            --primary-dark: #8bc3fc;
+            --secondary: #00aaff;
+            --text-dark: #333;
+            --text-muted: #252525;
+            --background: #f5f9ff;
+            --white: #ffffff;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        @keyframes borderBeam {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(360deg);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--background);
+            overflow-x: hidden;
+        }
+
+        .left-panel {
+            width: 55%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 2rem 4rem;
+            color: white;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.85), rgba(0, 170, 255, 0.85));
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        .logo {
+            margin-top: 3rem;
+            margin-bottom: 8rem;
+            display: flex;
+            align-items: center;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .logo text {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .welcome-content {
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-text h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .welcome-text p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .feature:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .feature:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .feature:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        .feature-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            animation: float 3s ease-in-out infinite;
+            transition: var(--transition);
+        }
+
+        .feature:hover .feature-icon {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-text p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .right-panel {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .login-form-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--white);
+            padding: 3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .login-form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+            background-size: 200% 100%;
+            animation: borderBeam 3s linear infinite;
+        }
+
+        .login-form-container:hover {
+            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .register-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .register-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            padding-right: 3rem;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            background-color: #f9fafc;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            background-color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .input-field:focus + .input-icon svg {
+            stroke: var(--primary);
+        }
+
+        .input-field::placeholder {
+            color: #b3b3b3;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 2.5rem;
+            color: #b3b3b3;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .password-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            right: 1rem;
+            top: 2.5rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 1.8rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .forgot-password a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .forgot-password a:hover::after {
+            width: 100%;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .login-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .left-panel {
+                padding: 2rem;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+            
+            .welcome-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+            
+            .left-panel {
+                clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+                padding: 2rem;
+                min-height: 400px;
+            }
+            
+            .logo {
+                margin-top: 1rem;
+                margin-bottom: 3rem;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                display: none;
+            }
+            
+            .login-form-container {
+                margin-top: -60px;
+                z-index: 2;
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-panel {
+                min-height: 300px;
+                padding: 1.5rem;
+            }
+            
+            .login-form-container {
+                padding: 1.5rem;
+            }
+            
+            .login-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="left-panel">
         <div class="logo">
             <svg width="150" height="60" viewBox="0 0 150 60">
-                <!-- <circle cx="25" cy="30" r="20" fill="#ffffff" />
-                <circle cx="45" cy="30" r="15" fill="#00aaff" /> -->
-                <text x="70" y="38" font-family="Arial" font-size="22" font-weight="bold" fill="#ffffff">MEDICO</text>
+                <text x="0" y="38" font-family="Arial" font-size="22" font-weight="bold" fill="#ffffff">MEDICO</text>
             </svg>
         </div>
         
@@ -68,27 +548,24 @@
             <div class="login-header">
                 <h2>Connexion</h2>
                 <p>Accédez à votre espace personnel MEDICO</p>
-                <a href="regis" class="register-link">Créer un compte</a>
+                <a href="/regis" class="register-link">Créer un compte →</a>
             </div>
             
-            <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+            <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Adresse email</label>
-                    <input type="email" id="email" class="input-field" placeholder="Entrez votre email" formControlName="email" required>
+                    <input type="email" id="email" class="input-field" placeholder="Entrez votre email" required>
                     <div class="input-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2">
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>
                     </div>
-                    <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
-                        Veuillez entrer un email valide
-                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" class="input-field" placeholder="Entrez votre mot de passe" formControlName="password" required>
+                    <input type="password" id="password" class="input-field" placeholder="Entrez votre mot de passe" required>
                     <button type="button" class="password-toggle" aria-label="Toggle password visibility">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -102,35 +579,36 @@
                 </div>
                 
                 <button type="submit" class="login-button">
-                    Se connecter
-                
+                    <span>Se connecter</span>
                 </button>
             </form>
-            
-
         </div>
     </div>
     
     <script>
-        // Toggle password visibility
         document.addEventListener('DOMContentLoaded', function() {
             const passwordToggle = document.querySelector('.password-toggle');
             const passwordInput = document.getElementById('password');
+            const loginForm = document.getElementById('loginForm');
             
             if (passwordToggle && passwordInput) {
                 passwordToggle.addEventListener('click', function() {
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
                     
-                    // Change icon based on password visibility
                     const svg = this.querySelector('svg');
                     if (type === 'text') {
-                        svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+                        svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23" stroke="#b3b3b3" stroke-width="2"></line>';
                     } else {
                         svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
                     }
                 });
             }
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Formulaire soumis');
+            });
         });
     </script>
 </body>

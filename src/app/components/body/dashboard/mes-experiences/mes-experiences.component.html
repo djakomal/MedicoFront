@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>🎓 Mes Expériences</h1>
+  <div class="experiences-list">
+    <div *ngFor="let experience of experiences" class="experience-card">
+      <div class="experience-titre">{{ experience.titre }}</div>
+      <div class="experience-info">{{ experience.entreprise }}</div>
+      <div class="experience-annees">{{ experience.annees }}</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="container">
+  <h1>🕒 Mes Horaires</h1>
+  <div class="horaires-table">
+    <div class="table-header">
+      <div class="col">Jour</div>
+      <div class="col">Début</div>
+      <div class="col">Fin</div>
+    </div>
+    <div *ngFor="let horaire of horaires" class="table-row">
+      <div class="col">{{ horaire.jour }}</div>
+      <div class="col">{{ horaire.debut }}</div>
+      <div class="col">{{ horaire.fin }}</div>
+    </div>
+  </div>
+</div>

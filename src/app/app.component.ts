@@ -1,4 +1,4 @@
-import { Component, Injectable, NgModule } from '@angular/core';
+import { Component, Injectable, NgModule, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -65,6 +65,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
   title = 'Centre-Medical';
 }

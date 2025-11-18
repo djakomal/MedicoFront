@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-
 import { NoteConfirmationComponent } from './components/note-confirmation/note-confirmation.component';
 import { DashboardComponent } from './components/body/dashboard/dashboard.component';
 import { AboutComponent } from './components/body/about/about.component';
@@ -25,134 +24,188 @@ import { UserDashboardComponent } from './components/body/dashboard/user-dashboa
 import { DocRegisterComponent } from './components/docteurAuth/doc-register/doc-register.component';
 import { DocLoginComponent } from './components/docteurAuth/doc-login/doc-login.component';
 import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
-
-
-
-
+import { MesRendezVousComponent } from './components/body/dashboard/mes-rendez-vous/mes-rendez-vous.component';
+import { MesPatientsComponent } from './components/body/dashboard/mes-patients/mes-patients.component';
+import { MesConseilsComponent } from './components/body/dashboard/mes-conseils/mes-conseils.component';
+import { InfosPersonnellesComponent } from './components/body/dashboard/infos-personnelles/infos-personnelles.component';
+import { TypesConsultationsComponent } from './components/body/dashboard/types-consultations/types-consultations.component';
+import { MesHorairesComponent } from './components/body/dashboard/mes-horaires/mes-horaires.component';
+import { MesExperiencesComponent } from './components/body/dashboard/mes-experiences/mes-experiences.component';
+import { MesFormationsComponent } from './components/body/dashboard/mes-formations/mes-formations.component';
+import { LanguesParleesComponent } from './components/body/dashboard/langues-parlees/langues-parlees.component';
+import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
+import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
 
 // import { ConnexionComponent } from './connexion/connexion.component';
 
-
-
 export const routes: Routes = [
+  {
+    path: 'regis',
+    component: RegisterComponent,
+  },
 
-    {
-        path: 'regis', component: RegisterComponent
+  {
+    path: 'Dash',
+    redirectTo: 'Dash',
+    pathMatch: 'full',
+  },
+  {
+    path: 'Dash',
+    component: DashboardComponent,
+  },
+  {
+    path: 'About',
+    component: AboutComponent,
+  },
+  {
+    path: 'noteConfirmation',
+    component: NoteConfirmationComponent,
+  },
 
-    },
+  {
+    path: 'Doc',
+    component: DoctorComponent,
+  },
+  {
+    path: 'Serv',
+    component: ServiceComponent,
+  },
+  {
+    path: 'Depart',
+    component: DepartementComponent,
+  },
+  {
+    path: 'Elem',
+    component: ElementsComponent,
+  },
+  {
+    path: 'Ap',
+    component: AppointComponent,
+  },
+  {
+    path: 'Blog',
+    component: BlogComponent,
+  },
 
-    {
-        path: 'Dash',
-        redirectTo: 'Dash',
-        pathMatch: 'full'
-    },
-    {
-        path: 'noteConfirmation', component: NoteConfirmationComponent
-    },
+  {
+    path: 'noteConfirmation',
+    component: NoteConfirmationComponent,
+  },
+  {
+    path: 'Admin/app',
+    component: AppointmentComponent,
+  },
+  {
+    path: 'Admin/regGet',
+    component: RegisteDetComponent,
+  },
+  {
+    path: 'Admin/form',
+    component: FormulaireComponent,
+  },
 
-    {
-        path: 'Dash', component: DashboardComponent
+  {
+    path: 'Single-blog',
+    component: SingleBlogComponent,
+  },
+  {
+    path: 'Cont',
+    component: ContactComponent,
+  },
+  {
+    path: 'connex',
+    component: ConnexionComponent,
+  },
+  {
+    path: 'conseil',
+    component: ConseilComponent,
+  },
+  {
+    path: 'UserDah',
+    component: UserDashboardComponent,
+    canActivate: [authGuard],
+  },
 
-    },
-    {
-        path: 'About', component: AboutComponent
+  {
+    path: 'DocRegist',
+    component: DocRegisterComponent,
+  },
 
-    },
+  {
+    path: 'DocLogin',
+    component: DocLoginComponent,
+  },
+  {
+    path: '**',
+    component: DashboardComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: 'DocDash',
+    component: DocDashboardComponent,
+    children: [
+      {
+        path: 'MesRendezVous',
+        component: MesRendezVousComponent,
+      },
+      {
+        path: 'MesPatients',
+        component: MesPatientsComponent,
+      },
+      {
+        path: 'MesConseils',
+        component: MesConseilsComponent,
+      },
+      {
+        path: 'InfosPersonnelles',
+        component: InfosPersonnellesComponent,
+      },
+      {
+        path: 'TypesConsultations',
+        component: TypesConsultationsComponent,
+      },
+      {
+        path: 'MesHoraires',
+        component: MesHorairesComponent,
+      },
+      {
+        path: 'MesExperiences',
+        component: MesExperiencesComponent,
+      },
+      {
+        path: 'MesFormations',
+        component: MesFormationsComponent,
+      },
+      {
+        path: 'LanguesParlees',
+        component: LanguesParleesComponent,
+      },
+      {
+        path: 'Publications',
+        component: PublicationsComponent,
+      },
+      {
+        path: 'Associations',
+        component: AssociationsComponent,
+      },
+    ],
+    // ,canActivate: [authGuard],
+  },
 
-    {
-        path: 'Doc', component: DoctorComponent,
+  // {
+  //     path: 'Dash',
+  //     component: BodyComponent,
+  //     canActivate: [authGuard], data: { role: 'USER' }
+  // },
+  {
+    path: 'Admin',
+    component: AdminComponent,
+    canActivate: [authGuard],
+    data: { role: 'ADMIN' },
+  },
+  //  {
+  //      path: 'UserDah', component: UserDashboardComponent,
+  //      canActivate: [authGuard],
 
-    },
-    {
-        path: 'Serv', component: ServiceComponent
-    },
-    {
-        path: 'Depart', component: DepartementComponent
-    },
-    {
-        path: 'Elem', component: ElementsComponent
-
-    },
-    {
-        path: 'Ap', component: AppointComponent
-
-    },
-    {
-        path: 'Blog', component: BlogComponent
-
-    },
-
-    {
-        path: 'noteConfirmation', component: NoteConfirmationComponent
-    },
-    {
-        path: 'Admin/app', component: AppointmentComponent,
-
-    },
-    {
-        path: 'Admin/regGet', component: RegisteDetComponent,
-    },
-    {
-        path: 'Admin/form', component: FormulaireComponent,
-
-    },
-
-    {
-        path: 'Single-blog', component: SingleBlogComponent
-
-    },
-    {
-        path: 'Cont', component: ContactComponent
-
-    },
-    {
-        path: 'connex', component: ConnexionComponent
-
-    },
-    {
-        path: 'conseil', component: ConseilComponent
-
-    },
-    {
-        path: 'UserDah', component: UserDashboardComponent,canActivate: [authGuard],
-
-    },
-
-        {
-        path: 'DocRegist', component: DocRegisterComponent
-
-    },
-
-        {
-        path: 'DocLogin', component: DocLoginComponent
-
-    },
-        {
-        path: 'DocDash', component: DocDashboardComponent,canActivate: [authGuard],
-
-    },
-
-
-    {
-        path: "**",
-        component: DashboardComponent,
-        pathMatch: "full"
-    },
-    // {
-    //     path: 'Dash',
-    //     component: BodyComponent,
-    //     canActivate: [authGuard], data: { role: 'USER' }
-    // },
-    {
-        path: 'Admin', component: AdminComponent,
-        canActivate: [authGuard],
-        data: { role: 'ADMIN' }
-    },
-    // {
-    //     path: 'UserDah', component: UserDashboardComponent,
-    //     canActivate: [authGuard],
-       
-    // },
-
-
+  //  },
 ];

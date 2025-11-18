@@ -309,43 +309,43 @@
                 </div>
             </div>
             
-            <a href="#" class="menu-item active">
+            <a routerLink="/DocDash" class="menu-item active">
                 <i>📊</i> Tableau de bord
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesRendezVous" class="menu-item">
                 <i>📅</i> Mes rendez-vous
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesPatients" class="menu-item">
                 <i>👥</i> Mes patients
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesConseils" class="menu-item">
                 <i>📝</i> Mes conseils
             </a>
             
             <div class="menu-section">Informations médecin</div>
             
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/InfosPersonnelles" class="menu-item">
                 <i>👤</i> Informations personnelles
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/TypesConsultations" class="menu-item">
                 <i>🏥</i> Types de consultations
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesHoraires" class="menu-item">
                 <i>🕒</i> Mes horaires
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesExperiences" class="menu-item">
                 <i>🎓</i> Expériences
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/MesFormations" class="menu-item">
                 <i>📚</i> Formations
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/LanguesParlees" class="menu-item">
                 <i>🌐</i> Langues parlées
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/Publications" class="menu-item">
                 <i>📄</i> Publications & références
             </a>
-            <a href="#" class="menu-item">
+            <a routerLink="/DocDash/Associations" class="menu-item">
                 <i>🤝</i> Associations
             </a>
             
@@ -360,6 +360,7 @@
         
         <!-- Main Content -->
         <main class="main-content">
+            
             <div class="header">
                 <h1>Bonjour, Dr. ABALO</h1>
                 <p>Vous avez 2 rdv(s) aujourd'hui</p>
@@ -399,86 +400,9 @@
                 </div>
             </div>
             
-            <div class="calendar-section">
-                <div class="calendar-header">
-                    <h2>Quoi de neuf aujourd'hui?</h2>
-                </div>
-                
-                <div class="calendar-days">
-                    <div class="calendar-day">
-                        <div class="day-name">Lun</div>
-                        <div class="day-number">22</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day">
-                        <div class="day-name">Mar</div>
-                        <div class="day-number">23</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day">
-                        <div class="day-name">Mer</div>
-                        <div class="day-number">24</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day">
-                        <div class="day-name">Jeu</div>
-                        <div class="day-number">25</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day">
-                        <div class="day-name">Ven</div>
-                        <div class="day-number">26</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day active">
-                        <div class="day-name">Sam</div>
-                        <div class="day-number">27</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                    <div class="calendar-day">
-                        <div class="day-name">Dim</div>
-                        <div class="day-number">28</div>
-                        <div class="day-month">Mai</div>
-                    </div>
-                </div>
-                
-                <div class="appointment-slots">
-                    <div class="appointment-slot">
-                        <div class="appointment-time">07:30 - 07:40</div>
-                        <div class="appointment-info">Motif : Rendez-vous en ligne...</div>
-                    </div>
-                    
-                    <div class="appointment-slot">
-                        <div class="appointment-time">15:30 - 15:40</div>
-                        <div class="appointment-info">Motif : Première consultation...</div>
-                    </div>
-                </div>
-            </div>
-            
             <div class="charts-container">
-                <div class="chart-card">
-                    <h2>Évolution des prises de rdv</h2>
-                    <div class="chart-placeholder">
-                        <!-- Ici on utiliserait une bibliothèque comme Chart.js ou ngx-charts dans Angular -->
-                        <svg width="100%" height="100%" viewBox="0 0 300 200">
-                            <path d="M0,180 C20,180 40,180 60,180 C80,180 100,180 120,180 C140,180 160,180 180,180 C200,180 220,170 240,100 C260,30 280,50 300,20" 
-                                  fill="none" stroke="#1976d2" stroke-width="2"/>
-                            <line x1="0" y1="180" x2="300" y2="180" stroke="#ccc" stroke-width="1"/>
-                        </svg>
-                    </div>
-                </div>
                 
-                <div class="chart-card">
-                    <h2>Répartition des types de rendez-vous</h2>
-                    <div class="chart-placeholder">
-                        <!-- Ici on utiliserait une bibliothèque comme Chart.js ou ngx-charts dans Angular -->
-                        <svg width="200" height="200" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#ccc" stroke-width="20" stroke-dasharray="251.2" stroke-dashoffset="0"/>
-                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#63a4ff" stroke-width="20" stroke-dasharray="251.2" stroke-dashoffset="188.4"/>
-                            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1976d2" stroke-width="20" stroke-dasharray="251.2" stroke-dashoffset="125.6"/>
-                        </svg>
-                    </div>
-                </div>
+                <router-outlet></router-outlet>
             </div>
         </main>
     </div>
