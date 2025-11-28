@@ -14,13 +14,11 @@
       <div class="logo-icon">+</div>
       <div class="logo-text" href="#">Medico</div>
     </div>
-    <div class="user-actions">
-      <div class="notification">
-        <i>🔔</i>
-        <div class="notification-badge">2</div>
-      </div>
-      <div class="user-profile">
-        <div class="profile-img"></div>
+    <!--je veux mettre le bouton profil qui deroule contenant le bouton deconnection  tres stylisé -->
+    <div class="user-profile" (click)="toggleMenu()">
+      <div class="img-profile">👤</div>
+      <div class="dropdown-menu" [class.show]="menuOpen">
+        <button class="logout" (click)="logout()">Déconnexion</button>
       </div>
     </div>
   </div>
@@ -46,9 +44,10 @@
 
       <div class="welcome-section">
         <div class="welcome-text">
-          <p>Bienvenue, <strong>{{userName}}</strong></p>
+          <p>Bienvenue <strong>{{ userName }}</strong></p>
           <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
-          <button class="appointment-btn">Prendre rendez-vous avec un médecin</button>
+          <button class="appointment-btn" (click)="showSection('forms-file', $event)">Prendre un 
+            rendez-vous</button>
         </div>
         <!-- <div class="illustration">
           <div class="doctor-image">

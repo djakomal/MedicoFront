@@ -26,7 +26,7 @@ export class DocLoginComponent  implements OnInit {
   
     ngOnInit(): void {
       this.loginForm = this.fb.group({
-        email: ['', Validators.required, Validators.email],
+        email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required],
       });
         // Récupérer le nom de l'utilisateur s'il est déjà connecté
@@ -41,10 +41,11 @@ export class DocLoginComponent  implements OnInit {
           if (response && response.jwt) {
             this.jwtService.saveToken(response.jwt);
             this.userName = this.jwtService.getUserName();
+
             console.log("🔑 Token stocké après connexion:", localStorage.getItem('jwtToken'));  // Sauvegarde le token
             alert('Connexion réussie !');
             localStorage.setItem('token', response.jwt);
-            this.router.navigateByUrl("/UserDah");
+            this.router.navigateByUrl("/DocDash");
           } else {
             alert("Erreur : Aucun token reçu !");
           }

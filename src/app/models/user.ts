@@ -8,9 +8,10 @@ export class User {
 
     // role= [{ id: 1, name: 'ROLE_USER' }];
     id!: number;
-    userName!: string;
+    username?: string;
     email!: string;
     password!: string;
+    confirmPassword!:String;
     firstName!: string;
     lastName!: string;
     role!:string;

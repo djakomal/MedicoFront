@@ -1,104 +1,141 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import axios, { Axios } from 'axios';
+import { jwtDecode } from 'jwt-decode'; // ✅ Import correct
 import { Docteur } from '../../models/docteur';
-
-// const BASE_URL = "http://localhost:8080/tickets/"
 
 @Injectable({
   providedIn: 'root',
 })
 export class JwtService {
 
-  private tokenKey = 'authToken';
+  private tokenKey = 'authToken'; // ✅ Utiliser le même nom partout
   private baseURL = 'http://localhost:8080/medico';
-  constructor(private http: HttpClient) {
-    axios.defaults.headers.post['Content-Type'] = 'application/json';
-  }
-  // inscription de l'utilisateur
 
-  register(signRequest: any): Observable<any> {
-    return this.http.post(this.baseURL + '/signup', signRequest);
-  }
-  // login de l'utilisateur
+  constructor(private http: HttpClient) {}
 
+  // 🔹 LOGIN UTILISATEUR
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(this.baseURL + '/login/login', credentials,
-      {headers: new HttpHeaders({'Content-Type': 'application/json'})
+    return this.http.post(this.baseURL + '/login/login', credentials, {
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
-      tap((response: any) =>console.log ("reponse du serveur :", response))
-    ) ;
+      tap((response: any) => {
+        console.log("✅ Réponse du serveur :", response);
+        
+        // ✅ Sauvegarder le token après connexion
+        if (response && response.jwt) {
+          this.saveToken(response.jwt);
+        }
+      })
+    );
   }
-// login du docteur 
+
+  // 🔹 LOGIN DOCTEUR
   loginDoc(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(this.baseURL + '/docteur/login', credentials,
-      {headers: new HttpHeaders({'Content-Type': 'application/json'})
+    return this.http.post(this.baseURL + '/docteur/login', credentials, {
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
-      tap((response: any) =>console.log ("reponse du serveur :", response))
-    ) ;
+      tap((response: any) => {
+        console.log("✅ Réponse du serveur docteur :", response);
+        
+        if (response && response.jwt) {
+          this.saveToken(response.jwt);
+        }
+      })
+    );
   }
 
-  registerDoc(signRequest: any): Observable<any> {
-    return this.http.post(this.baseURL + '/signup/docteur/add', signRequest);
-  }
-    getAllDocteurs(): Observable<Docteur[]> {
-    return this.http.get<Docteur[]>(this.baseURL + '/all', );
-  }
-   // Sauvegarder le token après connexion
-  saveToken(jwt: string) {
-    window.localStorage.setItem('jwtToken', jwt);
+  // 🔹 SAUVEGARDER LE TOKEN
+  saveToken(jwt: string): void {
+    localStorage.setItem(this.tokenKey, jwt);
+    console.log("💾 Token sauvegardé");
   }
 
-  // Récupérer le token pour les requêtes protégées
+  // 🔹 RÉCUPÉRER LE TOKEN
   getToken(): string | null {
-    const token = localStorage.getItem('jwtToken');
-    console.log("🔍 Token récupéré :", token);
+    const token = localStorage.getItem(this.tokenKey);
+    console.log("🔍 Token récupéré :", token ? "Token présent" : "Aucun token");
     return token;
   }
- 
-  setToken(jwt: string|null) {
-    if (jwt) {
-      localStorage.setItem('jwtToken', jwt);
-    } else {
-      localStorage.removeItem('jwtToken');
-    }
-  }
-  getUserName(): string | null {
-    const token = this.getToken();
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        // Vérifie plusieurs champs possibles pour le username
-        return decodedToken.preferred_username  || decodedToken.userName || decodedToken.name || decodedToken.sub || null;
-      } catch (error) {
-        console.error('Erreur lors du décodage du token JWT:', error);
-        return null;
-      }
-    }
-    return null;
+
+  // 🔹 SUPPRIMER LE TOKEN (LOGOUT)
+  removeToken(): void {
+    localStorage.removeItem(this.tokenKey);
+    console.log("🗑️ Token supprimé");
   }
 
-  // }
+  // 🔹 DÉCODER LE TOKEN COMPLET
+  getDecodedToken(): any | null {
+    const token = this.getToken();
+    
+    if (!token) {
+      console.warn("⚠️ Aucun token trouvé dans le localStorage");
+      return null;
+    }
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      console.log("📜 Contenu du token JWT :", decodedToken);
+      return decodedToken;
+    } catch (error) {
+      console.error("❌ Erreur lors du décodage du token JWT :", error);
+      return null;
+    }
+  }
+
+  // 🔹 RÉCUPÉRER LE USERNAME DEPUIS LE TOKEN
+  getUserName(): string | null {
+    const decodedToken = this.getDecodedToken();
+    
+    if (!decodedToken) {
+      return null;
+    }
+
+    // ✅ Vérifie plusieurs champs possibles
+    const username = decodedToken.sub ||           // Standard JWT
+                     decodedToken.username ||      // Champ custom
+                     decodedToken.name ||          // Nom complet
+                     decodedToken.email ||         // Email comme fallback
+                     decodedToken.preferred_username || 
+                     null;
+
+    console.log("👤 Username récupéré :", username);
+    return username;
+  }
+
+  // 🔹 VÉRIFIER SI LE TOKEN EST VALIDE
   isTokenValid(): boolean {
-    const jwtToken = localStorage.getItem('jwt');
-    if (!jwtToken) {
+    const token = this.getToken();
+    
+    if (!token) {
       return false;
     }
 
-    return true;
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      
+      // Vérifie si le token n'est pas expiré
+      if (decodedToken.exp && decodedToken.exp < currentTime) {
+        console.warn("⚠️ Token expiré");
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("❌ Token invalide :", error);
+      return false;
+    }
   }
 
+  // 🔹 REQUÊTES AVEC AUTHENTIFICATION
   get(url: string): Observable<any> {
     const token = this.getToken();
     const headers = token
       ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
-      : {};
+      : new HttpHeaders();
 
     return this.http.get<any>(`${this.baseURL}${url}`, { headers });
-  }
-  removeToken(): void {
-    localStorage.removeItem(this.tokenKey);
   }
 
   request(method: string, endpoint: string, data?: any): Observable<any> {
@@ -113,23 +150,16 @@ export class JwtService {
     });
   }
 
+  // 🔹 AUTRES MÉTHODES
+  register(signRequest: any): Observable<any> {
+    return this.http.post(this.baseURL + '/signup', signRequest);
+  }
 
-  getDecodedToken(): any | null {
-    const token = this.getToken();
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        console.log('Contenu du token JWT:', decodedToken);
-        return decodedToken;
-      } catch (error) {
-        console.error('Erreur lors du décodage du token JWT:', error);
-        return null;
-      }
-    }
-    return null;
+  registerDoc(signRequest: any): Observable<any> {
+    return this.http.post(this.baseURL + '/signup/docteur/add', signRequest);
+  }
+
+  getAllDocteurs(): Observable<Docteur[]> {
+    return this.http.get<Docteur[]>(this.baseURL + '/all');
   }
 }
-function jwtDecode(token: string): any {
-  throw new Error('Function not implemented.');
-}
-

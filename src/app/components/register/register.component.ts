@@ -34,11 +34,10 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      userName: ['',[Validators.required]],
+      username: ['',[Validators.required]],
       gender:['',[Validators.required]],
-      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     }, { validator: this.passwordMatchValidator })
   }
@@ -58,7 +57,6 @@ export class RegisterComponent implements OnInit {
   
   // submitForm() {
   //   const formData = this.registerForm.value;
-
   //   this.jwtService.register(formData).subscribe(
   //     response => {
   //       alert('Inscription réussie !');
@@ -89,8 +87,9 @@ export class RegisterComponent implements OnInit {
         }
       }
     );
+    console.log(this.registerForm.get("userName")?.value)
+    console.log(this.registerForm.get("password")?.value)
+    console.log(this.registerForm.get("email")?.value)
+    console.log(this.registerForm.get("gender")?.value)
   }
-  
-
-
 }

@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent {
-  userName: string | null = null; // Stocke le nom de l'utilisateur
+  userName: string='' ; // Stocke le nom de l'utilisateur
   notifications: string[] = [];
   menuOpen: boolean = false;
   tableauClasse!:AppoitementType[]
@@ -40,14 +40,10 @@ export class UserDashboardComponent {
   ) {}
 
   ngOnInit() {
+    this.loadUserName();
     this.notificationService.getNotifications().subscribe((notifications) => {
       this.notifications = notifications;
-      this.loadUserName();
     });
-
-    this.loadUserName();
-      
-  this.getAppointment();
   }
 
   // Méthode pour changer de section
@@ -78,23 +74,30 @@ export class UserDashboardComponent {
 
   loadUserName(): void {
     // Afficher le contenu complet du token pour le débogage
-    this.jwtService.getDecodedToken();
-    this.userName = this.jwtService.getUserName();
+    const decodedToken = this.jwtService.getDecodedToken();
+    console.log("📜 Token décodé :", decodedToken);
     
     // Récupérer le username
-    this.userName = this.jwtService.getUserName();
-    console.log("Nom d'utilisateur récupéré: ", this.userName);
+    this.userName = this.jwtService.getUserName() || '';
+    console.log("👤 Nom d'utilisateur affiché :", this.userName);
     
-    // Si aucun username n'est trouvé, essayer de déboguer
+    //Retirer la partie avant le @ si c'est un email
+    if (this.userName.includes('@')) {
+      this.userName = this.userName.split('@')[0];
+      console.log("👤 Nom d'utilisateur formaté :", this.userName);
+    }
+    
+    // Si aucun username n'est trouvé
     if (!this.userName) {
       console.warn("⚠️ Aucun username trouvé dans le token JWT");
+      console.log("💡 Vérifiez que le backend envoie bien le champ 'sub' ou 'username' dans le JWT");
     }
   }
 
 
   logout(): void {
     this.jwtService.removeToken();
-    this.userName = null; // Supprime le nom affiché
+    this.userName = ''; // Supprime le nom affiché
     this.menuOpen = false; // Ferme le menu
     this.router.navigateByUrl('/connex'); // Redirection vers la page de connexion
   }
@@ -119,8 +122,7 @@ export class UserDashboardComponent {
   openPopup(type: string) {
     this.popupType = type;
     this.showPopup = true;
-    this.cdr.detectChanges();
-    
+    this.cdr.detectChanges(); 
     // Définir le contenu selon le type de popup
     switch(type) {
       case 'nutrition':

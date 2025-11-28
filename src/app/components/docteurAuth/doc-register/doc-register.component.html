@@ -53,7 +53,7 @@
                 </div>
             </div>
             
-            <form [formGroup]="registerForm" (ngSubmit)="Register()">
+            <form [formGroup]="registerForm" (ngSubmit)="Register()" >
                 <!-- Step 1: Personal Information -->
                 <div class="step-content active" id="step1">
                     <!-- Contenu de l'étape 1 inchangé -->
@@ -91,7 +91,8 @@
                     
                     <div class="step-buttons">
                         <div></div>
-                        <button type="button" class="next-button" data-step="2">
+                        <button type="button" class="next-button" data-step="2"
+                       >
                             Suivant
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                 <path d="M5 12h14"></path>
@@ -104,27 +105,22 @@
                 <!-- Step 2: Professional Information -->
                 <div class="step-content" id="step2">
                     <!-- Contenu de l'étape 2 inchangé -->
-                    <div class="form-group">
-                        <label for="speciality">Spécialité</label>
-                        <select id="speciality" class="input-field" formControlName="speciality" required>
+                    <!-- <div class="form-group">
+                        <label for="speciality">Spécialité</label> 
+                        <!-- <pre>{{ specialities | json }}</pre> -->
+                        <!-- <select id="speciality" class="form-select" formControlName="speciality" (change)="onSpecialityChange($event)" required>
                             <option value="" disabled selected>Sélectionnez votre spécialité</option>
-                            <option value="GENERAL">Médecin généraliste</option>
-                            <option value="CARDIO">Cardiologie</option>
-                            <option value="DERMA">Dermatologie</option>
-                            <option value="GASTRO">Gastro-entérologie</option>
-                            <option value="GYNECO">Gynécologie</option>
-                            <option value="OPHTALMO">Ophtalmologie</option>
-                            <option value="PEDIATRE">Pédiatrie</option>
-                            <option value="PSYCHIATRE">Psychiatrie</option>
-                            <option value="AUTRE">Autre spécialité</option>
-                        </select>
-                        <div class="select-icon">
+                            <option *ngFor="let spec of specialities" [value]="spec.value">
+                              {{spec.label}}
+                            </option>
+                        </select> -->
+                        <!-- <div class="select-icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
-                        </div>
-                    </div>
-                    
+                        </div> -->
+                    <!-- </div> -->
+                     
                     <div class="form-group">
                         <label for="licence">Numéro de licence</label>
                         <input type="text" id="licence" class="input-field" placeholder="Entrez votre numéro de licence/RPPS" formControlName="licence">
@@ -170,6 +166,39 @@
                             </svg>
                         </div>
                     </div>
+                    <div class="creneaux-section">
+                        <h3 style="margin-bottom: 20px; color: #333;">Définissez vos créneaux de disponibilité</h3>
+                        
+                        <div formArrayName="creneaux">
+                            <div *ngFor="let creneau of creneaux.controls; let i = index" [formGroupName]="i" class="creneau-item">
+                                <div class="creneau-field">
+                                    <label>Jour</label>
+                                    <select class="input-field" formControlName="jour" required>
+                                        <option value="">Sélectionnez un jour</option>
+                                        <option *ngFor="let jour of jours" [value]="jour">{{jour}}</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="creneau-field">
+                                    <label>Heure début</label>
+                                    <input type="time" class="input-field" formControlName="heureDebut" required>
+                                </div>
+                                
+                                <div class="creneau-field">
+                                    <label>Heure fin</label>
+                                    <input type="time" class="input-field" formControlName="heureFin" required>
+                                </div>
+                                
+                                <button type="button" class="btn-remove-creneau" (click)="supprimerCreneau(i)">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn-add-creneau" (click)="ajouterCreneau()">
+                            + Ajouter un créneau
+                        </button>
+                    </div>
                     
                     <div class="step-buttons">
                         <button type="button" class="prev-button" data-step="1">
@@ -179,7 +208,8 @@
                             </svg>
                             Précédent
                         </button>
-                        <button type="button" class="next-button" data-step="3">
+                        <button type="button" class="next-button" data-step="3"
+                        >
                             Suivant
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                 <path d="M5 12h14"></path>
@@ -233,7 +263,7 @@
                             </svg>
                             Précédent
                         </button>
-                        <button type="button" class="next-button" data-step="4">
+                        <button type="button" class="next-button" data-step="4" (click)="validateCurrentStep(3)">
                             Suivant
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                 <path d="M5 12h14"></path>
@@ -288,7 +318,7 @@
                             </svg>
                             Précédent
                         </button>
-                        <button type="submit" class="submit-button">
+                        <button type="submit" class="submit-button" (click)="validateCurrentStep(4)">
                             S'inscrire
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                                 <path d="M5 12h14"></path>

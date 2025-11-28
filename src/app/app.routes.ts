@@ -23,7 +23,7 @@ import { ConseilComponent } from './components/body/conseil/conseil.component';
 import { UserDashboardComponent } from './components/body/dashboard/user-dashboard/user-dashboard.component';
 import { DocRegisterComponent } from './components/docteurAuth/doc-register/doc-register.component';
 import { DocLoginComponent } from './components/docteurAuth/doc-login/doc-login.component';
-import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
+
 import { MesRendezVousComponent } from './components/body/dashboard/mes-rendez-vous/mes-rendez-vous.component';
 import { MesPatientsComponent } from './components/body/dashboard/mes-patients/mes-patients.component';
 import { MesConseilsComponent } from './components/body/dashboard/mes-conseils/mes-conseils.component';
@@ -35,8 +35,8 @@ import { MesFormationsComponent } from './components/body/dashboard/mes-formatio
 import { LanguesParleesComponent } from './components/body/dashboard/langues-parlees/langues-parlees.component';
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
-
-// import { ConnexionComponent } from './connexion/connexion.component';
+import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
+1
 
 export const routes: Routes = [
   {
@@ -44,11 +44,11 @@ export const routes: Routes = [
     component: RegisterComponent,
   },
 
-  {
-    path: 'Dash',
-    redirectTo: 'Dash',
-    pathMatch: 'full',
-  },
+  // {
+  //   path: '',
+  //   redirectTo: 'Dash',
+  //   pathMatch: 'full',
+  // },
   {
     path: 'Dash',
     component: DashboardComponent,
@@ -116,6 +116,7 @@ export const routes: Routes = [
     path: 'connex',
     component: ConnexionComponent,
   },
+  
   {
     path: 'conseil',
     component: ConseilComponent,
@@ -123,7 +124,7 @@ export const routes: Routes = [
   {
     path: 'UserDah',
     component: UserDashboardComponent,
-    canActivate: [authGuard],
+     canActivate: [authGuard],
   },
 
   {
@@ -135,11 +136,9 @@ export const routes: Routes = [
     path: 'DocLogin',
     component: DocLoginComponent,
   },
-  {
-    path: '**',
-    component: DashboardComponent,
-    pathMatch: 'full',
-  },
+  
+
+
   {
     path: 'DocDash',
     component: DocDashboardComponent,
@@ -188,24 +187,21 @@ export const routes: Routes = [
         path: 'Associations',
         component: AssociationsComponent,
       },
-    ],
-    // ,canActivate: [authGuard],
+    ]
+     ,canActivate: [authGuard],
   },
 
-  // {
-  //     path: 'Dash',
-  //     component: BodyComponent,
-  //     canActivate: [authGuard], data: { role: 'USER' }
-  // },
   {
     path: 'Admin',
     component: AdminComponent,
     canActivate: [authGuard],
     data: { role: 'ADMIN' },
   },
-  //  {
-  //      path: 'UserDah', component: UserDashboardComponent,
-  //      canActivate: [authGuard],
 
-  //  },
+  {
+    path: '**',
+    component: DashboardComponent,
+    pathMatch: 'full',
+  },
+  
 ];

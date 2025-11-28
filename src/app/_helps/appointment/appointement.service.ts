@@ -23,4 +23,7 @@ export class AppointementService {
   getAppById(id: number): Observable<Appoitement> {
     return this.http.get<Appoitement>(`${this.matiereUrl}/get/${id}`);
   }
+  deleteAppointment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.matiereUrl}/delete/${id}`);
+  }
 }

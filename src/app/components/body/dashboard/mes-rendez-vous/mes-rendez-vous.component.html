@@ -1,10 +1,200 @@
-<div class="container">
-  <h1>📅 Mes Rendez-vous</h1>
-  <div class="rendez-vous-list">
-    <div *ngFor="let rdv of rendezVous" class="rendez-vous-card">
-      <div class="rdv-date">{{ rdv.date }} à {{ rdv.heure }}</div>
-      <div class="rdv-patient">Patient: {{ rdv.patient }}</div>
-      <div class="rdv-motif">Motif: {{ rdv.motif }}</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Rendez-vous</title>
+
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>📅 Gestion des Rendez-vous</h2>
+        <span class="badge-count" id="count">0 rendez-vous</span>
+      </div>
+      
+      <div class="table-container">
+        <table id="appointmentsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Les données seront insérées ici -->
+          </tbody>
+        </table>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <h3>Aucun rendez-vous</h3>
+          <p>Les demandes de rendez-vous apparaîtront ici</p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+
+  <script>
+    // Données d'exemple
+    const appointments = [
+      {
+        id: 1,
+        name: 'Marie Dubois',
+        date: '2024-12-15',
+        heure: '09:00',
+        type: 'Consultation générale',
+        description: 'Contrôle de routine et renouvellement ordonnance',
+        statut: 'En attente'
+      },
+      {
+        id: 2,
+        name: 'Jean Martin',
+        date: '2024-12-15',
+        heure: '10:30',
+        type: 'Suivi',
+        description: 'Suivi post-opératoire après intervention',
+        statut: 'En attente'
+      },
+      {
+        id: 3,
+        name: 'Sophie Bernard',
+        date: '2024-12-16',
+        heure: '14:00',
+        type: 'Urgence',
+        description: 'Douleurs abdominales intenses depuis 2 jours',
+        statut: 'En attente'
+      },
+      {
+        id: 4,
+        name: 'Pierre Leroy',
+        date: '2024-12-16',
+        heure: '15:30',
+        type: 'Vaccination',
+        description: 'Rappel vaccin grippe saisonnière',
+        statut: 'Validé'
+      },
+      {
+        id: 5,
+        name: 'Claire Petit',
+        date: '2024-12-17',
+        heure: '11:00',
+        type: 'Consultation spécialisée',
+        description: 'Résultats analyses et discussion traitement',
+        statut: 'En attente'
+      }
+    ];
+
+    function getStatusClass(statut) {
+      switch(statut?.toLowerCase()) {
+        case 'validé':
+          return 'status-validated';
+        case 'rejeté':
+          return 'status-rejected';
+        case 'en cours':
+          return 'status-started';
+        default:
+          return 'status-pending';
+      }
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('fr-FR', { 
+        day: '2-digit', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      const emptyState = document.getElementById('emptyState');
+      const countBadge = document.getElementById('count');
+      
+      if (appointments.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        countBadge.textContent = '0 rendez-vous';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      countBadge.textContent = `${appointments.length} rendez-vous`;
+
+      tbody.innerHTML = appointments.map(app => `
+        <tr>
+          <td class="id-cell">#${app.id}</td>
+          <td class="name-cell">${app.name}</td>
+          <td class="date-cell">${formatDate(app.date)}</td>
+          <td class="time-cell">${app.heure}</td>
+          <td><span class="type-cell">${app.type}</span></td>
+          <td class="description-cell" title="${app.description}">${app.description}</td>
+          <td>
+            <span class="status-badge ${getStatusClass(app.statut)}">
+              ${app.statut || 'Non défini'}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-success" onclick="validerRendezVous(${app.id})" ${app.statut === 'Validé' ? 'disabled' : ''}>
+                ✓ Valider
+              </button>
+              <button class="btn btn-danger" onclick="rejeterRendezVous(${app.id})" ${app.statut === 'Rejeté' ? 'disabled' : ''}>
+                ✗ Rejeter
+              </button>
+              <button class="btn btn-primary" onclick="debuterRendezVous(${app.id})" ${app.statut !== 'Validé' ? 'disabled' : ''}>
+                ▶ Débuter
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function validerRendezVous(id) {
+      const appointment = appointments.find(app => app.id === id);
+      if (appointment) {
+        appointment.statut = 'Validé';
+        renderTable();
+        alert(`✓ Rendez-vous #${id} validé avec succès`);
+      }
+    }
+
+    function rejeterRendezVous(id) {
+      const appointment = appointments.find(app => app.id === id);
+      if (appointment) {
+        appointment.statut = 'Rejeté';
+        renderTable();
+        alert(`✗ Rendez-vous #${id} rejeté`);
+      }
+    }
+
+    function debuterRendezVous(id) {
+      const appointment = appointments.find(app => app.id === id);
+      if (appointment && appointment.statut === 'Validé') {
+        appointment.statut = 'En cours';
+        renderTable();
+        alert(`▶ Rendez-vous #${id} débuté`);
+        // Ici vous pouvez ajouter la redirection
+        // window.location.href = '/consultation/' + id;
+      }
+    }
+
+    // Initialiser le tableau
+    renderTable();
+  </script>
+</body>
+</html>

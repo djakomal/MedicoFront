@@ -18,7 +18,7 @@ import { JwtService } from '../../_helps/jwt/jwt.service';
 @Component({
   selector: 'app-connexion',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule ,FormsModule],
   templateUrl: './connexion.component.html',
   styleUrl: './connexion.component.css'
 })
@@ -37,7 +37,7 @@ export class ConnexionComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email: ['', Validators.required, Validators.email],
+      email: ['', Validators.required],
       password: ['', Validators.required],
     });
       // Récupérer le nom de l'utilisateur s'il est déjà connecté
@@ -45,7 +45,6 @@ export class ConnexionComponent implements OnInit {
   }
   submitForm(): void {
     const credentials = this.loginForm.value;
-  
     this.jwtService.login(credentials).subscribe(
       (response: any) => {
         console.log("reponse du backend ",response);  // Affiche la réponse complète
