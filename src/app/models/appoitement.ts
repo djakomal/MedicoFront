@@ -10,7 +10,7 @@ import { Docteur } from "./docteur";
 
 export class Appoitement {
 
- id!: number; // Optionnel, généré par le backend
+  id!: number; // Optionnel, généré par le backend
   firstname!: string;
   lastname!: string;
   birthdate!: string; // Format YYYY-MM-DD
@@ -28,7 +28,7 @@ export class Appoitement {
   preferredTime!: 'morning' | 'afternoon' | 'evening';
   
   // Disponibilités alternatives
-  altAvailability!: {
+   altAvailability!: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;

@@ -1,3 +1,4 @@
+import { JwtService } from './../../../../_helps/jwt/jwt.service';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -50,7 +51,9 @@ export class DocDashboardComponent implements OnInit {
   selectedDay: number = new Date().getDate();
   currentWeek: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private JwtService:JwtService,
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -155,4 +158,5 @@ export class DocDashboardComponent implements OnInit {
       }
     });
   }
+
 }

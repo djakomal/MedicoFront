@@ -19,7 +19,6 @@ import { BodyComponent } from './components/body/body.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AppointComponent } from './components/body/appoint/appoint.component';
 import { authGuard } from './_helps/Guard/auth.guard';
-import { ConseilComponent } from './components/body/conseil/conseil.component';
 import { UserDashboardComponent } from './components/body/dashboard/user-dashboard/user-dashboard.component';
 import { DocRegisterComponent } from './components/docteurAuth/doc-register/doc-register.component';
 import { DocLoginComponent } from './components/docteurAuth/doc-login/doc-login.component';
@@ -36,6 +35,7 @@ import { LanguesParleesComponent } from './components/body/dashboard/langues-par
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
 import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
+import { ConseilComponent } from './components/body/conseil/conseil.component';
 1
 
 export const routes: Routes = [
@@ -119,12 +119,12 @@ export const routes: Routes = [
   
   {
     path: 'conseil',
-    component: ConseilComponent,
+    component:ConseilComponent,
   },
   {
     path: 'UserDah',
     component: UserDashboardComponent,
-     canActivate: [authGuard],
+    //  canActivate: [authGuard],
   },
 
   {

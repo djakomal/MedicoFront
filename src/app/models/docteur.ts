@@ -1,4 +1,5 @@
-import { Speciality } from "./speciality";
+import { Creneau } from './Creneau';
+import {Speciality} from './speciality'
 
 export class Docteur {
   id!: number;
@@ -14,7 +15,7 @@ export class Docteur {
   numeroLicence!: string;
   anneesExperience!: string;
   photoUrl!: string;
-//   creneau?: Creneau[];
+ creneau?: Creneau[];
   cvurl!: string;
   password!: string;
   confirmpassword!: string;

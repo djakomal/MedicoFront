@@ -17,7 +17,7 @@ export class AppointTypeServiceService {
      private http: HttpClient,
      private jwtService:JwtService
    ) { }
-  public addAppoitementType(appoitement: AppoitementType ): Observable<AppoitementType> {
+  public addAppoitement(appoitement: AppoitementType ): Observable<AppoitementType> {
     const token = this.jwtService.getToken();
 
   

@@ -8,11 +8,12 @@ import { AppoitementType } from '../../../../models/appoitementType';
 import { AppointmentComponent } from "../../../admin/main/appointment/appointment.component";
 import { AppointComponent } from "../../appoint/appoint.component";
 import { CommonModule } from '@angular/common';
+import { ConseilComponent } from "../../conseil/conseil.component";
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [ AppointComponent,CommonModule],
+  imports: [AppointComponent, CommonModule, ConseilComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })

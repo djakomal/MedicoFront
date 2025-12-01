@@ -120,8 +120,7 @@ export class MesConseilsComponent implements OnInit {
     // Marque tous les contrôles comme touchés
     Object.keys(this.conseilForm.controls).forEach(key => {
       this.conseilForm.get(key)!.markAsTouched();
-      console.log('Tentative submit — form valid ?', this.conseilForm.valid);
-      console.log('Form value:', this.conseilForm.value);
+
     });
 
     if (this.conseilForm.invalid) {
@@ -146,7 +145,9 @@ export class MesConseilsComponent implements OnInit {
         this.success = 'Conseil créé avec succès !';
         this.loading = false;
         setTimeout(() => {
-          this.router.navigate(['/conseils']);
+          alert("Conseil ajouter avec succes");
+          // this.router.navigate(['/Docdash']);
+          this.router.navigateByUrl("/Docdash");
         }, 2000);
       },
       error: (err) => {
@@ -155,6 +156,9 @@ export class MesConseilsComponent implements OnInit {
         this.loading = false;
       }
     });
+
+    console.log('Tentative submit — form valid ?', this.conseilForm.valid);
+    console.log('Form value:', this.conseilForm.value);
   }
 
   onReset(): void {

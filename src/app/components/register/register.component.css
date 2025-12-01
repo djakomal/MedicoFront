@@ -10,8 +10,8 @@
   --primary-light: #4d94ff;
   --primary-dark: #004c99;
   --secondary: #00aaff;
-  --text-dark: #333;
-  --text-muted: #717171;
+  --text-dark: #ffffff;
+  --text-muted: #ffffff;
   --background: #f5f9ff;
   --white: #ffffff;
   --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -57,6 +57,7 @@ body {
 }
 
 .welcome-text p {
+  color:#ffffff;
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
@@ -97,6 +98,7 @@ body {
 }
 
 .benefit-text p {
+  color:#ffffff;
   font-size: 0.9rem;
   opacity: 0.8;
 }
@@ -135,7 +137,7 @@ body {
 }
 
 .register-header p {
-  color: var(--text-muted);
+  color: var(--white);
   font-size: 0.95rem;
 }
 

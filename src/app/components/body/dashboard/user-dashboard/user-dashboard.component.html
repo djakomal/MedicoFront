@@ -225,15 +225,16 @@
     </div>
 
     <!-- Advice content -->
-    <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
+     <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
           <p>Conseils santé</p>
           <p>Retrouvez des conseils personnalisés pour maintenir et améliorer votre santé</p>
         </div>
       </div>
+      <app-conseil></app-conseil>
 
-      <div class="service-categories">
+      <!-- <div class="service-categories">
         <div class="service-category">
           <h3>Nutrition</h3>
           <p>Alimentation équilibrée et diététique</p>
@@ -288,8 +289,9 @@
             <button class="service-btn" (click)="openPopup('sommeil')">Lire l'article</button>
           </div>
         </div>
-      </div>
-    </div>
+      </div> -->
+    </div> 
+  
 
     <!-- Medical File content -->
     <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">

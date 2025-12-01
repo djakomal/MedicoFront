@@ -69,7 +69,7 @@
                 <a href="DocRegist" class="register-link">Créer un compte</a>
             </div>
             
-            <form id="loginForm" [formGroup]="loginForm" (ngSubmit)="submitForm()">
+            <form  [formGroup]="loginForm" (ngSubmit)="submitForm()">
                 <div class="form-group">
                     <label for="email">Adresse email</label>
                     <input type="email" id="email" class="input-field" placeholder="Entrez votre email" formControlName="email"  required>
