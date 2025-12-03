@@ -10,8 +10,8 @@
   --primary-light: #4d94ff;
   --primary-dark: #004c99;
   --secondary: #00aaff;
-  --text-dark: #ffffff;
-  --text-muted: #ffffff;
+  --text-dark: #333333;
+  --text-muted: #666666;
   --background: #f5f9ff;
   --white: #ffffff;
   --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -57,7 +57,7 @@ body {
 }
 
 .welcome-text p {
-  color:#ffffff;
+  color: #ffffff;
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 2rem;
@@ -98,7 +98,7 @@ body {
 }
 
 .benefit-text p {
-  color:#ffffff;
+  color: #ffffff;
   font-size: 0.9rem;
   opacity: 0.8;
 }
@@ -137,7 +137,7 @@ body {
 }
 
 .register-header p {
-  color: var(--white);
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -162,6 +162,17 @@ body {
   background-color: #f9fafc;
   font-size: 1rem;
   transition: var(--transition);
+  position: relative;
+  z-index: 1; /* AJOUTÉ - Pour que le select soit au-dessus de l'icône */
+}
+
+/* AJOUTÉ - Style spécifique pour les select */
+select.input-field {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 2.5rem; /* Pour laisser de la place à l'icône */
 }
 
 .input-field:focus {
@@ -180,6 +191,8 @@ body {
   right: 1rem;
   top: 2.5rem;
   color: #b3b3b3;
+  pointer-events: none; /* AJOUTÉ */
+  z-index: 0; /* AJOUTÉ */
 }
 
 .select-icon {
@@ -187,6 +200,7 @@ body {
   right: 1rem;
   top: 2.5rem;
   pointer-events: none;
+  z-index: 0; /* AJOUTÉ - Pour que l'icône soit DERRIÈRE le select */
 }
 
 .password-toggle {
@@ -197,7 +211,9 @@ body {
   right: 1rem;
   top: 2.5rem;
   color: var(--text-muted);
+  z-index: 2; /* AJOUTÉ - Pour que le bouton soit cliquable */
 }
+
 .password-toggle:hover svg {
   stroke: var(--primary) !important;
   transition: stroke 0.2s ease;
@@ -256,14 +272,19 @@ body {
 }
 
 .register-button:hover {
-  background-color: #ffffffff;
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
-  color:blue;
   box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
 }
 
 .register-button:active {
   transform: translateY(0);
+}
+
+.register-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .login-option {

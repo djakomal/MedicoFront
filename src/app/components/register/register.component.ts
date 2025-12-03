@@ -29,8 +29,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required]],
-       gender: ['', [Validators.required]], // Initialisé avec une chaîne vide
+      username: ['', [Validators.required]], // Initialisé avec une chaîne vide
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
@@ -94,17 +93,17 @@ export class RegisterComponent implements OnInit {
       username: this.registerForm.get('username')?.value?.trim(),
       email: this.registerForm.get('email')?.value?.trim(),
       password: this.registerForm.get('password')?.value,
-      gender: this.registerForm.get('gender')?.value
+      // gender: this.registerForm.get('gender')?.value
     };
 
     console.log('📤 Données envoyées au backend:', registerData);
 
     // Vérification finale avant envoi
-    if (!registerData.gender || registerData.gender === '') {
-      console.error('❌ ERREUR: Gender est vide avant envoi!');
-      alert('Veuillez sélectionner votre sexe');
-      return;
-    }
+    // if (!registerData.gender || registerData.gender === '') {
+    //   console.error('❌ ERREUR: Gender est vide avant envoi!');
+    //   alert('Veuillez sélectionner votre sexe');
+    //   return;
+    // }
 
     this.jwtService.register(registerData).subscribe(
       response => {

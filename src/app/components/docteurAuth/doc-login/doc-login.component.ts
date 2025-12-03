@@ -26,7 +26,7 @@ export class DocLoginComponent  implements OnInit {
   
     ngOnInit(): void {
       this.loginForm = this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
+        username: ['', Validators.required],
         password: ['', Validators.required],
       });
         // Récupérer le nom de l'utilisateur s'il est déjà connecté

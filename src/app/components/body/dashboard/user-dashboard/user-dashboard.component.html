@@ -16,10 +16,12 @@
     </div>
     <!--je veux mettre le bouton profil qui deroule contenant le bouton deconnection  tres stylisé -->
     <div class="user-profile" (click)="toggleMenu()">
-      <div class="img-profile">👤</div>
-      <div class="dropdown-menu" [class.show]="menuOpen">
-        <button class="logout" (click)="logout()">Déconnexion</button>
-      </div>
+      <div class="img-profile"> 
+        <div class="dropdown-menu" [class.show]="menuOpen">
+          <button class="logout" (click)="logout()">Déconnexion</button>
+        </div>👤 {{ userName }}
+       </div>
+
     </div>
   </div>
 

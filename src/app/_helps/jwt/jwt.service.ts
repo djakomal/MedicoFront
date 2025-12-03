@@ -31,7 +31,7 @@ export class JwtService {
   }
 
   // 🔹 LOGIN DOCTEUR
-  loginDoc(credentials: { email: string; password: string }): Observable<any> {
+  loginDoc(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(this.baseURL + '/docteur/login', credentials, {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(

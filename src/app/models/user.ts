@@ -5,15 +5,13 @@ import { Role } from "./role";
   })
 
 export class User {
-
-    // role= [{ id: 1, name: 'ROLE_USER' }];
     id!: number;
     username!: string;
     email!: string;
     password!: string;
-    confirmPassword!:String;
+    confirmPassword!:string;
     firstName!: string;
     lastName!: string;
     role!:string;
-    gender?: string; 
+    gender!: string; 
 }
