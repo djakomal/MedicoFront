@@ -295,16 +295,19 @@
     </div> 
   
 
+  
     <!-- Medical File content -->
     <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
           <p>Mon dossier médical</p>
           <p>Accédez à l'ensemble de vos informations médicales en toute sécurité</p>
-          <button class="appointment-btn">Télécharger mon dossier complet</button>
+          <button class="appointment-btn" (click)="downloadCompleteMedicalFile()">
+            📥 Télécharger mon dossier complet
+          </button>
         </div>
       </div>
-
+    
       <div class="service-categories">
         <div class="service-category">
           <h3>Antécédents</h3>
@@ -323,48 +326,53 @@
           <p>Allergies et intolérances</p>
         </div>
       </div>
-
+    
       <div class="service-list">
         <h3>Derniers documents médicaux</h3>
-
-        <div class="service-item">
-          <div class="service-icon">📄</div>
+    
+        <!-- ✅ Boucle sur les fichiers médicaux -->
+        <div class="service-item" *ngFor="let file of medicalFiles">
+          <div class="service-icon">{{ file.icon }}</div>
           <div class="service-details">
-            <h4>Analyse de sang</h4>
-            <p><strong>Date:</strong> 25 avril 2025</p>
-            <p><strong>Laboratoire:</strong> BioMed Paris</p>
-            <button class="service-btn">Consulter</button>
+            <h4>{{ file.title }}</h4>
+            <p><strong>Date:</strong> {{ file.date }}</p>
+            <p><strong>{{ file.type }}:</strong> {{ file.location }}</p>
+            <button class="service-btn" (click)="openMedicalFile(file.id)">
+              👁️ Consulter
+            </button>
           </div>
         </div>
-
-        <div class="service-item">
-          <div class="service-icon">📄</div>
-          <div class="service-details">
-            <h4>Ordonnance médicale</h4>
-            <p><strong>Date:</strong> 15 avril 2025</p>
-            <p><strong>Médecin:</strong> Dr. Martin</p>
-            <button class="service-btn">Consulter</button>
-          </div>
+      </div>
+    </div>
+    
+    <!-- ✅ Popup pour consulter les fichiers médicaux -->
+    <div class="popup-overlay" *ngIf="showMedicalFilePopup" (click)="closeMedicalFilePopup()">
+      <div class="popup-modal" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>{{ selectedMedicalFile?.title }}</h2>
+          <button class="popup-close" (click)="closeMedicalFilePopup()">&times;</button>
         </div>
-
-        <div class="service-item">
-          <div class="service-icon">📄</div>
-          <div class="service-details">
-            <h4>Radiographie pulmonaire</h4>
-            <p><strong>Date:</strong> 10 mars 2025</p>
-            <p><strong>Centre d'imagerie:</strong> Radiopole</p>
-            <button class="service-btn">Consulter</button>
-          </div>
-        </div>
-
-        <div class="service-item">
-          <div class="service-icon">📄</div>
-          <div class="service-details">
-            <h4>Compte-rendu ophtalmologique</h4>
-            <p><strong>Date:</strong> 3 mars 2025</p>
-            <p><strong>Médecin:</strong> Dr. Petit</p>
-            <button class="service-btn">Consulter</button>
-          </div>
+        
+        <div class="popup-content" [innerHTML]="selectedMedicalFile?.details"></div>
+        
+        <div class="popup-footer">
+          <button 
+            class="service-btn" 
+            (click)="downloadMedicalFile(selectedMedicalFile?.fileUrl, selectedMedicalFile?.title)"
+            style="margin-right: 10px;"
+          >
+            📥 Télécharger
+          </button>
+          <button 
+            class="service-btn" 
+            (click)="printMedicalFile()"
+            style="margin-right: 10px;"
+          >
+            🖨️ Imprimer
+          </button>
+          <button class="popup-btn-close" (click)="closeMedicalFilePopup()">
+            Fermer
+          </button>
         </div>
       </div>
     </div>
@@ -377,19 +385,7 @@
       
     </div>
 
-    <!-- Popup Modal -->
-    <div class="popup-overlay" *ngIf="showPopup" (click)="closePopup()">
-      <div class="popup-modal" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>{{ popupContent.title }}</h2>
-          <button class="popup-close" (click)="closePopup()">✕</button>
-        </div>
-        <div class="popup-content" [innerHTML]="popupContent.content"></div>
-        <div class="popup-footer">
-          <button class="popup-btn-close" (click)="closePopup()">Fermer</button>
-        </div>
-      </div>
-    </div>
+ 
   </div>
 </body>
 

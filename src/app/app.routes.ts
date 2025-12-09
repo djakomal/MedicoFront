@@ -29,13 +29,12 @@ import { MesConseilsComponent } from './components/body/dashboard/mes-conseils/m
 import { InfosPersonnellesComponent } from './components/body/dashboard/infos-personnelles/infos-personnelles.component';
 import { TypesConsultationsComponent } from './components/body/dashboard/types-consultations/types-consultations.component';
 import { MesHorairesComponent } from './components/body/dashboard/mes-horaires/mes-horaires.component';
-import { MesExperiencesComponent } from './components/body/dashboard/mes-experiences/mes-experiences.component';
 import { MesFormationsComponent } from './components/body/dashboard/mes-formations/mes-formations.component';
-import { LanguesParleesComponent } from './components/body/dashboard/langues-parlees/langues-parlees.component';
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
-import { DocDashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
+
 import { ConseilComponent } from './components/body/conseil/conseil.component';
+import { DocdashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
 1
 
 export const routes: Routes = [
@@ -141,7 +140,7 @@ export const routes: Routes = [
 
   {
     path: 'DocDash',
-    component: DocDashboardComponent,
+    component: DocdashboardComponent,
     children: [
       {
         path: 'MesRendezVous',
@@ -168,16 +167,8 @@ export const routes: Routes = [
         component: MesHorairesComponent,
       },
       {
-        path: 'MesExperiences',
-        component: MesExperiencesComponent,
-      },
-      {
         path: 'MesFormations',
         component: MesFormationsComponent,
-      },
-      {
-        path: 'LanguesParlees',
-        component: LanguesParleesComponent,
       },
       {
         path: 'Publications',

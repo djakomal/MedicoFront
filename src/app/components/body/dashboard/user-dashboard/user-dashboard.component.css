@@ -335,7 +335,7 @@ s
 
 .welcome-section {
   display: flex;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(240, 249, 255, 0.5) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, rgba(216, 219, 235, 0.952) 100%);
   border-radius: 15px;
   padding: 40px;
   margin-bottom: 40px;
@@ -343,6 +343,7 @@ s
   border: 1px solid rgba(30, 136, 229, 0.08);
   animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
+  border: 2px solid rgba(128, 148, 238, 0.1);
   overflow: hidden;
 }
 
@@ -353,9 +354,13 @@ s
   right: -10%;
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(0, 188, 212, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(228, 234, 235, 0.05) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
+}
+.welcome-section:hover::before {
+  animation: float 6s ease-in-out infinite;
+  transform: translate(-4);
 }
 
 @keyframes slideInDown {
@@ -392,7 +397,7 @@ s
   margin-bottom: 20px;
 }
 .appointment-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
   color: white;
   border: none;
   padding: 14px 32px;
@@ -403,7 +408,7 @@ s
   cursor: pointer;
   margin-top: 20px;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:linear-gradient(135deg, #8c8f9e 0%, #a099a7 100%);
   position: relative;
   overflow: hidden;
 }
@@ -430,8 +435,8 @@ s
 
 .appointment-btn:hover {
   transform: translateY(-4px);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
+  box-shadow:linear-gradient(135deg, #8c8f9e 0%, #a099a7 100%);
 }
 
 .appointment-btn:hover::before {
@@ -454,13 +459,13 @@ s
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(10, 10, 10, 0.3), transparent);
   transition: left 0.5s;
 }
 
 .appointment-btn:hover {
   transform: translateY(-3px);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: linear-gradient(135deg, #667eea 0%, #bebdc0 100%);
 }
 
 .appointment-btn:hover::before {
@@ -480,11 +485,11 @@ s
   background-color: white;
   border-radius: 15px;
   padding: 20px;
-  box-shadow:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:linear-gradient(135deg, #364586 50%, #3541ad 100%);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(30, 136, 229, 0.1);
+  border: 2px solid rgba(46, 46, 46, 0.1);
 }
 
 .card::before {
@@ -500,7 +505,7 @@ s
 
 .card:hover {
   transform: translateY(-12px) scale(1);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
 }
 
 .card:hover::before {
@@ -533,7 +538,7 @@ s
 }
 
 .card:hover h3 {
-  color: #00bcd4;
+  color: #f6f8f8;
   transform: translateX(4px);
 }
 .card p {
@@ -555,14 +560,14 @@ s
   background-color: white;
   border-radius: 15px;
   padding: 20px;
-  box-shadow:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:linear-gradient(135deg, #161616 0%, #181818 100%);
   flex: 1;
   min-width: 250px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(30, 136, 229, 0.1);
+  border: 1px solid rgba(22, 22, 22, 0.1);
 }
 
 .service-category::after {
@@ -575,9 +580,9 @@ s
 }
 
 .service-category:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background: linear-gradient(135deg, #ffffff 0%, rgba(240, 249, 255, 0.5) 100%);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: linear-gradient(135deg, #ffffff 0%, #111111 100%);
+  background: linear-gradient(135deg, #ffffff 0%, rgb(255, 255, 255) 100%);
 }
 
 .service-category:hover::after {
@@ -585,18 +590,18 @@ s
 }
 
 .service-category h3 {
-  color: #1e88e5;
+  color: #0c0c0c;
   margin-bottom: 10px;
   transition: all 0.3s ease;
   position: relative;
   z-index: 1;
 }
 .service-list {
-  background: linear-gradient(135deg, #ffffff 0%, rgba(240, 249, 255, 0.3) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, rgba(250, 250, 250, 0.3) 100%);
   border-radius: 15px;
   padding: 30px;
-  box-shadow: 0 8px 25px rgba(30, 136, 229, 0.12);
-  border: 1px solid rgba(30, 136, 229, 0.08);
+  box-shadow: 3px 8px 25px rgba(27, 27, 27, 0.12);
+  border: 1px solid rgba(61, 61, 61, 0.08);
   animation: listSlideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -616,8 +621,8 @@ s
   padding: 20px;
   margin-bottom: 10px;
   background: linear-gradient(135deg, rgba(30, 136, 229, 0.02) 0%, rgba(0, 188, 212, 0.02) 100%);
-  border-radius: 12px;
-  border-left: 4px solid #1e88e5;
+  border-radius: 14px ;
+   border: 0.1rem solid #e6e7e7; 
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
@@ -648,9 +653,11 @@ s
 }
 
 .service-item:hover {
-  background: linear-gradient(135deg, rgba(30, 136, 229, 0.08) 0%, rgba(0, 188, 212, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(248, 248, 250, 0.08) 0%, rgba(247, 247, 248, 0.08) 100%);
+  color:#ffffff;
+  border: 1px solid rgba(165, 166, 167, 0.2);
   transform: translateX(8px);
-  box-shadow: 0 6px 20px rgba(30, 136, 229, 0.15);
+  box-shadow: 3px 6px 20px rgba(36, 36, 36, 0.15);
 }
 
 .service-item:hover::before {
@@ -661,7 +668,7 @@ s
   margin-bottom: 0;
 }
 .service-icon {
-  background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
   width: 70px;
   height: 70px;
   border-radius: 15px;
@@ -670,10 +677,10 @@ s
   justify-content: center;
   font-size: 32px;
   margin-right: 20px;
-  color: #1e88e5;
+  color: #b4d1eb;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 6px 18px rgba(30, 136, 229, 0.25), inset 0 1px 0 rgba(255,255,255,0.8);
-  border: 2px solid rgba(0, 188, 212, 0.3);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.986);
+  border: 2px solid rgba(114, 115, 116, 0.3);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -684,7 +691,7 @@ s
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 188, 212, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(181, 203, 206, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 0;
@@ -703,7 +710,7 @@ s
 
 .service-item:hover .service-icon {
   transform: scale(1.12) rotate(-5deg);
-  box-shadow: 0 12px 30px rgba(30, 136, 229, 0.35), inset 0 1px 0 rgba(255,255,255,1);
+  box-shadow: 0 12px 30px rgba(236, 237, 238, 0.35), inset 0 1px 0 rgba(255,255,255,1);
 }
 
 .service-item:hover .service-icon::before {
@@ -729,7 +736,7 @@ s
 }
 
 .service-item:hover .service-details h4 {
-  color: #00bcd4;
+  color: #545388;
   text-shadow: 0 0 8px rgba(0, 188, 212, 0.2);
 }
 
@@ -755,7 +762,7 @@ s
   font-size: 14px;
   letter-spacing: 0.5px;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 6px 16px rgba(30, 136, 229, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: 0 6px 16px rgba(69, 86, 133, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
   position: relative;
   overflow: hidden;
   z-index: 2;
@@ -1105,7 +1112,8 @@ input:focus, textarea:focus, select:focus {
 }
 
 .logout {
-  color: #dc3545;
+  
+  color: #070707;
 }
 
 .logout:hover {
@@ -1115,5 +1123,5 @@ input:focus, textarea:focus, select:focus {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  color: white;
+  color: rgb(26, 25, 25);
 }

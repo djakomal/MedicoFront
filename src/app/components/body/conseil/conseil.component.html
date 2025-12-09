@@ -1,342 +1,99 @@
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Medico - Santé et Bien-être</title>
-</head>
-<body>
 
-
-    <div class="container">
-        <div class="search-filters">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Rechercher un conseil..." />
-                <button onclick="searchConseils()">🔍 Rechercher</button>
-            </div>
-            
-            <div class="categories-filter">
-                <button class="active" onclick="filterByCategorie('Tous')">Tous</button>
-                <button onclick="filterByCategorie('VIRUS ET ÉPIDÉMIES')">VIRUS ET ÉPIDÉMIES</button>
-                <button onclick="filterByCategorie('AMOUR ET SEXO')">AMOUR ET SEXO</button>
-                <button onclick="filterByCategorie('BIEN-ÊTRE')">BIEN-ÊTRE</button>
-                <button onclick="filterByCategorie('NUTRITION')">NUTRITION</button>
-                <button onclick="filterByCategorie('SANTÉ')">SANTÉ</button>
-                <button onclick="filterByCategorie('PÉDIATRIE / PARENTALITÉ')">PÉDIATRIE / PARENTALITÉ</button>
-            </div>
-        </div>
-
-        <div class="articles-grid" id="articlesGrid"></div>
-
-        <div id="noResults" class="no-results" style="display: none;">
-            <p>Aucun conseil trouvé</p>
-        </div>
+<div class="container">
+  <!-- Barre de recherche et filtres -->
+  <div class="search-filters">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery"
+        placeholder="Rechercher un conseil..." 
+      />
+      <button (click)="searchConseils()">🔍 Rechercher</button>
     </div>
-
-    <!-- Modal Popup -->
-    <div id="conseilModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <div id="modalBody"></div>
-        </div>
+    
+    <div class="categories-filter">
+      <button 
+        *ngFor="let cat of categories"
+        [class.active]="selectedCategorie === cat"
+        (click)="filterByCategorie(cat)"
+      >
+        {{ cat }}
+      </button>
     </div>
+  </div>
 
-    <script>
-        const conseilsData = [
-            {
-                id: 1,
-                titre: "DENGUE",
-                auteur: "Dr. Kokou Géoffroy DISSE",
-                datePublication: "2024-07-17",
-                contenu: "La dengue est une maladie virale transmise par les moustiques. Elle se manifeste par de la fièvre, des douleurs musculaires et articulaires...",
-                tags: ["VIRUS ET ÉPIDÉMIES"],
-                nombreVues: 1250,
-                svgType: "dengue"
-            },
-            {
-                id: 2,
-                titre: "PrEP VIH",
-                auteur: "Dr. Kokou Géoffroy DISSE",
-                datePublication: "2024-07-17",
-                contenu: "La prophylaxie pré-exposition (PrEP) est une méthode de prévention du VIH pour les personnes non infectées mais à risque élevé...",
-                tags: ["AMOUR ET SEXO", "VIRUS ET ÉPIDÉMIES"],
-                nombreVues: 980,
-                svgType: "prep"
-            },
-            {
-                id: 3,
-                titre: "8 solutions naturelles pour faire baisser votre glycémie !",
-                auteur: "Dr.BABA",
-                datePublication: "2024-01-16",
-                contenu: "Découvrez des méthodes naturelles et efficaces pour contrôler votre taux de sucre dans le sang. L'alimentation, l'exercice et certaines plantes peuvent vous aider...",
-                tags: ["BIEN-ÊTRE", "NUTRITION", "SANTÉ"],
-                nombreVues: 2340,
-                svgType: "glycemie"
-            },
-            {
-                id: 4,
-                titre: "Alimentation saine pour renforcer l'immunité",
-                auteur: "Medico",
-                datePublication: "2024-01-15",
-                contenu: "Une alimentation équilibrée riche en fruits, légumes et nutriments essentiels est la clé pour maintenir un système immunitaire fort...",
-                tags: ["NUTRITION", "BIEN-ÊTRE"],
-                nombreVues: 1890,
-                svgType: "alimentation"
-            },
-            {
-                id: 5,
-                titre: "Prévention contre les moustiques porteurs de maladies",
-                auteur: "Dr. Kokou Géoffroy DISSE",
-                datePublication: "2024-07-14",
-                contenu: "Les moustiques peuvent transmettre de nombreuses maladies dangereuses. Apprenez les meilleures méthodes de prévention et de protection...",
-                tags: ["VIRUS ET ÉPIDÉMIES", "SANTÉ"],
-                nombreVues: 1560,
-                svgType: "moustique"
-            },
-            {
-                id: 6,
-                titre: "Comment gérer la fièvre chez l'enfant",
-                auteur: "Mr.Kokou",
-                datePublication: "2024-01-12",
-                contenu: "La fièvre chez l'enfant peut être inquiétante pour les parents. Découvrez quand s'inquiéter et comment réagir de manière appropriée...",
-                tags: ["PÉDIATRIE / PARENTALITÉ", "SANTÉ"],
-                nombreVues: 3120,
-                svgType: "fievre"
-            }
-        ];
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="loading">
+    <p>⏳ Chargement des conseils...</p>
+  </div>
 
-        let currentConseils = [...conseilsData];
-        let selectedCategorie = "Tous";
+  <!-- Message d'erreur -->
+  <div *ngIf="error && !loading" class="error">
+    <p>❌ {{ error }}</p>
+    <button (click)="loadConseils()" class="btn-retry">🔄 Réessayer</button>
+  </div>
 
-        function getSVG(type) {
-            const svgs = {
-                dengue: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="dengueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#1d6a96;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#4a98c9;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#e67e22;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#dengueGradient)"/>
-                    <circle cx="200" cy="100" r="30" fill="#27ae60" opacity="0.6"/>
-                    <text x="40" y="160" font-family="Arial" font-size="32" fill="white" font-weight="bold">DENGUE</text>
-                </svg>`,
-                prep: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%" fill="#e6f0f7"/>
-                    <text x="140" y="80" font-family="Arial" font-size="68" fill="#ff5252" font-weight="bold">PrEP</text>
-                    <g transform="translate(80,130)">
-                        <ellipse cx="0" cy="0" rx="20" ry="10" fill="#5d9cec" />
-                    </g>
-                    <g transform="translate(120,140)">
-                        <ellipse cx="0" cy="0" rx="20" ry="10" fill="#5d9cec" />
-                    </g>
-                </svg>`,
-                glycemie: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%" fill="#f5f5f5"/>
-                    <rect x="150" y="30" width="80" height="120" rx="5" fill="#e0e0e0"/>
-                    <rect x="160" y="40" width="60" height="40" rx="2" fill="#f0f0f0"/>
-                </svg>`,
-                alimentation: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%" fill="#f9fbe7"/>
-                    <circle cx="100" cy="70" r="30" fill="#e57373"/>
-                    <circle cx="160" cy="80" r="25" fill="#ffa726"/>
-                </svg>`,
-                moustique: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%" fill="#e3f2fd"/>
-                    <g transform="translate(200, 100) scale(0.8)">
-                        <ellipse cx="0" cy="0" rx="50" ry="15" fill="#424242"/>
-                        <circle cx="-60" cy="0" r="12" fill="#616161"/>
-                    </g>
-                </svg>`,
-                fievre: `<svg width="100%" height="100%" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%" fill="#fce4ec"/>
-                    <rect x="100" y="120" width="200" height="30" fill="#b39ddb"/>
-                    <circle cx="150" cy="100" r="20" fill="#ffccbc"/>
-                </svg>`
-            };
-            return svgs[type] || svgs.dengue;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-            return `${date.getDate()} ${months[date.getMonth()]}`;
-        }
-
-        function getTagClass(tag) {
-            const tagClasses = {
-                'VIRUS ET ÉPIDÉMIES': 'tag-yellow',
-                'AMOUR ET SEXO': 'tag-pink',
-                'BIEN-ÊTRE': 'tag-green',
-                'NUTRITION': 'tag-orange',
-                'SANTÉ': 'tag-pink',
-                'PÉDIATRIE / PARENTALITÉ': 'tag-pink'
-            };
-            return tagClasses[tag] || 'tag-green';
-        }
-
-        function displayConseils(conseils) {
-            const grid = document.getElementById('articlesGrid');
-            const noResults = document.getElementById('noResults');
-            
-            if (conseils.length === 0) {
-                grid.style.display = 'none';
-                noResults.style.display = 'block';
-                return;
-            }
-            
-            noResults.style.display = 'none';
-            grid.style.display = 'grid';
-            
-            grid.innerHTML = conseils.map(conseil => `
-                <div class="article-card" onclick="viewConseil(${conseil.id})">
-                    <div class="article-image">
-                        ${getSVG(conseil.svgType)}
-                    </div>
-                    <div class="article-content">
-                        <div class="article-meta">
-                            <span>${conseil.auteur}</span>
-                            <span>${formatDate(conseil.datePublication)}</span>
-                        </div>
-                        <h3 class="article-title">${conseil.titre}</h3>
-                        <p class="article-excerpt">${conseil.contenu.substring(0, 150)}...</p>
-                        <div class="article-tags">
-                            ${conseil.tags.map(tag => 
-                                `<span class="tag ${getTagClass(tag)}">${tag}</span>`
-                            ).join('')}
-                        </div>
-                        <div class="article-footer">
-                            <span class="views">👁️ ${conseil.nombreVues} vues</span>
-                            <a href="#" class="read-more" onclick="event.preventDefault()">Lire plus →</a>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function searchConseils() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            
-            if (!query) {
-                currentConseils = [...conseilsData];
-            } else {
-                currentConseils = conseilsData.filter(conseil => 
-                    conseil.titre.toLowerCase().includes(query) ||
-                    conseil.contenu.toLowerCase().includes(query) ||
-                    conseil.auteur.toLowerCase().includes(query)
-                );
-            }
-            
-            if (selectedCategorie !== 'Tous') {
-                currentConseils = currentConseils.filter(conseil => 
-                    conseil.tags.includes(selectedCategorie)
-                );
-            }
-            
-            displayConseils(currentConseils);
-        }
-
-        function filterByCategorie(categorie) {
-            selectedCategorie = categorie;
-            
-            document.querySelectorAll('.categories-filter button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            
-            if (categorie === 'Tous') {
-                currentConseils = query ? 
-                    conseilsData.filter(conseil => 
-                        conseil.titre.toLowerCase().includes(query) ||
-                        conseil.contenu.toLowerCase().includes(query)
-                    ) : [...conseilsData];
-            } else {
-                currentConseils = conseilsData.filter(conseil => 
-                    conseil.tags.includes(categorie) &&
-                    (query ? 
-                        conseil.titre.toLowerCase().includes(query) ||
-                        conseil.contenu.toLowerCase().includes(query) : true)
-                );
-            }
-            
-            displayConseils(currentConseils);
-        }
-
-        function viewConseil(id) {
-            const conseil = conseilsData.find(c => c.id === id);
-            if (!conseil) return;
-            
-            const modal = document.getElementById('conseilModal');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalBody.innerHTML = `
-                <div class="modal-image">
-                    ${getSVG(conseil.svgType)}
-                </div>
-                <div class="modal-header">
-                    <h2>${conseil.titre}</h2>
-                    <div class="modal-meta">
-                        <span>👤 ${conseil.auteur}</span>
-                        <span>📅 ${formatDate(conseil.datePublication)}</span>
-                        <span>👁️ ${conseil.nombreVues} vues</span>
-                    </div>
-                </div>
-                <div class="modal-tags">
-                    ${conseil.tags.map(tag => 
-                        `<span class="tag ${getTagClass(tag)}">${tag}</span>`
-                    ).join('')}
-                </div>
-                <div class="modal-text">
-                    <p>${conseil.contenu}</p>
-                    <p>Pour plus d'informations sur ce sujet, consultez un professionnel de santé qualifié.</p>
-                </div>
-                <div class="modal-actions">
-                    <button onclick="shareConseil(${conseil.id})" class="action-btn">
-                        📤 Partager
-                    </button>
-                    <button onclick="saveConseil(${conseil.id})" class="action-btn">
-                        💾 Sauvegarder
-                    </button>
-                </div>
-            `;
-            
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+  <!-- Grille des articles -->
+  <div *ngIf="!loading && !error && conseils.length > 0" class="articles-grid">
+    <div 
+      *ngFor="let conseil of conseils" 
+      class="article-card"
+    >
+      <!-- Image ou placeholder -->
+      <div class="article-image">
+        <img 
+          *ngIf="conseil.imageUrl" 
+          [src]="conseil.imageUrl" 
+          [alt]="conseil.titre"
+          onerror="this.style.display='none'"
+        />
+        <div *ngIf="!conseil.imageUrl" class="image-placeholder">
+          <span class="placeholder-icon">📄</span>
+        </div>
+      </div>
+      
+      <!-- Contenu de l'article -->
+      <div class="article-content">
+        <div class="article-meta">
+          <span>👤 {{ conseil.auteur }}</span>
+          <span>📅 {{ formatDate(conseil.datePublication) }}</span>
+        </div>
         
-        function closeModal() {
-            const modal = document.getElementById('conseilModal');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+        <h3 class="article-title">{{ conseil.titre }}</h3>
         
-        function shareConseil(id) {
-            alert('Fonction de partage - Article #' + id);
-        }
+        <p class="article-excerpt">
+          {{ conseil.contenu?.substring(0, 150) }}...
+        </p>
         
-        function saveConseil(id) {
-            alert('Article #' + id + ' sauvegardé !');
-        }
+        <!-- Tags -->
+        <div class="article-tags">
+          <span 
+            *ngFor="let tag of conseil.tags" 
+            [ngClass]="['tag', getTagClass(tag)]"
+          >
+            {{ tag }}
+          </span>
+        </div>
         
-        window.onclick = function(event) {
-            const modal = document.getElementById('conseilModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
+        <!-- Footer avec vues -->
+        <div class="article-footer">
+          <span class="views">👁️ {{ conseil.nombreVues || 0 }} vues</span>
+          <a href="#" class="read-more" (click)="$event.preventDefault()">
+            Lire plus →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            displayConseils(currentConseils);
-            
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchConseils();
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+  <!-- Message aucun résultat -->
+  <div *ngIf="!loading && !error && conseils.length === 0" class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h3>Aucun conseil trouvé</h3>
+    <p>Essayez de modifier vos critères de recherche</p>
+    <button (click)="loadConseils()" class="btn-reset">
+      🔄 Réinitialiser
+    </button>
+  </div>
+</div>
+

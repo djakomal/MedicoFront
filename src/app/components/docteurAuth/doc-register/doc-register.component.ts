@@ -13,7 +13,6 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Docteur } from '../../../models/docteur';
 import { Speciality } from '../../../models/speciality';
-// import { Speciality } from '../../../models/speciality';
 
 @Component({
   selector: 'app-doc-register',
@@ -25,8 +24,9 @@ import { Speciality } from '../../../models/speciality';
 export class DocRegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   currentStep: number = 1;
+   message = '';
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-  // specialities = this.getSpecialityOptions();
+   specialities = this.getSpecialityOptions();
 
   constructor(
     private jwtService: JwtService,
@@ -43,7 +43,7 @@ export class DocRegisterComponent implements OnInit {
         tel: [''],
 
         // Step 2: Informations professionnelles
-        // speciality: [''], // IMPORTANT: Doit être vide au départ
+        speciality: ['', [Validators.required]], // IMPORTANT: Doit être vide au départ
         licence: ['', [Validators.required]],
         professionalAddress: [''],
         anneesExperience: [''],
@@ -73,6 +73,7 @@ export class DocRegisterComponent implements OnInit {
     this.registerForm.get('speciality')?.valueChanges.subscribe((value) => {
       console.log('Spécialité changée:', value);
     });
+    this.onSpecialityChange( { target: { value: '' } } as any); // Initialiser avec une valeur vide
   }
 
   get creneaux(): FormArray {
@@ -267,15 +268,15 @@ export class DocRegisterComponent implements OnInit {
         }
         break;
 
-      // case 2:
-      //   const speciality = this.registerForm.get('speciality');
-      //   console.log('Validation étape 2 - Spécialité:', speciality?.value, 'Valid:', speciality?.valid);
+      case 2:
+        const speciality = this.registerForm.get('speciality');
+        console.log('Validation étape 2 - Spécialité:', speciality?.value, 'Valid:', speciality?.valid);
 
-      //   if (!speciality?.valid || !speciality?.value) {
-      //     errorMessages.push('La spécialité est requise');
-      //     isValid = false;
-      //   }
-      //   break;
+        if (!speciality?.valid || !speciality?.value) {
+          errorMessages.push('La spécialité est requise');
+          isValid = false;
+        }
+        break;
 
       case 3:
         if (!this.registerForm.get('username')?.valid) {
@@ -314,15 +315,15 @@ export class DocRegisterComponent implements OnInit {
 
   // Afficher les erreurs de validation
   showValidationErrors(step: number): void {
-    let message = 'Veuillez corriger les erreurs suivantes :\n\n';
+  
 
     switch (step) {
       case 1:
         if (!this.registerForm.get('name')?.valid) {
-          message += '• Le nom complet est requis\n';
+          this.message += '• Le nom complet est requis\n';
         }
         if (!this.registerForm.get('email')?.valid) {
-          message += '• Un email valide est requis\n';
+          this.message += '• Un email valide est requis\n';
         }
         break;
 
@@ -331,27 +332,32 @@ export class DocRegisterComponent implements OnInit {
           !this.registerForm.get('licence')?.valid ||
           !this.registerForm.get('licence')?.value
         ) {
-          message += '• La licence est requise\n';
+          this.message += '• La licence est requise\n';
+        } if (
+          !this.registerForm.get('speciality')?.valid ||
+          !this.registerForm.get('speciality')?.value
+        ) {
+          this.message += '• La spécialité est requise\n';
         }
         break;
 
       case 3:
         if (!this.registerForm.get('username')?.valid) {
-          message += "• Le nom d'utilisateur est requis\n";
+          this.message += "• Le nom d'utilisateur est requis\n";
         }
         if (!this.registerForm.get('password')?.valid) {
-          message += '• Le mot de passe doit contenir au moins 6 caractères\n';
+          this.message += '• Le mot de passe doit contenir au moins 6 caractères\n';
         }
         if (
           this.registerForm.get('password')?.value !==
           this.registerForm.get('confirmpassword')?.value
         ) {
-          message += '• Les mots de passe ne correspondent pas\n';
+          this.message += '• Les mots de passe ne correspondent pas\n';
         }
         break;
     }
 
-    alert(message);
+    alert(this.message);
   }
 
   // Configuration des boutons de basculement de visibilité des mots de passe
@@ -454,28 +460,28 @@ export class DocRegisterComponent implements OnInit {
   }
 
   // Génération de enum de speciality dynamiquement
-  // getSpecialityOptions() {
-  //   const labels: Record<string, string> = {
-  //     'GENERAL': 'Médecin généraliste',
-  //     'DENTISTE': 'Dentiste',
-  //     'CARDIOLOGUE': 'Cardiologie',
-  //     'DERMATOLOGUE': 'Dermatologie',
-  //     'GYNECOLOGUE': 'Gynécologie',
-  //     'OPHTALMOLOGUE': 'Ophtalmologie',
-  //     'PEDIATRE': 'Pédiatrie',
-  //     'PSYCHIATRE': 'Psychiatrie',
-  //     'ORL': 'ORL',
-  //     'RHUMATOLOGUE': 'Rhumatologie',
-  //     'AUTRE': 'Autre spécialité'
-  //   };
+  getSpecialityOptions() {
+    const labels: Record<string, string> = {
+      'GENERAL': 'Médecin généraliste',
+      'DENTISTE': 'Dentiste',
+      'CARDIOLOGUE': 'Cardiologie',
+      'DERMATOLOGUE': 'Dermatologie',
+      'GYNECOLOGUE': 'Gynécologie',
+      'OPHTALMOLOGUE': 'Ophtalmologie',
+      'PEDIATRE': 'Pédiatrie',
+      'PSYCHIATRE': 'Psychiatrie',
+      'ORL': 'ORL',
+      'RHUMATOLOGUE': 'Rhumatologie',
+      'AUTRE': 'Autre spécialité'
+    };
 
-  //   return Object.keys(Speciality)
-  //     .filter(key => isNaN(Number(key)))
-  //     .map(key => ({
-  //       value: key,
-  //       label: labels[key] || key
-  //     }));
-  // }
+    return Object.keys(Speciality)
+      .filter(key => isNaN(Number(key)))
+      .map(key => ({
+        value: key,
+        label: labels[key] || key
+      }));
+  }
 
   // Méthode pour valider avant de passer à l'étape suivante (appelée depuis le HTML)
   validateAndGoToStep(targetStep: number): void {
@@ -489,15 +495,15 @@ export class DocRegisterComponent implements OnInit {
   }
 
   // NOUVEAU: Gestion du changement de spécialité
-  // onSpecialityChange(event: Event): void {
-  //   const target = event.target as HTMLSelectElement;
-  //   const value = target.value;
-  //   console.log('Spécialité changée (via onSpecialityChange):', value);
+  onSpecialityChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value;
+    console.log('Spécialité changée (via onSpecialityChange):', value);
 
-  //   // Mise à jour explicite du FormControl
-  //   this.registerForm.patchValue({ speciality: value });
-  //   this.registerForm.get('speciality')?.markAsTouched();
+    // Mise à jour explicite du FormControl
+    this.registerForm.patchValue({ speciality: value });
+    this.registerForm.get('speciality')?.markAsTouched();
 
-  //   console.log('Nouvelle valeur du FormControl:', this.registerForm.get('speciality')?.value);
-  // }
+    console.log('Nouvelle valeur du FormControl:', this.registerForm.get('speciality')?.value);
+  }
 }

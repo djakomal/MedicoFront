@@ -10,7 +10,7 @@ export class Docteur {
   professionalAddress!: string;
   licence!: string;
 
-  //   specialite?: string;
+    // specialite?: string;
  speciality!: Speciality;
   numeroLicence!: string;
   anneesExperience!: string;

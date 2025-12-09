@@ -18,18 +18,139 @@ import { ConseilComponent } from "../../conseil/conseil.component";
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent {
+  
+  medicalFiles = [
+    {
+      id: 1,
+      icon: '📄',
+      title: 'Analyse de sang',
+      date: '25 avril 2025',
+      location: 'BioMed Paris',
+      type: 'Laboratoire',
+      details: `
+        <h3>Résultats d'analyse de sang</h3>
+        <p><strong>Date du prélèvement :</strong> 25 avril 2025</p>
+        <p><strong>Laboratoire :</strong> BioMed Paris</p>
+        
+        <h4>Hématologie</h4>
+        <ul>
+          <li><strong>Globules rouges :</strong> 4.5 M/µL (Norme : 4.5-5.5)</li>
+          <li><strong>Hémoglobine :</strong> 14.2 g/dL (Norme : 13-17)</li>
+          <li><strong>Globules blancs :</strong> 7200 /µL (Norme : 4000-10000)</li>
+          <li><strong>Plaquettes :</strong> 250000 /µL (Norme : 150000-400000)</li>
+        </ul>
+        
+        <h4>Biochimie</h4>
+        <ul>
+          <li><strong>Glycémie à jeun :</strong> 0.95 g/L (Norme : 0.70-1.10)</li>
+          <li><strong>Cholestérol total :</strong> 1.85 g/L (Norme : < 2.00)</li>
+          <li><strong>Créatinine :</strong> 9.5 mg/L (Norme : 7-13)</li>
+        </ul>
+        
+        <p><strong>Conclusion :</strong> Résultats dans les normes. Aucune anomalie détectée.</p>
+      `,
+      fileUrl: '/assets/documents/analyse-sang-2025-04-25.pdf'
+    },
+    {
+      id: 2,
+      icon: '📄',
+      title: 'Ordonnance médicale',
+      date: '15 avril 2025',
+      location: 'Dr. Martin',
+      type: 'Médecin',
+      details: `
+        <h3>Ordonnance médicale</h3>
+        <p><strong>Date :</strong> 15 avril 2025</p>
+        <p><strong>Prescripteur :</strong> Dr. Martin, Médecin généraliste</p>
+        
+        <h4>Médicaments prescrits</h4>
+        <ul>
+          <li><strong>Doliprane 1000mg :</strong> 1 comprimé 3 fois par jour pendant 5 jours</li>
+          <li><strong>Amoxicilline 500mg :</strong> 1 gélule 3 fois par jour pendant 7 jours</li>
+          <li><strong>Vitamine C 500mg :</strong> 1 comprimé par jour pendant 1 mois</li>
+        </ul>
+        
+        <h4>Recommandations</h4>
+        <p>Repos conseillé pendant 48h. Boire beaucoup d'eau. Consulter si les symptômes persistent au-delà de 5 jours.</p>
+        
+        <p><strong>Renouvellement :</strong> Non renouvelable</p>
+      `,
+      fileUrl: '/assets/documents/ordonnance-2025-04-15.pdf'
+    },
+    {
+      id: 3,
+      icon: '📄',
+      title: 'Radiographie pulmonaire',
+      date: '10 mars 2025',
+      location: 'Radiopole',
+      type: 'Centre d\'imagerie',
+      details: `
+        <h3>Compte-rendu de radiographie pulmonaire</h3>
+        <p><strong>Date de l'examen :</strong> 10 mars 2025</p>
+        <p><strong>Centre d'imagerie :</strong> Radiopole</p>
+        <p><strong>Radiologue :</strong> Dr. Dupont</p>
+        
+        <h4>Technique</h4>
+        <p>Radiographie thoracique de face et de profil</p>
+        
+        <h4>Résultats</h4>
+        <ul>
+          <li><strong>Champs pulmonaires :</strong> Clairs et bien aérés</li>
+          <li><strong>Structures médiastinales :</strong> Normales</li>
+          <li><strong>Cœur :</strong> Taille et forme normales</li>
+          <li><strong>Coupoles diaphragmatiques :</strong> Régulières</li>
+          <li><strong>Paroi thoracique :</strong> Sans anomalie</li>
+        </ul>
+        
+        <h4>Conclusion</h4>
+        <p>Radiographie thoracique sans anomalie décelable. Pas d'image pathologique pulmonaire.</p>
+      `,
+      fileUrl: '/assets/documents/radio-pulmonaire-2025-03-10.pdf'
+    },
+    {
+      id: 4,
+      icon: '📄',
+      title: 'Compte-rendu ophtalmologique',
+      date: '3 mars 2025',
+      location: 'Dr. Petit',
+      type: 'Médecin',
+      details: `
+        <h3>Compte-rendu ophtalmologique</h3>
+        <p><strong>Date :</strong> 3 mars 2025</p>
+        <p><strong>Ophtalmologiste :</strong> Dr. Petit</p>
+        
+        <h4>Motif de consultation</h4>
+        <p>Contrôle annuel de la vue</p>
+        
+        <h4>Examen de la vue</h4>
+        <ul>
+          <li><strong>Œil droit :</strong> Acuité visuelle 10/10</li>
+          <li><strong>Œil gauche :</strong> Acuité visuelle 10/10</li>
+          <li><strong>Vision binoculaire :</strong> Normale</li>
+          <li><strong>Pression intraoculaire :</strong> OD: 15 mmHg, OG: 14 mmHg (Normal)</li>
+        </ul>
+        
+        <h4>Fond d'œil</h4>
+        <p>Rétine saine, pas de signe de pathologie rétinienne. Nerf optique normal.</p>
+        
+        <h4>Conclusion</h4>
+        <p>Examen ophtalmologique normal. Vision excellente. Contrôle recommandé dans 1 an.</p>
+      `,
+      fileUrl: '/assets/documents/ophtalmo-2025-03-03.pdf'
+    }
+  ];
   userName: string='' ; // Stocke le nom de l'utilisateur
   notifications: string[] = [];
   menuOpen: boolean = false;
   tableauClasse!:AppoitementType[]
-  
   // Propriété pour suivre la section active
   activeSection: string = 'dashboard';
-  
   // Gestion des popups
   showPopup: boolean = false;
   popupType: string = '';
   popupContent: any = {};
+  showMedicalFilePopup: boolean = false;
+  selectedMedicalFile: any = null;
 
   constructor(
     private notificationService: NotificationService,
@@ -118,100 +239,82 @@ export class UserDashboardComponent {
       }
     });
   }
-
-  // Méthodes pour gérer les popups
-  openPopup(type: string) {
-    this.popupType = type;
-    this.showPopup = true;
-    this.cdr.detectChanges(); 
-    // Définir le contenu selon le type de popup
-    switch(type) {
-      case 'nutrition':
-        this.popupContent = {
-          title: 'Maintenir une alimentation équilibrée',
-          content: `
-            <h3>Guide nutritionnel</h3>
-            <p>Une alimentation équilibrée est essentielle pour votre santé. Voici les principes clés :</p>
-            <ul>
-              <li><strong>Fruits et légumes :</strong> 5 portions par jour minimum</li>
-              <li><strong>Protéines :</strong> Viande maigre, poisson, œufs ou légumineuses</li>
-              <li><strong>Glucides complexes :</strong> Riz complet, pâtes complètes, pain complet</li>
-              <li><strong>Produits laitiers :</strong> Pour le calcium et le phosphore</li>
-              <li><strong>Hydratation :</strong> 1.5 à 2 litres d'eau par jour</li>
-            </ul>
-            <p><strong>Conseil :</strong> Consultez un nutritionniste pour un plan personnalisé adapté à vos besoins spécifiques.</p>
-          `
-        };
-        break;
-        
-      case 'relaxation':
-        this.popupContent = {
-          title: 'Techniques de relaxation contre le stress',
-          content: `
-            <h3>Exercices de relaxation</h3>
-            <p>Pratiquez ces exercices quotidiennement pour réduire votre stress :</p>
-            <h4>1. Respiration profonde (5 minutes)</h4>
-            <ul>
-              <li>Inspirez lentement pendant 4 secondes</li>
-              <li>Retenez votre respiration pendant 4 secondes</li>
-              <li>Expirez lentement pendant 4 secondes</li>
-              <li>Répétez 10 fois</li>
-            </ul>
-            <h4>2. Scan corporel (10 minutes)</h4>
-            <p>Allongé, focalisez-vous sur chaque partie de votre corps de haut en bas, en relâchant les tensions.</p>
-            <h4>3. Méditation (10 minutes)</h4>
-            <p>Trouvez un endroit calme et concentrez-vous sur vos pensées sans les juger.</p>
-          `
-        };
-        break;
-        
-      case 'activite':
-        this.popupContent = {
-          title: 'Programme d\'activité physique adapté',
-          content: `
-            <h3>Programme d'activité physique</h3>
-            <p>L'activité physique régulière est cruciale pour votre santé. Voici un programme adapté :</p>
-            <h4>Semaine Type</h4>
-            <ul>
-              <li><strong>Lundi :</strong> 30 min marche rapide ou jogging léger</li>
-              <li><strong>Mardi :</strong> 30 min musculation légère</li>
-              <li><strong>Mercredi :</strong> Repos ou activité douce (yoga)</li>
-              <li><strong>Jeudi :</strong> 30 min marche rapide ou jogging léger</li>
-              <li><strong>Vendredi :</strong> 30 min musculation légère</li>
-              <li><strong>Samedi :</strong> 45 min activité récréative (sport, danse, vélo)</li>
-              <li><strong>Dimanche :</strong> Repos</li>
-            </ul>
-            <p><strong>Important :</strong> Commencez progressivement et consultez votre médecin avant tout nouveau programme.</p>
-          `
-        };
-        break;
-        
-      case 'sommeil':
-        this.popupContent = {
-          title: 'Améliorer la qualité de votre sommeil',
-          content: `
-            <h3>Conseils pour un meilleur sommeil</h3>
-            <p>Suivez ces recommandations pour un sommeil réparateur :</p>
-            <h4>Hygiène du sommeil</h4>
-            <ul>
-              <li>Maintenez une routine régulière (coucher/lever à heures fixes)</li>
-              <li>Évitez les écrans 1 heure avant le coucher</li>
-              <li>Gardez votre chambre fraîche (16-19°C) et sombre</li>
-              <li>Évitez la caféine après 14h</li>
-              <li>Pratiquez une activité relaxante avant le coucher</li>
-              <li>Limitez les siestes à 20 minutes maximum</li>
-            </ul>
-            <h4>Environnement optimal</h4>
-            <p>Investissez dans un bon matelas et des oreillers confortables. La qualité de votre lit affecte directement votre sommeil.</p>
-          `
-        };
-        break;
+  /**
+   * ✅ Ouvrir la popup de consultation d'un fichier médical
+   */
+  openMedicalFile(fileId: number): void {
+    const file = this.medicalFiles.find(f => f.id === fileId);
+    if (file) {
+      this.selectedMedicalFile = file;
+      this.showMedicalFilePopup = true;
+      this.cdr.detectChanges();
+      console.log('📄 Fichier médical ouvert:', file.title);
     }
   }
 
-  closePopup() {
-    this.showPopup = false;
-    this.popupType = '';
+  /**
+   * ✅ Fermer la popup du fichier médical
+   */
+  closeMedicalFilePopup(): void {
+    this.showMedicalFilePopup = false;
+    this.selectedMedicalFile = null;
     this.cdr.detectChanges();
+  }
+
+  /**
+   * ✅ Télécharger un fichier médical
+   */
+  downloadMedicalFile(fileUrl: string, fileName: string): void {
+    // Simulation du téléchargement
+    console.log('📥 Téléchargement du fichier:', fileName);
+    
+    // En production, vous feriez un vrai téléchargement :
+     window.open(fileUrl, '_blank');
+    // ou
+    // this.http.get(fileUrl, { responseType: 'blob' }).subscribe(blob => {
+    //   const url = window.URL.createObjectURL(blob);
+    //   const a = document.createElement('a');
+    //   a.href = url;
+    //   a.download = fileName;
+    //   a.click();
+    // });    // En production, vous feriez un vrai téléchargement :
+     window.open(fileUrl, '_blank');
+    // ou
+    // this.http.get(fileUrl, { responseType: 'blob' }).subscribe(blob => {
+    //   const url = window.URL.createObjectURL(blob);
+    //   const a = document.createElement('a');
+    //   a.href = url;
+    //   a.download = fileName;
+    //   a.click();
+    // });
+    
+    alert(`Téléchargement de ${fileName} en cours...`);
+  }
+
+  /**
+   * ✅ Imprimer un fichier médical
+   */
+  printMedicalFile(): void {
+    if (this.selectedMedicalFile) {
+      console.log('🖨️ Impression du fichier:', this.selectedMedicalFile.title);
+      window.print();
+    }
+  }
+
+  /**
+   * ✅ Télécharger le dossier médical complet
+   */
+  downloadCompleteMedicalFile(): void {
+    console.log('📥 Téléchargement du dossier médical complet');
+    alert('Téléchargement du dossier médical complet en cours...\nCela peut prendre quelques instants.');
+    
+    // En production :
+    //this.medicalFileService.downloadComplete().subscribe(blob => {
+    //   const url = window.URL.createObjectURL(blob);
+    //   const a = document.createElement('a');
+    //   a.href = url;
+    //   a.download = `dossier-medical-${this.userName}.pdf`;
+    //   a.click();
+    // });
   }
 }

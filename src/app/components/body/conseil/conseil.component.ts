@@ -1,23 +1,29 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from '../../footer/footer.component';
 import { Conseil } from '../../../models/Conseil';
 import { ConseilService } from '../../../_helps/Docteur/Conseil/Conseil.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-conseil',
   standalone: true,
-  imports: [HeaderComponent,FooterComponent],
+  imports: [HeaderComponent, CommonModule,      // ✅ Pour *ngFor, *ngIf, etc.
+    FormsModule, FooterComponent],
   templateUrl: './conseil.component.html',
   styleUrl: './conseil.component.css'
 })
-export class ConseilComponent implements OnInit {
+export class ConseilComponent implements OnInit, OnDestroy {
   conseils: Conseil[] = [];
   loading: boolean = false;
   error: string = '';
   searchQuery: string = '';
   selectedCategorie: string = '';
+  
+  private routerSubscription?: Subscription;
 
   categories = [
     'Tous',
@@ -29,10 +35,28 @@ export class ConseilComponent implements OnInit {
     'SANTÉ'
   ];
 
-  constructor(private conseilService: ConseilService) { }
+  constructor(
+    private conseilService: ConseilService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    // Charger les conseils au démarrage
     this.loadConseils();
+    
+    // ✅ SOLUTION 1: Recharger à chaque navigation vers ce composant
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.loadConseils();
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Nettoyer la souscription pour éviter les fuites mémoire
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 
   loadConseils(): void {
@@ -43,10 +67,11 @@ export class ConseilComponent implements OnInit {
       next: (data) => {
         this.conseils = data;
         this.loading = false;
+        console.log('✅ Conseils chargés:', data.length); // Debug
       },
       error: (err) => {
         this.error = 'Erreur lors du chargement des conseils';
-        console.error('Erreur:', err);
+        console.error('❌ Erreur:', err);
         this.loading = false;
       }
     });
@@ -110,6 +135,12 @@ export class ConseilComponent implements OnInit {
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
   }
+
+  
+  /**
+   * Empêcher le comportement par défaut d'un lien
+   */
+  preventDefault(event: Event): void {
+    event.preventDefault();
+  }
 }
-
-

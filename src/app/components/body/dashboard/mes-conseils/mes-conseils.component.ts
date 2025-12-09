@@ -116,11 +116,9 @@ export class MesConseilsComponent implements OnInit {
     this.submitted = true;
     this.error = '';
     this.success = '';
-
     // Marque tous les contrôles comme touchés
     Object.keys(this.conseilForm.controls).forEach(key => {
       this.conseilForm.get(key)!.markAsTouched();
-
     });
 
     if (this.conseilForm.invalid) {
@@ -147,7 +145,7 @@ export class MesConseilsComponent implements OnInit {
         setTimeout(() => {
           alert("Conseil ajouter avec succes");
           // this.router.navigate(['/Docdash']);
-          this.router.navigateByUrl("/Docdash");
+          this.router.navigateByUrl("/");
         }, 2000);
       },
       error: (err) => {

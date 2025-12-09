@@ -21,57 +21,131 @@ export class ConseilService {
 
   // Créer un nouveau conseil
   creerConseil(conseil: Conseil): Observable<Conseil> {
+    // ✅ Récupérer le token
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    console.log('🔑 Envoi requête avec token:', token);
     return this.http.post<Conseil>(this.baseUrl, conseil, { 
-      headers: this.getHeaders() 
+      headers:  headers 
     });
   }
 
   // Récupérer tous les conseils
   getAllConseils(): Observable<Conseil[]> {
-    return this.http.get<Conseil[]>(this.baseUrl);
+
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Conseil[]>(this.baseUrl, { headers });
   }
 
   // Récupérer les conseils publiés
   getConseilsPublies(): Observable<Conseil[]> {
-    return this.http.get<Conseil[]>(`${this.baseUrl}/publies`);
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Conseil[]>(`${this.baseUrl}/publies`, { headers });
   }
 
   // Récupérer un conseil par ID
   getConseilById(id: number): Observable<Conseil> {
-    return this.http.get<Conseil>(`${this.baseUrl}/${id}`);
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Conseil>(`${this.baseUrl}/${id}`, { headers });
   }
 
-  // Récupérer les conseils par catégorie
+  // Récupérer les   conseils par catégorie
   getConseilsByCategorie(categorie: string): Observable<Conseil[]> {
-    return this.http.get<Conseil[]>(`${this.baseUrl}/categorie/${categorie}`);
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Conseil[]>(`${this.baseUrl}/categorie/${categorie}`, { headers });
   }
 
   // Récupérer les conseils par auteur
   getConseilsByAuteur(auteur: string): Observable<Conseil[]> {
-    return this.http.get<Conseil[]>(`${this.baseUrl}/auteur/${auteur}`);
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Conseil[]>(`${this.baseUrl}/auteur/${auteur}`, { headers });
   }
 
   // Rechercher des conseils
   rechercherConseils(query: string): Observable<Conseil[]> {
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     return this.http.get<Conseil[]>(`${this.baseUrl}/recherche`, {
+      headers,
       params: { query }
     });
   }
 
   // Mettre à jour un conseil
   updateConseil(id: number, conseil: Conseil): Observable<Conseil> {
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     return this.http.put<Conseil>(`${this.baseUrl}/${id}`, conseil, {
-      headers: this.getHeaders()
+      headers
     });
   }
 
   // Publier/Dépublier un conseil
   togglePublish(id: number): Observable<Conseil> {
-    return this.http.patch<Conseil>(`${this.baseUrl}/${id}/toggle-publish`, {});
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }); 
+    return this.http.patch<Conseil>(`${this.baseUrl}/${id}/toggle-publish`, {}, { headers });
   }
 
   // Supprimer un conseil
   deleteConseil(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers });
   }
 }

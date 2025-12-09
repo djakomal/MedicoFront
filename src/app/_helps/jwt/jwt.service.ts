@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode'; // ✅ Import correct
 import { Docteur } from '../../models/docteur';
+import { Speciality } from '../../models/speciality';
+import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -102,6 +104,9 @@ export class JwtService {
     console.log("👤 Username récupéré :", username);
     return username;
   }
+   getAllUser(): Observable<User[]> {
+    return this.http.get<User[]>(this.baseURL + '/signup');
+  }
 
   // 🔹 VÉRIFIER SI LE TOKEN EST VALIDE
   isTokenValid(): boolean {
@@ -162,4 +167,7 @@ export class JwtService {
   getAllDocteurs(): Observable<Docteur[]> {
     return this.http.get<Docteur[]>(this.baseURL + '/all');
   }
+  // getSpeciality(): Observable<Speciality[]> {
+  //   return this.http.get<Speciality[]>(this.baseURL + '/specialites');
+  // }
 }
