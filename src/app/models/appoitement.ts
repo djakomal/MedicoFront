@@ -1,6 +1,7 @@
 import { Time } from "@angular/common";
 import { Injectable } from "@angular/core";
 import { Docteur } from "./docteur";
+import { Speciality } from "./speciality";
 
 
 
@@ -18,6 +19,7 @@ export class Appoitement {
   email!: string;
   phone!: string;
   insurance!: string; // Optionnel
+  speciality!: Speciality.GENERAL; // Spécialité médicale du rendez-vous
   
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
@@ -44,6 +46,7 @@ export class Appoitement {
   // Informations complémentaires
   additionalInfo!: string; // Optionnel
   consent!: boolean;
+  statut!: string;
   
   // Champs potentiellement ajoutés par le backend
   status!: 'pending' | 'confirmed' | 'cancelled';

@@ -64,13 +64,9 @@
           </div>
 
           <div class="form-group">
-            <label for="gender" class="form-select">Sexe</label>
-            <select
-              id="gender"
-              formControlName="gender"
-              (change)="onGenderChange($event)"
-            >
-              <option [ngValue]="null">Sélectionner</option>
+            <label for="gender" >Sexe</label>
+            <select id="gender"formControlName="gender"(change)="onGenderChange($event)" class="form-select">
+              <option value="">Sélectionner</option>
               <option value="male">Homme</option>
               <option value="female">Femme</option>
               <option value="other">Autre</option>

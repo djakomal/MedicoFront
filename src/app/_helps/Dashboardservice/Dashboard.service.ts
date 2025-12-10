@@ -1,29 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { Appoitement } from '../../models/appoitement';
-import { User } from '../../models/user';
 import { Conseil } from '../../models/Conseil';
+import { User } from '../../models/user';
 
 export interface DashboardStats {
-    nombreAppoitementAujourdhui:number
-  nombreRendezvousAujourdhui: number;
+  nombreAppoitementAujourdhui: number;
   nombrePatientsActifs: number;
   nombreConseilsPublies: number;
-  tendanceRendezvous: number;
+  tendanceAppoitement: number;
   tendancePatientsActifs: number;
   tendanceConseils: number;
-  tendanceAppoitement: number;
+  nombreRendezvousAujourdhui: number;
+  tendanceRendezvous: number;
 }
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
   private baseUrl = 'http://localhost:8080/medico/api';
-  patients : User[] = [];
 
   constructor(private http: HttpClient) { }
 
@@ -35,21 +32,14 @@ export class DashboardService {
     });
   }
 
-  // Récupérer tous les rendez-vous
-  getAllAppointment(): Observable<Appoitement[]> {
-    const headers = this.getHeaders();
-    return this.http.get<Appoitement[]>(`${this.baseUrl}`, { headers });
-  }
-
-  // Récupérer tous les patients
-  getAllUser(): Observable<User[]> {
-    const headers = this.getHeaders();
-    return this.http.get<User[]>(`${this.baseUrl}/signup`, { headers });
-  }
-
-  // Calculer les statistiques du tableau de bord
+  /**
+   * Calculer les statistiques du tableau de bord
+   * @param appoitements - Liste de tous les rendez-vous
+   * @param conseils - Liste de tous les conseils publiés
+   * @param patients - Liste de tous les patients/utilisateurs
+   */
   calculateDashboardStats(
-    rendezVous: Appoitement[], 
+    appoitements: Appoitement[], 
     conseils: Conseil[], 
     patients: User[]
   ): DashboardStats {
@@ -59,97 +49,205 @@ export class DashboardService {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Filtrer les rendez-vous d'aujourd'hui
-    const rendezVousAujourdhui = rendezVous.filter(rdv => {
-      const rdvDate = new Date(rdv.preferredDate);
-      return rdvDate >= today && rdvDate < tomorrow;
-    });
-
-    // Filtrer les rendez-vous d'hier pour calculer la tendance
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    const rendezVousHier = rendezVous.filter(rdv => {
-      const rdvDate = new Date(rdv.preferredDate);
-      return rdvDate >= yesterday && rdvDate < today;
-    });
-
-    // Calculer les patients actifs du mois en cours
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const patientsAvecRdvCeMois = new Set(
-      rendezVous
-        .filter(rdv => new Date(rdv.preferredDate) >= firstDayOfMonth)
-        .map(rdv => rdv.firstname)
-    );
-
-    // Calculer les patients actifs du mois dernier
-    const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-    const patientsAvecRdvMoisDernier = new Set(
-      rendezVous
-        .filter(rdv => {
-          const rdvDate = new Date(rdv.preferredDate);
-          return rdvDate >= firstDayOfLastMonth && rdvDate <= lastDayOfLastMonth;
-        })
-        .map(rdv => rdv.firstname)
-    );
-
-    // Calculer les conseils de cette semaine
-    const firstDayOfWeek = new Date(today);
-    firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-    firstDayOfWeek.setHours(0, 0, 0, 0);
-
-    const conseilsCetteSemaine = conseils.filter(conseil => {
-      if (conseil.datePublication) {
-        const datePublication = new Date(conseil.datePublication);
-        return datePublication >= firstDayOfWeek;
+    // ============================================
+    // CALCUL DES RENDEZ-VOUS D'AUJOURD'HUI
+    // ============================================
+    const appoitementsAujourdhui = appoitements.filter(app => {
+      if (app.preferredDate) {
+        const appDate = new Date(app.preferredDate);
+        return appDate >= today && appDate < tomorrow;
       }
       return false;
     });
 
-    return {
-        nombreAppoitementAujourdhui:rendezVousAujourdhui.length,
-      nombreRendezvousAujourdhui: rendezVousAujourdhui.length,
+    // ============================================
+    // CALCUL DES RENDEZ-VOUS D'HIER (pour tendance)
+    // ============================================
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const appoitementsHier = appoitements.filter(app => {
+      if (app.preferredDate) {
+        const appDate = new Date(app.preferredDate);
+        return appDate >= yesterday && appDate < today;
+      }
+      return false;
+    });
+
+    // ============================================
+    // CALCUL DES PATIENTS ACTIFS (avec RDV ce mois)
+    // ============================================
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const patientsAvecRdvCeMois = new Set(
+      appoitements
+        .filter(app => {
+          if (app.preferredDate) {
+            return new Date(app.preferredDate) >= firstDayOfMonth;
+          }
+          return false;
+        })
+        .map(app => app.id) // Supposant que userId identifie le patient
+        .filter(id => id !== undefined)
+    );
+
+    // ============================================
+    // CALCUL DES PATIENTS ACTIFS MOIS DERNIER
+    // ============================================
+    const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    const patientsAvecRdvMoisDernier = new Set(
+      appoitements
+        .filter(app => {
+          if (app.preferredDate) {
+            const appDate = new Date(app.preferredDate);
+            return appDate >= firstDayOfLastMonth && appDate <= lastDayOfLastMonth;
+          }
+          return false;
+        })
+        .map(app => app.id)
+        .filter(id => id !== undefined)
+    );
+
+    // ============================================
+    // CALCUL DES CONSEILS - AVEC COMPARAISON SEMAINES
+    // ============================================
+    let tendanceConseils = 0;
+    
+    // Calculer le premier jour de cette semaine (lundi)
+    const firstDayOfWeek = new Date(today);
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    firstDayOfWeek.setDate(today.getDate() + diff);
+    firstDayOfWeek.setHours(0, 0, 0, 0);
+
+    // Vérifier si dateCreation ou datePublication existe
+    const hasDateCreation = conseils.length > 0 && (conseils[0].datePublication || conseils[0].datePublication);
+
+    if (hasDateCreation) {
+      // ===== OPTION 1: Avec dateCreation ou datePublication (RECOMMANDÉ) =====
+      
+      // Conseils créés cette semaine
+      const conseilsCetteSemaine = conseils.filter(conseil => {
+        const dateRef = conseil.datePublication || conseil.datePublication;
+        if (dateRef) {
+          const date = new Date(dateRef);
+          return date >= firstDayOfWeek;
+        }
+        return false;
+      });
+
+      // Conseils créés la semaine dernière
+      const firstDayOfLastWeek = new Date(firstDayOfWeek);
+      firstDayOfLastWeek.setDate(firstDayOfWeek.getDate() - 7);
+      
+      const lastDayOfLastWeek = new Date(firstDayOfWeek);
+      lastDayOfLastWeek.setDate(firstDayOfWeek.getDate() - 1);
+      lastDayOfLastWeek.setHours(23, 59, 59, 999);
+
+      const conseilsSemaineDerniere = conseils.filter(conseil => {
+        const dateRef = conseil.datePublication || conseil.datePublication;
+        if (dateRef) {
+          const date = new Date(dateRef);
+          return date >= firstDayOfLastWeek && date <= lastDayOfLastWeek;
+        }
+        return false;
+      });
+
+      tendanceConseils = conseilsCetteSemaine.length - conseilsSemaineDerniere.length;
+      
+      console.log('✅ Calcul avec dateCreation/datePublication:');
+      console.log('   📅 Conseils créés cette semaine:', conseilsCetteSemaine.length);
+      console.log('   📅 Conseils créés semaine dernière:', conseilsSemaineDerniere.length);
+      console.log('   📈 Tendance:', tendanceConseils);
+      
+    } else if (conseils.length > 0) {
+      // ===== OPTION 2: Sans date - Basé sur les IDs =====
+      
+      console.warn('⚠️ dateCreation/datePublication non disponible, calcul basé sur les IDs');
+      
+      // Trier par ID décroissant (les plus récents d'abord)
+      const conseilsTries = [...conseils].sort((a, b) => (b.id || 0) - (a.id || 0));
+      
+      // Prendre les 7 derniers conseils comme "cette semaine"
+      const nombreConseilsRecents = Math.min(7, conseilsTries.length);
+      const conseilsCetteSemaine = conseilsTries.slice(0, nombreConseilsRecents);
+      const conseilsSemaineDerniere = conseilsTries.slice(nombreConseilsRecents, nombreConseilsRecents * 2);
+      
+      tendanceConseils = conseilsCetteSemaine.length - conseilsSemaineDerniere.length;
+      
+      console.log('⚠️ Calcul approximatif basé sur IDs:');
+      console.log('   📊 7 conseils les plus récents:', conseilsCetteSemaine.length);
+      console.log('   📊 7 conseils précédents:', conseilsSemaineDerniere.length);
+      console.log('   📈 Tendance:', tendanceConseils);
+    }
+
+    // ============================================
+    // RETOUR DES STATISTIQUES
+    // ============================================
+    const stats: DashboardStats = {
+      nombreAppoitementAujourdhui: appoitementsAujourdhui.length,
+      nombreRendezvousAujourdhui: appoitementsAujourdhui.length, // Même valeur
       nombrePatientsActifs: patientsAvecRdvCeMois.size,
-      nombreConseilsPublies: conseils.length,
-      tendanceRendezvous: rendezVousAujourdhui.length - rendezVousHier.length,
+      nombreConseilsPublies: conseils.length, // ✅ Tous les conseils créés (publiés + brouillons)
+      tendanceAppoitement: appoitementsAujourdhui.length - appoitementsHier.length,
+      tendanceRendezvous: appoitementsAujourdhui.length - appoitementsHier.length, // Même valeur
       tendancePatientsActifs: patientsAvecRdvCeMois.size - patientsAvecRdvMoisDernier.size,
-        tendanceAppoitement: rendezVousAujourdhui.length - rendezVousHier.length,
-      tendanceConseils: conseilsCetteSemaine.length
+      tendanceConseils: tendanceConseils // ✅ Conseils créés cette semaine vs semaine dernière
     };
+
+    console.log('📊 Statistiques finales:', stats);
+    
+    return stats;
   }
 
-  // Filtrer les rendez-vous du jour
-  getRendezVousAujourdhui(rendezVous: Appoitement[]): Appoitement[] {
+  /**
+   * Filtrer les rendez-vous d'aujourd'hui
+   */
+  getRendezVousAujourdhui(appoitements: Appoitement[]): Appoitement[] {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return rendezVous
-      .filter(rdv => {
-        const rdvDate = new Date(rdv.preferredDate);
-        return rdvDate >= today && rdvDate < tomorrow;
+    return appoitements
+      .filter(app => {
+        if (app.preferredDate) {
+          const appDate = new Date(app.preferredDate);
+          return appDate >= today && appDate < tomorrow;
+        }
+        return false;
       })
       .sort((a, b) => {
-        return new Date(a.preferredDate).getTime() - new Date(b.preferredDate).getTime();
+        const dateA = a.preferredDate ? new Date(a.preferredDate).getTime() : 0;
+        const dateB = b.preferredDate ? new Date(b.preferredDate).getTime() : 0;
+        return dateA - dateB;
       });
   }
 
-  // Filtrer les rendez-vous de la semaine
-  getRendezVousSemaine(rendezVous: Appoitement[]): Appoitement[] {
+  /**
+   * Filtrer les rendez-vous de la semaine
+   */
+  getRendezVousSemaine(appoitements: Appoitement[]): Appoitement[] {
     const today = new Date();
+    
+    // Premier jour de la semaine (lundi)
     const firstDayOfWeek = new Date(today);
-    firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    firstDayOfWeek.setDate(today.getDate() + diff);
     firstDayOfWeek.setHours(0, 0, 0, 0);
     
+    // Dernier jour de la semaine (dimanche)
     const lastDayOfWeek = new Date(firstDayOfWeek);
     lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7);
 
-    return rendezVous.filter(rdv => {
-      const rdvDate = new Date(rdv.preferredDate);
-      return rdvDate >= firstDayOfWeek && rdvDate < lastDayOfWeek;
+    return appoitements.filter(app => {
+      if (app.preferredDate) {
+        const appDate = new Date(app.preferredDate);
+        return appDate >= firstDayOfWeek && appDate < lastDayOfWeek;
+      }
+      return false;
     });
   }
 }

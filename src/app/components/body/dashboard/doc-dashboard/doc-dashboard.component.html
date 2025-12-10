@@ -23,28 +23,28 @@
     </div>
     
     <nav class="sidebar-nav">
-      <a [routerLink]="['/']" class="menu-item active">
+      <a [routerLink]="['/DocDash']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
         </svg>
         <span>Tableau de bord</span>
       </a>
       
-      <a [routerLink]="['MesRendezVous']" class="menu-item">
+      <a [routerLink]="['MesRendezVous']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
         </svg>
         <span>Mes rendez-vous</span>
       </a>
       
-      <a  [routerLink]="['MesPatients']"  class="menu-item">
+      <a [routerLink]="['MesPatients']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
         </svg>
         <span>Mes patients</span>
       </a>
       
-    <a [routerLink]="['MesConseils']" class="menu-item">
+      <a [routerLink]="['MesConseils']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
           <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
         </svg>
@@ -78,116 +78,105 @@
   </aside>
   
   <main class="main-content">
-    <div class="header">
-      <h1>Bonjour, Dr. Jean Dupont 👋</h1>
-      <p>Voici un aperçu de votre journée</p>
-      <button *ngIf="!loading" class="refresh-btn" (click)="refreshData()">🔄 Actualiser</button>
-    </div>
-
-    <!-- Message d'erreur -->
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
-
-    <!-- Loader -->
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Chargement des données...</p>
-    </div>
-    
-    <!-- Cartes de statistiques -->
-    <div class="dashboard-cards" *ngIf="!loading">
-      <div class="stat-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/>
-            </svg>
-          </div>
-        </div>
-        <div class="card-content">
-          <div class="card-number">{{ stats.nombreRendezvousAujourdhui }}</div>
-          <div class="card-label">Rendez-vous aujourd'hui</div>
-          <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceRendezvous)">
-            {{ getTrendIcon(stats.tendanceRendezvous) }} 
-            {{ stats.tendanceRendezvous > 0 ? '+' : '' }}{{ stats.tendanceRendezvous }} vs hier
-          </div>
-        </div>
+    <!-- Contenu du Dashboard (visible uniquement sur la route /DocDash) -->
+    <div *ngIf="isDashboard" class="dashboard-container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Bonjour, Dr. Jean Dupont 👋</h1>
+        <p>Voici un aperçu de votre journée</p>
+        <button *ngIf="!loading" class="refresh-btn" (click)="refreshData()">
+          🔄 Actualiser
+        </button>
       </div>
 
-      <div class="stat-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/>
-            </svg>
+      <!-- Message d'erreur -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Loader -->
+      <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Chargement des données...</p>
+      </div>
+      <!-- Cartes de statistiques -->
+      <div class="dashboard-cards" *ngIf="!loading">
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombrePatientsActifs }}</div>
+            <div class="card-label">Rendez-vous</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendancePatientsActifs)">
+              {{ getTrendIcon(stats.tendancePatientsActifs) }} 
+              {{ stats.tendancePatientsActifs > 0 ? '+' : '' }}{{ stats.tendancePatientsActifs }} ce mois
+            </div>
           </div>
         </div>
-        <div class="card-content">
-          <div class="card-number">{{ stats.nombrePatientsActifs }}</div>
-          <div class="card-label">Patients actifs</div>
-          <div class="card-trend" [ngClass]="getTrendClass(stats.tendancePatientsActifs)">
-            {{ getTrendIcon(stats.tendancePatientsActifs) }} 
-            {{ stats.tendancePatientsActifs > 0 ? '+' : '' }}{{ stats.tendancePatientsActifs }} ce mois
+
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombreConseilsPublies }}</div>
+            <div class="card-label">Conseils créés</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
+              {{ getTrendIcon(stats.tendanceConseils) }} 
+              {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/>
-            </svg>
+      <!-- Calendrier de la semaine -->
+      <div class="calendar-section" *ngIf="!loading">
+        <div class="calendar-header">
+          <h2>📅 Rendez-vous de la semaine</h2>
+          <div class="calendar-nav">
+            <button>←</button>
+            <button>→</button>
           </div>
-        </div>
-        <div class="card-content">
-          <div class="card-number">{{ stats.nombreConseilsPublies }}</div>
-          <div class="card-label">Conseils publiés</div>
-          <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
-            {{ getTrendIcon(stats.tendanceConseils) }} 
-            {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
-          </div>
-        </div>
-      </div>
-    </div>
-    <router-outlet></router-outlet>
-    
-    <!-- Calendrier de la semaine -->
-    <div class="calendar-section" *ngIf="!loading">
-      <div class="calendar-header">
-        <h2>📅 Rendez-vous de la semaine</h2>
-        <div class="calendar-nav">
-          <button>←</button>
-          <button>→</button>
-        </div>
-      </div>
-      
-      <div class="calendar-days">
-        <div class="calendar-day" 
-             *ngFor="let day of weekDays"
-             [class.active]="day.isToday">
-          <div class="day-name">{{ day.name }}</div>
-          <div class="day-number">{{ day.number }}</div>
-        </div>
-      </div>
-      
-      <div class="appointment-slots">
-        <div *ngIf="rendezVousAujourdhui.length === 0" class="no-appointments">
-          Aucun rendez-vous prévu pour aujourd'hui
         </div>
         
-        <div class="appointment-slot" *ngFor="let rdv of rendezVousAujourdhui">
-          <div class="appointment-time">
-            🕐 {{ formatTime(rdv.dateHeureDebut) }} - {{ formatTime(rdv.dateHeureFin) }}
+        <div class="calendar-days">
+          <div class="calendar-day" 
+              *ngFor="let day of weekDays"
+              [class.active]="day.isToday">
+            <div class="day-name">{{ day.name }}</div>
+            <div class="day-number">{{ day.number }}</div>
           </div>
-          <div class="appointment-info">
-            {{ getPatientName(rdv) }} - {{getAppointmentType(rdv) }}
+        </div>
+        
+        <div class="appointment-slots">
+          <div *ngIf="AppoitementAujourdhui.length === 0" class="no-appointments">
+          Vous Avez  {{stats.nombrePatientsActifs}} rendez-vous aujourd'hui.
+          </div>
+          
+          <div class="appointment-slot" *ngFor="let app of AppoitementAujourdhui">
+            <div class="appointment-time">
+              🕐 {{ formatTime(app.preferredDate) }}
+            </div>
+            <div class="appointment-info">
+              {{ getPatientName(app) }} - {{ getAppointmentType(app) }}
+            </div>
           </div>
         </div>
       </div>
     </div>
- 
+
+    <!-- Router Outlet pour les autres pages (caché quand isDashboard = true) -->
+    <div *ngIf="!isDashboard">
+      <router-outlet></router-outlet>
+    </div>
   </main>
-  
 </div>

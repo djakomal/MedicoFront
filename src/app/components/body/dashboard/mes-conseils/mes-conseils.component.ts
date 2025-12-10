@@ -145,7 +145,7 @@ export class MesConseilsComponent implements OnInit {
         setTimeout(() => {
           alert("Conseil ajouter avec succes");
           // this.router.navigate(['/Docdash']);
-          this.router.navigateByUrl("/");
+          this.router.navigateByUrl("/Docdash");
         }, 2000);
       },
       error: (err) => {

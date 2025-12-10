@@ -26,7 +26,7 @@ export class DocRegisterComponent implements OnInit {
   currentStep: number = 1;
    message = '';
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-   specialities = this.getSpecialityOptions();
+  specialities = Object.values(Speciality);
 
   constructor(
     private jwtService: JwtService,
@@ -43,7 +43,7 @@ export class DocRegisterComponent implements OnInit {
         tel: [''],
 
         // Step 2: Informations professionnelles
-        speciality: ['', [Validators.required]], // IMPORTANT: Doit être vide au départ
+        speciality: [Speciality.GENERAL, [Validators.required]], // IMPORTANT: Doit être vide au départ
         licence: ['', [Validators.required]],
         professionalAddress: [''],
         anneesExperience: [''],
@@ -73,7 +73,6 @@ export class DocRegisterComponent implements OnInit {
     this.registerForm.get('speciality')?.valueChanges.subscribe((value) => {
       console.log('Spécialité changée:', value);
     });
-    this.onSpecialityChange( { target: { value: '' } } as any); // Initialiser avec une valeur vide
   }
 
   get creneaux(): FormArray {
@@ -328,6 +327,9 @@ export class DocRegisterComponent implements OnInit {
         break;
 
       case 2:
+      const speciality = this.registerForm.get('speciality');
+      console.log('Value:', speciality?.value);
+
         if (
           !this.registerForm.get('licence')?.valid ||
           !this.registerForm.get('licence')?.value
@@ -411,6 +413,7 @@ export class DocRegisterComponent implements OnInit {
   Register(): void {
     if (!this.registerForm.valid ) {
       alert('Veuillez remplir correctement tous les champs obligatoires.');
+      console.log('Valeur de speciality:', this.registerForm.get('speciality')?.value);
       console.log('Form errors:', this.registerForm.errors);
       Object.keys(this.registerForm.controls).forEach(key => {
         const control = this.registerForm.get(key);
@@ -460,28 +463,24 @@ export class DocRegisterComponent implements OnInit {
   }
 
   // Génération de enum de speciality dynamiquement
-  getSpecialityOptions() {
-    const labels: Record<string, string> = {
-      'GENERAL': 'Médecin généraliste',
-      'DENTISTE': 'Dentiste',
-      'CARDIOLOGUE': 'Cardiologie',
-      'DERMATOLOGUE': 'Dermatologie',
-      'GYNECOLOGUE': 'Gynécologie',
-      'OPHTALMOLOGUE': 'Ophtalmologie',
-      'PEDIATRE': 'Pédiatrie',
-      'PSYCHIATRE': 'Psychiatrie',
-      'ORL': 'ORL',
-      'RHUMATOLOGUE': 'Rhumatologie',
-      'AUTRE': 'Autre spécialité'
-    };
-
-    return Object.keys(Speciality)
-      .filter(key => isNaN(Number(key)))
-      .map(key => ({
-        value: key,
-        label: labels[key] || key
-      }));
-  }
+  
+  // getSpecialityOptions() {
+  // //fonctionne pour tous les types d'enums
+  //     return [
+  //       { value: Speciality.GENERAL, label: 'Médecin généraliste' },
+  //       { value: Speciality.DENTISTE, label: 'Dentiste' },
+  //       { value: Speciality.CARDIOLOGUE, label: 'Cardiologie' },
+  //       { value: Speciality.DERMATOLOGUE, label: 'Dermatologie' },
+  //       { value: Speciality.GYNECOLOGUE, label: 'Gynécologie' },
+  //       { value: Speciality.OPHTALMOLOGUE, label: 'Ophtalmologie' },
+  //       { value: Speciality.PEDIATRE, label: 'Pédiatrie' },
+  //       { value: Speciality.PSYCHIATRE, label: 'Psychiatrie' },
+  //       { value: Speciality.ORL, label: 'ORL' },
+  //       { value: Speciality.RHUMATOLOGUE, label: 'Rhumatologie' },
+  //       { value: Speciality.AUTRE, label: 'Autre spécialité' }
+  //     ];
+  //   }
+  
 
   // Méthode pour valider avant de passer à l'étape suivante (appelée depuis le HTML)
   validateAndGoToStep(targetStep: number): void {
@@ -494,16 +493,4 @@ export class DocRegisterComponent implements OnInit {
     }
   }
 
-  // NOUVEAU: Gestion du changement de spécialité
-  onSpecialityChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const value = target.value;
-    console.log('Spécialité changée (via onSpecialityChange):', value);
-
-    // Mise à jour explicite du FormControl
-    this.registerForm.patchValue({ speciality: value });
-    this.registerForm.get('speciality')?.markAsTouched();
-
-    console.log('Nouvelle valeur du FormControl:', this.registerForm.get('speciality')?.value);
-  }
 }

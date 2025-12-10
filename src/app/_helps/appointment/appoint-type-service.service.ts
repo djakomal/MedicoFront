@@ -17,9 +17,18 @@ export class AppointTypeServiceService {
      private http: HttpClient,
      private jwtService:JwtService
    ) { }
+
+   private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+   
   public addAppoitement(appoitement: AppoitementType ): Observable<AppoitementType> {
     const token = this.jwtService.getToken();
-
+    
   
     if (!token) {
       console.error("Token is missing");
@@ -33,7 +42,7 @@ export class AppointTypeServiceService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.post<AppoitementType>(this.matiereUrl, appoitement, { headers })
+    return this.http.post<AppoitementType>(this.matiereUrl, appoitement, { headers :this.getHeaders() })
       .pipe(
         catchError(error => {
           console.log("donnee:", appoitement);
@@ -52,7 +61,7 @@ export class AppointTypeServiceService {
       'Authorization': `Bearer ${token}` // Ajoute le token d'authentification
     });
   
-    return this.http.get<AppoitementType[]>(this.matiereUrl, { headers }); // Correction ici
+    return this.http.get<AppoitementType[]>(this.matiereUrl, { headers :this.getHeaders() }); // Correction ici
   }
   
  

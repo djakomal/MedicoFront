@@ -1,39 +1,460 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestion des Rendez-vous</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header-section h1 {
+      color: white;
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-section p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card h3 {
+      color: #666;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .number {
+      font-size: 36px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .card-header h2 {
+      color: white;
+      font-size: 26px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-count {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead {
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    thead th {
+      padding: 20px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: #667eea;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e9ecef;
+      transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: linear-gradient(to right, #f8f9fa, #ffffff);
+      transform: scale(1.002);
+    }
+
+    tbody td {
+      padding: 20px 16px;
+      font-size: 14px;
+      color: #333;
+      vertical-align: middle;
+    }
+
+    .id-cell {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 16px;
+    }
+
+    .name-cell {
+      font-weight: 600;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .name-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .date-cell {
+      color: #555;
+      font-weight: 500;
+    }
+
+    .time-cell {
+      font-weight: 600;
+      color: #667eea;
+      background: #f0f4ff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      color: #1976d2;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .description-cell {
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+      background: linear-gradient(135deg, #fff3cd, #ffe69c);
+      color: #856404;
+    }
+
+    .status-validated {
+      background: linear-gradient(135deg, #d4edda, #c3e6cb);
+      color: #155724;
+    }
+
+    .status-rejected {
+      background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+      color: #721c24;
+    }
+
+    .status-started {
+      background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+      color: #0c5460;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #999;
+    }
+
+    .empty-state svg {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 25px;
+      opacity: 0.4;
+      stroke: #667eea;
+    }
+
+    .empty-state h3 {
+      color: #666;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #999;
+      font-size: 16px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    tbody tr {
+      animation: slideIn 0.4s ease;
+    }
+
+    @media (max-width: 1400px) {
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .header-section h1 {
+        font-size: 28px;
+      }
+
+      .card-header {
+        padding: 20px;
+        flex-direction: column;
+      }
+
+      .card-header h2 {
+        font-size: 20px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      thead th {
+        padding: 15px 10px;
+        font-size: 10px;
+      }
+
+      tbody td {
+        padding: 15px 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
+    <div class="header-section">
+      <h1>📅 Gestion des Rendez-vous</h1>
+      <p>Gérez efficacement vos demandes de rendez-vous</p>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>Total</h3>
+        <div class="number" id="totalCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>En attente</h3>
+        <div class="number" id="pendingCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Validés</h3>
+        <div class="number" id="validatedCount">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Rejetés</h3>
+        <div class="number" id="rejectedCount">0</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">
-        <h2>📅 Gestion des Rendez-vous</h2>
-        <span class="badge-count" id="count">0 rendez-vous</span>
+        <h2>📋 Liste des rendez-vous</h2>
+        <span class="badge-count" id="count">{{tableauClasse.length}} rendez-vous</span>
       </div>
-      
+
       <div class="table-container">
         <table id="appointmentsTable">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Heure</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th>NOM & PRÉNOM</th>
+              <th>DATE</th>
+              <th>HEURE</th>
+              <th>TYPE</th>
+              <th>RAISON</th>
+              <th>GENRE</th>
+              <th>EMAIL</th>
+              <th>TÉLÉPHONE</th>
+              <th>STATUT</th>
+              <th>ACTIONS</th>
             </tr>
           </thead>
-          <tbody id="tableBody">
-            <!-- Les données seront insérées ici -->
+          <tbody *ngFor="let app of this.tableauClasse" id="tableBody">
+            <!-- Sample data for demonstration -->
+            <tr>
+              <td class="id-cell">{{app.id}}</td>
+              <td class="name-cell">
+                <div class="name-avatar">{{app.firstname.charAt(0)}}{{app.lastname.charAt(0)}}</div>
+                <span>{{app.firstname}} {{app.lastname}}</span>
+              </td>
+              <td class="date-cell">{{app.preferredDate}}</td>
+              <td><span class="time-cell">{{app.preferredTime}}</span></td>
+              <td><span class="type-badge">{{app.appointmentType}}</span></td>
+              <td class="description-cell">{{app.reason}}</td>
+              <td>{{app.gender}}</td>
+              <td>{{app.email}}</td>
+              <td>{{app.phone}}</td>
+              <td><span class="status-badge status-pending">En attente</span></td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn btn-success">✓ Valider</button>
+                  <button class="btn btn-danger">✕ Rejeter</button>
+                  <button class="btn btn-primary">▶ Débuter</button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
-        
-        <div id="emptyState" class="empty-state" style="display: none;">
+
+        <div id="emptyState" class="empty-state" style="display: none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -48,153 +469,31 @@
   </div>
 
   <script>
-    // Données d'exemple
-    const appointments = [
-      {
-        id: 1,
-        name: 'Marie Dubois',
-        date: '2024-12-15',
-        heure: '09:00',
-        type: 'Consultation générale',
-        description: 'Contrôle de routine et renouvellement ordonnance',
-        statut: 'En attente'
-      },
-      {
-        id: 2,
-        name: 'Jean Martin',
-        date: '2024-12-15',
-        heure: '10:30',
-        type: 'Suivi',
-        description: 'Suivi post-opératoire après intervention',
-        statut: 'En attente'
-      },
-      {
-        id: 3,
-        name: 'Sophie Bernard',
-        date: '2024-12-16',
-        heure: '14:00',
-        type: 'Urgence',
-        description: 'Douleurs abdominales intenses depuis 2 jours',
-        statut: 'En attente'
-      },
-      {
-        id: 4,
-        name: 'Pierre Leroy',
-        date: '2024-12-16',
-        heure: '15:30',
-        type: 'Vaccination',
-        description: 'Rappel vaccin grippe saisonnière',
-        statut: 'Validé'
-      },
-      {
-        id: 5,
-        name: 'Claire Petit',
-        date: '2024-12-17',
-        heure: '11:00',
-        type: 'Consultation spécialisée',
-        description: 'Résultats analyses et discussion traitement',
-        statut: 'En attente'
-      }
-    ];
+    // Sample functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStats();
+    });
 
-    function getStatusClass(statut) {
-      switch(statut?.toLowerCase()) {
-        case 'validé':
-          return 'status-validated';
-        case 'rejeté':
-          return 'status-rejected';
-        case 'en cours':
-          return 'status-started';
-        default:
-          return 'status-pending';
-      }
-    }
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('fr-FR', { 
-        day: '2-digit', 
-        month: 'long', 
-        year: 'numeric' 
-      });
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById('tableBody');
-      const emptyState = document.getElementById('emptyState');
-      const countBadge = document.getElementById('count');
+    function updateStats() {
+      const rows = document.querySelectorAll('#tableBody tr');
+      document.getElementById('totalCount').textContent = rows.length;
+      document.getElementById('count').textContent = rows.length + ' rendez-vous';
       
-      if (appointments.length === 0) {
-        tbody.innerHTML = '';
-        emptyState.style.display = 'block';
-        countBadge.textContent = '0 rendez-vous';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      countBadge.textContent = `${appointments.length} rendez-vous`;
-
-      tbody.innerHTML = appointments.map(app => `
-        <tr>
-          <td class="id-cell">#${app.id}</td>
-          <td class="name-cell">${app.name}</td>
-          <td class="date-cell">${formatDate(app.date)}</td>
-          <td class="time-cell">${app.heure}</td>
-          <td><span class="type-cell">${app.type}</span></td>
-          <td class="description-cell" title="${app.description}">${app.description}</td>
-          <td>
-            <span class="status-badge ${getStatusClass(app.statut)}">
-              ${app.statut || 'Non défini'}
-            </span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn btn-success" onclick="validerRendezVous(${app.id})" ${app.statut === 'Validé' ? 'disabled' : ''}>
-                ✓ Valider
-              </button>
-              <button class="btn btn-danger" onclick="rejeterRendezVous(${app.id})" ${app.statut === 'Rejeté' ? 'disabled' : ''}>
-                ✗ Rejeter
-              </button>
-              <button class="btn btn-primary" onclick="debuterRendezVous(${app.id})" ${app.statut !== 'Validé' ? 'disabled' : ''}>
-                ▶ Débuter
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      // Count by status
+      let pending = 0, validated = 0, rejected = 0;
+      rows.forEach(row => {
+        const status = row.querySelector('.status-badge');
+        if (status) {
+          if (status.classList.contains('status-pending')) pending++;
+          if (status.classList.contains('status-validated')) validated++;
+          if (status.classList.contains('status-rejected')) rejected++;
+        }
+      });
+      
+      document.getElementById('pendingCount').textContent = pending;
+      document.getElementById('validatedCount').textContent = validated;
+      document.getElementById('rejectedCount').textContent = rejected;
     }
-
-    function validerRendezVous(id) {
-      const appointment = appointments.find(app => app.id === id);
-      if (appointment) {
-        appointment.statut = 'Validé';
-        renderTable();
-        alert(`✓ Rendez-vous #${id} validé avec succès`);
-      }
-    }
-
-    function rejeterRendezVous(id) {
-      const appointment = appointments.find(app => app.id === id);
-      if (appointment) {
-        appointment.statut = 'Rejeté';
-        renderTable();
-        alert(`✗ Rendez-vous #${id} rejeté`);
-      }
-    }
-
-    function debuterRendezVous(id) {
-      const appointment = appointments.find(app => app.id === id);
-      if (appointment && appointment.statut === 'Validé') {
-        appointment.statut = 'En cours';
-        renderTable();
-        alert(`▶ Rendez-vous #${id} débuté`);
-        // Ici vous pouvez ajouter la redirection
-        // window.location.href = '/consultation/' + id;
-      }
-    }
-
-    // Initialiser le tableau
-    renderTable();
   </script>
 </body>
 </html>
