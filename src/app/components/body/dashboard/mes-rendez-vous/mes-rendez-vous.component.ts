@@ -1,14 +1,12 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { AppointTypeServiceService } from '../../../../_helps/appointment/appoint-type-service.service';
-import  { AppointementService } from '../../../../_helps/appointment/appointement.service';
+import  { AppointementService, AppointmentResponse } from '../../../../_helps/appointment/appointement.service';
 import { NotificationService } from '../../../../_helps/notification.service';
 import { Appoitement } from '../../../../models/appoitement';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AppoitementType } from '../../../../models/appoitementType';
+import { Message } from '../../../../models/Message';
 
 
 @Component({
@@ -19,9 +17,14 @@ import { AppoitementType } from '../../../../models/appoitementType';
   styleUrls: ['./mes-rendez-vous.component.css']
 })
 export class MesRendezVousComponent  implements OnInit {
-  tableauClasse!:Appoitement[]
+  tableauClasse:Appoitement[]=[];
+  messageList!:Message[];
+  // Messages de notification
+  showAlert: boolean = false;
+  alertMessage: string = '';
+  alertType: 'success' | 'error' | 'info' = 'success';
   
-    constructor( private router :Router,
+  constructor( private router :Router,
       private appointementService:AppointementService,
       private notificationService: NotificationService
     ){
@@ -47,50 +50,97 @@ export class MesRendezVousComponent  implements OnInit {
       }
     });
   }
+  showNotification(message: string, type: 'success' | 'error' | 'info'): void {
+    this.alertMessage = message;      // Texte à afficher
+    this.alertType = type;            // Type de notification (couleur)
+    this.showAlert = true;            // Afficher la notification
+  
+    // Masquer automatiquement après 5 secondes
+    setTimeout(() => {
+      this.hideNotification();
+    }, 5000);
+  }
+  
+  hideNotification(): void {
+    this.showAlert = false;
+  }
   
   redirection(){
     this.router.navigateByUrl("Admin/form")
   }
-    // validerRendezVous(id: number) {
-    //   const appointement = this.tableauClasse.find(app => app.id === id);
-    //   if (appointement) {
-    //     appointement.statut = 'Validé';
-    //     this.notificationService.showNotification(`Rendez-vous ${id} validé avec succès.`, 'success');
-    //   }
-    // }
-  
-    // rejeterRendezVous(id: number) {
-    //   const appointement = this.tableauClasse.find(app => app.id === id);
-    //   if (appointement) {
-    //     appointement.statut = 'Rejeté';
-    //     this.notificationService.showNotification(`Rendez-vous ${id} rejeté.`, 'error');
-    //   }
-    // }
-    validerRendezVous(id: number) {
-      const appointement = this.tableauClasse.find(app => app.id === id);
-         if (appointement) {
-           appointement.statut = 'Validé';
-           this.notificationService.showNotification(`Rendez-vous ${id} validé avec succès.`, 'success');
-         }
-      // votre logique pour valider le rendez-vous
-      this.notificationService.addNotification('Rendez-vous validé avec succès!');
+
+ // Valider un rendez-vous
+  validerRendezVous(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir valider ce rendez-vous ?')) {
+      this.appointementService.validateAppointment(id).subscribe({
+        next: (response: AppointmentResponse) => {
+          if (response.success) {
+            this.showNotification( 'Rendez-vous validé et notification envoyée',
+              'success');
+            this.getAppointment(); // Recharger la liste
+          } else {
+            this.showNotification(response.message, 'error');
+          }
+        },
+        error: (error) => {
+          this.showNotification('Erreur lors de la validation du rendez-vous', 'error');
+          console.error('Error validating appointment:', error);
+        }
+      });
     }
-  
-    rejeterRendezVous(id: number) {
-      const appointement = this.tableauClasse.find(app => app.id === id);
-         if (appointement) {
-           appointement.statut = 'Rejeté';
-           this.notificationService.showNotification(`Rendez-vous ${id} rejeté.`, 'error');
-         }
-      // votre logique pour rejeter le rendez-vous
-      this.notificationService.addNotification('Rendez-vous rejeté!');
+  }
+
+  // Rejeter un rendez-vous
+  rejeterRendezVous(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir rejeter ce rendez-vous ?')) {
+      this.appointementService.rejectAppointment(id).subscribe({
+        next: (response: AppointmentResponse) => {
+          if (response.success) {
+            this.showNotification(response.message, 'success');
+            this.getAppointment(); // Recharger la liste
+          } else {
+            this.showNotification(response.message, 'error');
+          }
+        },
+        error: (error) => {
+          this.showNotification('Erreur lors du rejet du rendez-vous', 'error');
+          console.error('Error rejecting appointment:', error);
+        }
+      });
     }
-  
-    debuterRendezVous(id: number) {
-      const appointement = this.tableauClasse.find(app => app.id === id);
-      if (appointement) {
-        appointement.statut = 'En cours';
-        this.notificationService.showNotification(`Rendez-vous ${id} démarré.`, 'success');
-      }
+  }
+
+  // Débuter un rendez-vous
+  debuterRendezVous(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir débuter ce rendez-vous ?')) {
+      this.appointementService.startAppointment(id).subscribe({
+        next: (response: AppointmentResponse) => {
+          if (response.success) {
+            this.showNotification(response.message, 'success');
+            this.getAppointment(); // Recharger la liste
+          } else {
+            this.showNotification(response.message, 'error');
+          }
+        },
+        error: (error) => {
+          this.showNotification('Erreur lors du démarrage du rendez-vous', 'error');
+          console.error('Error starting appointment:', error);
+        }
+      });
     }
+  }
+  getCountByStatus(status: string): number {
+    if (!this.tableauClasse) return 0;
+    return this.tableauClasse.filter(app => app.status === status).length;
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: any = {
+      'pending': 'En attente',
+      'validated': 'Validé',
+      'cancelled': 'Annulé'
+    };
+    return labels[status] || status;
+  }
+  
 }

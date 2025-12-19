@@ -1,24 +1,45 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { NotificationService } from '../../../../_helps/notification.service';
-import { Router } from '@angular/router';
+// user-dashboard.component.ts (Mis à jour)
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { JwtService } from '../../../../_helps/jwt/jwt.service';
-import { FormBuilder } from '@angular/forms';
-import { AppointTypeServiceService } from '../../../../_helps/appointment/appoint-type-service.service';
-import { AppoitementType } from '../../../../models/appoitementType';
-import { AppointmentComponent } from "../../../admin/main/appointment/appointment.component";
 import { AppointComponent } from "../../appoint/appoint.component";
 import { CommonModule } from '@angular/common';
 import { ConseilComponent } from "../../conseil/conseil.component";
+import { Appoitement } from '../../../../models/appoitement';
+import { AppointementService } from '../../../../_helps/appointment/appointement.service';
+import { Subscription } from 'rxjs';
+import { NotificationService } from '../../../../_helps/notification.service';
+import { Message } from '../../../../models/Message';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [AppointComponent, CommonModule, ConseilComponent],
+  imports: [AppointComponent, CommonModule, ConseilComponent, RouterLink],
   templateUrl: './user-dashboard.component.html',
-  styleUrl: './user-dashboard.component.css'
+  styleUrls: ['./user-dashboard.component.css']
 })
-export class UserDashboardComponent {
+export class UserDashboardComponent implements OnInit, OnDestroy {
+  // ✅ Notifications en temps réel
+  unreadMessagesCount: number = 0;
+  showMessagesPanel: boolean = false;
+  showMessageDetail: boolean = false;
+  selectedMessage: Message | null = null;
+  appointmentNotifications: Message[] = [];
   
+  // Subscriptions
+  private notificationsSubscription?: Subscription;
+  private unreadCountSubscription?: Subscription;
+
+  userName: string = '';
+  menuOpen: boolean = false;
+  tableauClasse: Appoitement[] = [];
+  showMedicalFilePopup: boolean = false;
+  selectedMedicalFile: any = null;
+  activeSection: string = 'dashboard';
+  showAlert: boolean = false;
+  alertMessage: string = '';
+  alertType: 'success' | 'error' | 'info' = 'success';
+
   medicalFiles = [
     {
       id: 1,
@@ -139,182 +160,255 @@ export class UserDashboardComponent {
       fileUrl: '/assets/documents/ophtalmo-2025-03-03.pdf'
     }
   ];
-  userName: string='' ; // Stocke le nom de l'utilisateur
-  notifications: string[] = [];
-  menuOpen: boolean = false;
-  tableauClasse!:AppoitementType[]
-  // Propriété pour suivre la section active
-  activeSection: string = 'dashboard';
-  // Gestion des popups
-  showPopup: boolean = false;
-  popupType: string = '';
-  popupContent: any = {};
-  showMedicalFilePopup: boolean = false;
-  selectedMedicalFile: any = null;
 
   constructor(
     private notificationService: NotificationService,
     private router: Router,
     private jwtService: JwtService,
-    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-        private appointementService:AppointTypeServiceService,
+    private appointementService: AppointementService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadUserName();
-    this.notificationService.getNotifications().subscribe((notifications) => {
-      this.notifications = notifications;
+    this.loadUserAppointments();
+    this.subscribeToNotifications();
+    
+    // ✅ Polling pour vérifier les mises à jour toutes les 10 secondes
+    setInterval(() => {
+      this.loadUserAppointments();
+    }, 10000);
+  }
+
+  ngOnDestroy(): void {
+    // ✅ Nettoyer les subscriptions
+    this.notificationsSubscription?.unsubscribe();
+    this.unreadCountSubscription?.unsubscribe();
+  }
+
+  // ✅ S'abonner au service de notifications
+  subscribeToNotifications(): void {
+    // Écouter les changements de notifications
+    this.notificationsSubscription = this.notificationService.notifications$.subscribe(
+      (notifications: Message[]) => {
+        this.appointmentNotifications = notifications;
+        this.cdr.detectChanges();
+      }
+    );
+  
+    // Écouter les changements du compteur
+    this.unreadCountSubscription = this.notificationService.unreadCount$.subscribe(
+      (count: number) => {
+        this.unreadMessagesCount = count;
+        this.cdr.detectChanges();
+      }
+    );
+  }
+  
+
+  loadUserName(): void {
+
+    const decodedToken = this.jwtService.getDecodedToken();
+    this.userName = this.jwtService.getUserName() || '';
+    
+    if (this.userName.includes('@')) {
+      this.userName = this.userName.split('@')[0];
+    }
+  }
+
+  loadUserAppointments(): void {
+    this.appointementService.getAllAppointment().subscribe({
+      next: (data) => {
+        const oldAppointments = [...this.tableauClasse];
+        this.tableauClasse = data;
+        
+        // Détecter les changements si ce n'est pas le premier chargement
+        if (oldAppointments.length > 0) {
+          this.detectStatusChanges(oldAppointments, data);
+        }
+      },
+      error: (error) => {
+        console.error("❌ Erreur lors du chargement des rendez-vous :", error);
+      }
     });
   }
 
-  // Méthode pour changer de section
-  showSection(section: string, event?: Event) {
+  // ✅ Détecter les changements de statut et créer des notifications
+  detectStatusChanges(oldList: Appoitement[], newList: Appoitement[]): void {
+    newList.forEach(newApp => {
+      const oldApp = oldList.find(old => old.id === newApp.id);
+      
+      if (oldApp && oldApp.status !== newApp.status) {
+        console.log(`🔔 Changement détecté pour RDV #${newApp.id}: ${oldApp.status} → ${newApp.status}`);
+        
+        // Créer la notification appropriée selon le nouveau statut
+        switch (newApp.status) {
+          case 'validated':
+            this.notificationService.notifyAppointmentValidated(newApp);
+            this.showNotification('✅ Votre rendez-vous a été validé !', 'success');
+            break;
+            
+          case 'cancelled':
+            this.notificationService.notifyAppointmentRejected(newApp);
+            this.showNotification('❌ Votre rendez-vous a été rejeté', 'info');
+            break;
+            
+          case 'started':
+            this.notificationService.notifyAppointmentStarted(newApp);
+            this.showNotification('🏥 Votre rendez-vous a débuté', 'info');
+            break;
+        }
+      }
+    });
+  }
+
+  // ✅ Gestion du panneau de messages
+  toggleMessagesPanel(): void {
+    this.showMessagesPanel = !this.showMessagesPanel;
+    if (this.showMessagesPanel) {
+      this.showMessageDetail = false;
+    }
+  }
+
+  openMessage(notification: Message): void {
+    this.selectedMessage = notification;
+    this.showMessageDetail = true;
+    
+    if (notification.read) {
+      this.notificationService.markAsRead(notification.id);
+    }
+  }
+
+  closeMessageDetail(): void {
+    this.showMessageDetail = false;
+    this.selectedMessage = null;
+  }
+
+  deleteMessage(notificationId: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')) {
+      this.notificationService.deleteNotification(notificationId);
+      
+      if (this.selectedMessage?.id === notificationId) {
+        this.closeMessageDetail();
+      }
+      
+      this.showNotification('Notification supprimée avec succès', 'success');
+    }
+  }
+
+  markAllAsRead(): void {
+    this.notificationService.markAllAsRead();
+    this.showNotification('Toutes les notifications ont été marquées comme lues', 'success');
+  }
+
+  getMessageIcon(type: string): string {
+    const icons: any = {
+      'info': 'ℹ️',
+      'success': '✅',
+      'alert': '⚠️',
+      'error': '❌'
+    };
+    return icons[type] || '📧';
+  }
+
+  showNotification(message: string, type: 'success' | 'error' | 'info'): void {
+    this.alertMessage = message;
+    this.alertType = type;
+    this.showAlert = true;
+
+    setTimeout(() => {
+      this.hideNotification();
+    }, 5000);
+  }
+
+  hideNotification(): void {
+    this.showAlert = false;
+  }
+
+  // Gestion des sections
+  showSection(section: string, event?: Event): void {
     if (event) {
       event.preventDefault();
     }
-    
     this.activeSection = section;
-    this.cdr.detectChanges(); // Force la mise à jour de l'affichage
+    this.cdr.detectChanges();
   }
 
-  // Méthode pour vérifier si une section est active
   isSectionActive(section: string): boolean {
     return this.activeSection === section;
   }
 
-  clearNotifications() {
-    this.notificationService.clearNotifications();
-  }
-  
-  toggleMenu() {
+  toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
-    this.cdr.detectChanges(); // Force la mise à jour de l'affichage
-    console.log("Menu toggled: ", this.menuOpen);
+    this.cdr.detectChanges();
   }
-
-
-  loadUserName(): void {
-    // Afficher le contenu complet du token pour le débogage
-    const decodedToken = this.jwtService.getDecodedToken();
-    console.log("📜 Token décodé :", decodedToken);
-    
-    // Récupérer le username
-    this.userName = this.jwtService.getUserName() || '';
-    console.log("👤 Nom d'utilisateur affiché :", this.userName);
-    
-    //Retirer la partie avant le @ si c'est un email
-    if (this.userName.includes('@')) {
-      this.userName = this.userName.split('@')[0];
-      console.log("👤 Nom d'utilisateur formaté :", this.userName);
-    }
-    
-    // Si aucun username n'est trouvé
-    if (!this.userName) {
-      console.warn("⚠️ Aucun username trouvé dans le token JWT");
-      console.log("💡 Vérifiez que le backend envoie bien le champ 'sub' ou 'username' dans le JWT");
-    }
-  }
-
 
   logout(): void {
     this.jwtService.removeToken();
-    this.userName = ''; // Supprime le nom affiché
-    this.menuOpen = false; // Ferme le menu
-    this.router.navigateByUrl('/connex'); // Redirection vers la page de connexion
+    this.userName = '';
+    this.menuOpen = false;
+    this.router.navigateByUrl('/');
   }
-  getAppointment() {
-    this.appointementService.getAllAppointmentType().subscribe({
-      next: (data) => {
-        console.log("📌 Données reçues :", data);
-        
-        if (Array.isArray(data)) {
-          this.tableauClasse = data;
-        } else {
-          console.error("❌ Format des données incorrect :", data);
-        }
-      },
-      error: (error) => {
-        console.error("❌ Erreur API :", error);
-      }
-    });
-  }
-  /**
-   * ✅ Ouvrir la popup de consultation d'un fichier médical
-   */
+
   openMedicalFile(fileId: number): void {
     const file = this.medicalFiles.find(f => f.id === fileId);
     if (file) {
       this.selectedMedicalFile = file;
       this.showMedicalFilePopup = true;
       this.cdr.detectChanges();
-      console.log('📄 Fichier médical ouvert:', file.title);
     }
   }
 
-  /**
-   * ✅ Fermer la popup du fichier médical
-   */
   closeMedicalFilePopup(): void {
     this.showMedicalFilePopup = false;
     this.selectedMedicalFile = null;
     this.cdr.detectChanges();
   }
 
-  /**
-   * ✅ Télécharger un fichier médical
-   */
   downloadMedicalFile(fileUrl: string, fileName: string): void {
-    // Simulation du téléchargement
-    console.log('📥 Téléchargement du fichier:', fileName);
-    
-    // En production, vous feriez un vrai téléchargement :
-     window.open(fileUrl, '_blank');
-    // ou
-    // this.http.get(fileUrl, { responseType: 'blob' }).subscribe(blob => {
-    //   const url = window.URL.createObjectURL(blob);
-    //   const a = document.createElement('a');
-    //   a.href = url;
-    //   a.download = fileName;
-    //   a.click();
-    // });    // En production, vous feriez un vrai téléchargement :
-     window.open(fileUrl, '_blank');
-    // ou
-    // this.http.get(fileUrl, { responseType: 'blob' }).subscribe(blob => {
-    //   const url = window.URL.createObjectURL(blob);
-    //   const a = document.createElement('a');
-    //   a.href = url;
-    //   a.download = fileName;
-    //   a.click();
-    // });
-    
+    window.open(fileUrl, '_blank');
     alert(`Téléchargement de ${fileName} en cours...`);
   }
 
-  /**
-   * ✅ Imprimer un fichier médical
-   */
   printMedicalFile(): void {
     if (this.selectedMedicalFile) {
-      console.log('🖨️ Impression du fichier:', this.selectedMedicalFile.title);
       window.print();
     }
   }
 
-  /**
-   * ✅ Télécharger le dossier médical complet
-   */
   downloadCompleteMedicalFile(): void {
-    console.log('📥 Téléchargement du dossier médical complet');
     alert('Téléchargement du dossier médical complet en cours...\nCela peut prendre quelques instants.');
-    
-    // En production :
-    //this.medicalFileService.downloadComplete().subscribe(blob => {
-    //   const url = window.URL.createObjectURL(blob);
-    //   const a = document.createElement('a');
-    //   a.href = url;
-    //   a.download = `dossier-medical-${this.userName}.pdf`;
-    //   a.click();
-    // });
+  }
+
+  deleteAppointement(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')) {
+      this.appointementService.deleteAppointment(id).subscribe({
+        next: () => {
+          this.showNotification('Rendez-vous annulé avec succès', 'success');
+          this.loadUserAppointments();
+        },
+        error: (error) => {
+          console.error("❌ Erreur lors de l'annulation :", error);
+          this.showNotification('Erreur lors de l\'annulation', 'error');
+        }
+      });
+    }
+  }
+
+  updateAppointment(id: number, updatedData: Partial<Appoitement>): void {
+    this.appointementService.updateAppointment(id, updatedData as Appoitement).subscribe({
+      next: () => {
+        this.showNotification('Rendez-vous mis à jour avec succès', 'success');
+        this.loadUserAppointments();
+      },
+      error: (error) => {
+        console.error("❌ Erreur lors de la mise à jour :", error);
+        this.showNotification('Erreur lors de la mise à jour', 'error');
+      }
+    });
   }
 }

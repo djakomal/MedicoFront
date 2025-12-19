@@ -146,15 +146,14 @@
                             </ng-container>
                         </svg>
                     </button>
-                    <div 
-                        *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" 
-                        class="error-message">
-                        <span *ngIf="registerForm.get('password')?.errors?.['required']">
-                            Le mot de passe est requis
-                        </span>
-                        <span *ngIf="registerForm.get('password')?.errors?.['minlength']">
-                            Le mot de passe doit contenir au moins 8 caractères
-                        </span>
+                    <div *ngIf="password?.invalid && password?.touched" class="invalid-feedback">
+                        <div *ngIf="password?.errors?.['required']">Le mot de passe est requis</div>
+                        <div *ngIf="password?.errors?.['minlength']">
+                            Le mot de passe doit contenir au moins 6 caractères
+                        </div>
+                        <div *ngIf="password?.errors?.['invalidPassword']">
+                            Le mot de passe doit contenir au moins : une majuscule, une minuscule, un chiffre et un caractère spécial
+                        </div>
                     </div>
                 </div>
                 
@@ -185,15 +184,14 @@
                             </ng-container>
                         </svg>
                     </button>
-                    <div 
-                        *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" 
-                        class="error-message">
-                        La confirmation du mot de passe est requise
-                    </div>
-                    <div 
-                        *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" 
-                        class="error-message">
-                        Les mots de passe ne correspondent pas
+                    <div *ngIf="password?.invalid && password?.touched" class="invalid-feedback">
+                        <div *ngIf="password?.errors?.['required']">Le mot de passe est requis</div>
+                        <div *ngIf="password?.errors?.['minlength']">
+                            Le mot de passe doit contenir au moins 6 caractères
+                        </div>
+                        <div *ngIf="password?.errors?.['invalidPassword']">
+                            Le mot de passe doit contenir au moins : une majuscule, une minuscule, un chiffre et un caractère spécial
+                        </div>
                     </div>
                 </div>
                 

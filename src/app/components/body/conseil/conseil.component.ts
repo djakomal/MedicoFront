@@ -42,8 +42,7 @@ export class ConseilComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Charger les conseils au démarrage
-    this.loadConseils();
-    
+    this.loadConseils(); 
     // ✅ SOLUTION 1: Recharger à chaque navigation vers ce composant
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)

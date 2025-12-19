@@ -44,7 +44,7 @@ export class AppointComponent  implements OnInit {
       // Étape 2: Détails du rendez-vous
       doctorType: ['', Validators.required],
       otherSpecialist: [''],
-      doctorId: [null],
+      doctorId: ['', Validators.required],
       appointmentType: ['', Validators.required],
       preferredDate: ['', Validators.required],
       preferredTime: ['', Validators.required],
@@ -208,4 +208,6 @@ export class AppointComponent  implements OnInit {
   showOtherSpecialist() {
     return this.appointmentForm.get('doctorType')?.value === 'other';
   }
+
+  
 }

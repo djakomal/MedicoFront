@@ -1,22 +1,21 @@
-*{
-  margin: auto;
-  padding: auto;
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #82679c 100%);
   min-height: 100vh;
-  justify-content: center;
-  min-width:10.5%;
-  padding: 40px 40px;
+  padding: 40px 20px;
+
 }
 
 .container {
-  justify-content: center;
-  min-width:6.5rem;
-  margin: 1400px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .header-section {
@@ -126,7 +125,7 @@ thead {
   z-index: 10;
 }
 
-thead th {
+th {
   padding: 20px 16px;
   text-align: left;
   font-size: 12px;
@@ -140,6 +139,7 @@ thead th {
 tbody tr {
   border-bottom: 1px solid #e9ecef;
   transition: all 0.2s ease;
+  animation: slideIn 0.4s ease;
 }
 
 tbody tr:hover {
@@ -147,7 +147,7 @@ tbody tr:hover {
   transform: scale(1.002);
 }
 
-tbody td {
+td {
   padding: 20px 16px;
   font-size: 14px;
   color: #333;
@@ -161,11 +161,11 @@ tbody td {
 }
 
 .name-cell {
-  font-weight: 600;
-  color: #2c3e50;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .name-avatar {
@@ -173,11 +173,12 @@ tbody td {
   height: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   font-weight: 700;
+ padding-: 10%;
   font-size: 16px;
 }
 
@@ -298,7 +299,7 @@ tbody td {
 .empty-state svg {
   width: 100px;
   height: 100px;
-  margin-bottom: 25px;
+  margin: 0 auto 25px;
   opacity: 0.4;
   stroke: #667eea;
 }
@@ -323,10 +324,6 @@ tbody td {
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-tbody tr {
-  animation: slideIn 0.4s ease;
 }
 
 @media (max-width: 1400px) {
@@ -362,12 +359,12 @@ tbody tr {
     font-size: 12px;
   }
 
-  thead th {
+  th {
     padding: 15px 10px;
     font-size: 10px;
   }
 
-  tbody td {
+  td {
     padding: 15px 10px;
     font-size: 12px;
   }

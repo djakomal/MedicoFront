@@ -125,4 +125,21 @@ export class RegisterComponent implements OnInit {
       }
     );
   }
+  
+  passwordValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+    // Exemple de validation : au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    return passwordRegex.test(control.value) ? null : { invalidPassword: true };
+  }
+
+  get username() {
+    return this.registerForm.get('username');
+  }
+
+  get password() {
+    return this.registerForm.get('password');
+  }
 }

@@ -1,7 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap } from 'rxjs';
 import { Appoitement } from '../../models/appoitement';
+import { JwtService } from '../jwt/jwt.service';
+
+// Ajouter l'interface ICI, avant le @Injectable
+export interface AppointmentResponse {
+  success: boolean;
+  message: string;
+  appointment: Appoitement;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +18,12 @@ export class AppointementService {
 
   private matiereUrl = "http://localhost:8080/medico/appointment";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+  private jwtService: JwtService) { }
 
   // Méthode pour récupérer les headers avec le token
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = this.jwtService.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -47,13 +56,37 @@ export class AppointementService {
   }
 
   // Supprimer un rendez-vous
-  deleteAppointment(id: number): Observable<void> {
-    return this.http.delete<void>(
+  // Supprimer un rendez-vous
+  deleteAppointment(id: number): Observable<any> {
+    console.log('🗑️ Tentative de suppression du rendez-vous ID:', id);
+    
+    // ✅ VALIDATION
+    if (!id || id <= 0) {
+      console.error('❌ ID invalide:', id);
+      throw new Error('ID de rendez-vous invalide');
+    }
+
+    return this.http.delete<any>(
       `${this.matiereUrl}/delete/${id}`,
-      { headers: this.getHeaders() }
+      { 
+        headers: this.getHeaders(),
+        observe: 'response' // ✅ Pour capturer toute la réponse HTTP
+      }
+    ).pipe(
+      tap((response: any) => {
+        console.log('✅ Rendez-vous supprimé avec succès:', response);
+      }),
+      catchError(error => {
+        console.error('❌ Erreur lors de la suppression:', error);
+        if (error.status === 401) {
+          console.error('🔒 Token expiré ou invalide');
+        } else if (error.status === 404) {
+          console.error('❌ Rendez-vous introuvable');
+        }
+        throw error;
+      })
     );
   }
-
   // Récupérer les rendez-vous d'aujourd'hui
   public getTodayAppointments(): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
@@ -83,6 +116,36 @@ export class AppointementService {
     return this.http.put<Appoitement>(
       `${this.matiereUrl}/update/${id}`,
       appoitement,
+      { headers: this.getHeaders() }
+    );
+  }
+
+
+  // NOUVELLES MÉTHODES DE VALIDATION
+  
+  // Valider un rendez-vous
+  public validateAppointment(id: number): Observable<AppointmentResponse> {
+    return this.http.put<AppointmentResponse>(
+      `${this.matiereUrl}/${id}/validate`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+  // Rejeter un rendez-vous
+  public rejectAppointment(id: number): Observable<AppointmentResponse> {
+    return this.http.put<AppointmentResponse>(
+      `${this.matiereUrl}/${id}/reject`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+  // Débuter un rendez-vous
+  public startAppointment(id: number): Observable<AppointmentResponse> {
+    return this.http.put<AppointmentResponse>(
+      `${this.matiereUrl}/${id}/start`,
+      {},
       { headers: this.getHeaders() }
     );
   }

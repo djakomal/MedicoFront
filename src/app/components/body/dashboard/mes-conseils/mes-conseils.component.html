@@ -122,7 +122,7 @@
                     />
                     <div class="image-preview" *ngIf="conseilForm.value.imageUrl">
                         <img [src]="conseilForm.value.imageUrl" alt="Aperçu" 
-                             (error)="conseilForm.patchValue({imageUrl: ''})">
+                             (error)="conseilForm.patchValue({imageUrl: ''})" />
                     </div>
                 </div>
 

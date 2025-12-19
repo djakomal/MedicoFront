@@ -9,10 +9,15 @@
           <tr>
             <th scope="col">ID</th>
             <th scope="col">NOM</th>
-            <th scope="col">DATE</th>
-            <th scope="col">HEURE</th>
+            <th scope="col">PRENOM</th>
+            <th scope="col"> DATE HEURE</th>
             <th scope="col">TYPE</th>
-            <th scope="col">DESCRIPTION</th>
+            <th scope="col">SYMPTÔMES</th>
+            <th scope="col">PREMIER RENDEZ VOUS </th>
+            <th scope="col">MOMENTS</th>
+            <th scope="col">ALERGIE</th>
+            <th scope="col">MEDICAMENT PRIS</th>
+            <th scope="col">INFORMATION SUPPLEMENTAIRE</th>
             <th scope="col">STATUS</th>
             <th scope="col">ACTION</th>
 
@@ -22,12 +27,17 @@
           <tr>
 
             <td>{{app.id}}</td>
-            <td>{{app.name}}</td>
-            <td>{{app.date}}</td>
-            <td>{{app.heure}}</td>
-            <td>{{app.type}}</td>
-            <td>{{app.description}}</td>
-             <td>{{app.statut || 'Non défini'}}</td>
+            <td>{{app.firstname}}</td>
+            <td>{{app.lastname}}</td>
+            <td>{{app.preferredDate || app.preferredTime }}</td>
+            <td>{{app.appointmentType}}</td>
+            <td>{{app.symptoms}}</td>
+            <td>{{app.firstVisit}}</td>
+            <td >{{app.altAvailability}}</td>
+            <td>{{app.allergies}}</td>
+              <td>{{app.medications}}</td>
+            <td>{{app.additionalInfo}}</td>
+             <td>{{app.status || 'Non défini'}}</td>
             <td>
               <button type="submit" class="btn btn-success btn-circle btn-sm" (click)="validerRendezVous(app.id)">Vaider Rendez-Vous</button>
               <button type="submit" class="btn btn-danger btn-circle btn-sm" (click)=" rejeterRendezVous(app.id)">Rejeter Rendez-Vous</button>

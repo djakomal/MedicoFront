@@ -8,8 +8,8 @@ import { FormulaireComponent } from '../../formulaire/formulaire.component';
 import { Appoitement } from '../../../../models/appoitement';
 
 import { NotificationService } from '../../../../_helps/notification.service';
-import { AppoitementType } from '../../../../models/appoitementType';
 import { AppointTypeServiceService } from '../../../../_helps/appointment/appoint-type-service.service';
+import { AppointementService } from '../../../../_helps/appointment/appointement.service';
 
 
 
@@ -23,11 +23,11 @@ import { AppointTypeServiceService } from '../../../../_helps/appointment/appoin
   styleUrl: './appointment.component.css'
 })
 export class AppointmentComponent  implements OnInit{
-  tableauClasse!:AppoitementType[]
+  tableauClasse!:Appoitement[]
 
   constructor( private router :Router
     ,
-    private appointementService:AppointTypeServiceService,
+    private appointementService:AppointementService,
     private notificationService: NotificationService
   ){
 
@@ -37,7 +37,7 @@ export class AppointmentComponent  implements OnInit{
   this.getAppointment();
  }
  getAppointment() {
-  this.appointementService.getAllAppointmentType().subscribe({
+  this.appointementService.getAllAppointment().subscribe({
     next: (data) => {
       console.log("📌 Données reçues :", data);
       
@@ -73,32 +73,30 @@ redirection(){
   // }
 
 
-
-
   validerRendezVous(id: number) {
     const appointement = this.tableauClasse.find(app => app.id === id);
-       if (appointement) {
-         appointement.statut = 'Validé';
-         this.notificationService.showNotification(`Rendez-vous ${id} validé avec succès.`, 'success');
-       }
+    if (appointement) {
+      appointement.status = 'validated';
+      this.notificationService.showNotification(`Rendez-vous ${id} validé avec succès.`, 'success');
+    }
     // votre logique pour valider le rendez-vous
-    this.notificationService.addNotification('Rendez-vous validé avec succès!');
+    // Supprimé : this.notificationService.addNotification('success'); // Évite l'erreur de type
   }
-
+  
   rejeterRendezVous(id: number) {
     const appointement = this.tableauClasse.find(app => app.id === id);
-       if (appointement) {
-         appointement.statut = 'Rejeté';
-         this.notificationService.showNotification(`Rendez-vous ${id} rejeté.`, 'error');
-       }
+    if (appointement) {
+      appointement.status = 'cancelled';
+      this.notificationService.showNotification(`Rendez-vous ${id} rejeté.`, 'error');
+    }
     // votre logique pour rejeter le rendez-vous
-    this.notificationService.addNotification('Rendez-vous rejeté!');
+    // Supprimé : this.notificationService.addNotification('error'); // Évite l'erreur de type
   }
-
+  
   debuterRendezVous(id: number) {
     const appointement = this.tableauClasse.find(app => app.id === id);
     if (appointement) {
-      appointement.statut = 'En cours';
+      appointement.status = 'pending';
       this.notificationService.showNotification(`Rendez-vous ${id} démarré.`, 'success');
     }
   }

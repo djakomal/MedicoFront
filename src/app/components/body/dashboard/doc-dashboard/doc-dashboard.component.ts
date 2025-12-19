@@ -1,9 +1,8 @@
-
+import { JwtService } from './../../../../_helps/jwt/jwt.service';
 import { Component, OnInit } from '@angular/core';
 import { filter, forkJoin } from 'rxjs';
 import { Conseil } from '../../../../models/Conseil';
 import { User } from '../../../../models/user';
-import { JwtService } from '../../../../_helps/jwt/jwt.service';
 import { Appoitement } from '../../../../models/appoitement';
 import { ConseilService } from '../../../../_helps/Docteur/Conseil/Conseil.service';
 import { AppointementService } from '../../../../_helps/appointment/appointement.service';
@@ -33,10 +32,12 @@ export class DocdashboardComponent implements OnInit {
   };
 
   AppoitementAujourdhui: Appoitement[] = [];
+  userName: string = '';
   AppoitementSemaine: Appoitement[] = [];
   loading: boolean = false;
   error: string = '';
   isDashboard: boolean = false;
+  menuOpen: boolean = false;
 
   // Données brutes
   allAppointments: Appoitement[] = [];
@@ -51,7 +52,7 @@ export class DocdashboardComponent implements OnInit {
     private dashboardService: DashboardService,
     private conseilService: ConseilService,
     private AppoitementService: AppointementService,
-    private patientService: JwtService
+    private JwtService: JwtService
 
   ) { }
 
@@ -59,6 +60,7 @@ export class DocdashboardComponent implements OnInit {
     this.initializeWeekDays();
     this.loadDashboardData();
     this.checkRoute(this.router.url);
+    this.loadUserName();
     
     // Écouter les changements de route
     this.router.events.pipe(
@@ -234,6 +236,14 @@ export class DocdashboardComponent implements OnInit {
     this.loadDashboardData();
   }
 
+
+  logout(): void {
+    this.JwtService.removeToken();
+    this.userName = '';
+    this.menuOpen = false;
+    this.router.navigateByUrl('/connex');
+  }
+
   
   /**
    * Obtenir le nombre de rendez-vous pour un jour spécifique
@@ -310,6 +320,16 @@ generateWeekDays() {
       date: day,
       isToday: this.isSameDay(day, today)
     });
+  }
+}
+
+
+loadUserName(): void {
+  const decodedToken = this.JwtService.getDecodedToken();
+  this.userName = this.JwtService.getUserName() || '';
+  
+  if (this.userName.includes('@')) {
+    this.userName = this.userName.split('@')[0];
   }
 }
 }

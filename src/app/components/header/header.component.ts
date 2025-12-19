@@ -6,6 +6,7 @@ import { Router, RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../_helps/notification.service';
 import { JwtService } from '../../_helps/jwt/jwt.service';
+import { Message } from '../../models/Message';
 
 
 @Component({
@@ -18,7 +19,7 @@ import { JwtService } from '../../_helps/jwt/jwt.service';
 export class HeaderComponent {
   userName: string | null = null; // Stocke le nom de l'utilisateur
 
-  notifications: string[] = [];
+  notifications: Message[] = [];
 
   menuOpen: boolean = false;
 
@@ -31,7 +32,7 @@ export class HeaderComponent {
   ) {}
 
   ngOnInit() {
-    this.notificationService.getNotifications().subscribe((notifications) => {
+    this.notificationService.notifications$.subscribe((notifications: Message[]) => {
       this.notifications = notifications;
     });
 
@@ -39,7 +40,7 @@ export class HeaderComponent {
   }
 
   clearNotifications() {
-    this.notificationService.clearNotifications();
+    this.notificationService.clearAllNotifications();
   }
   toggleMenu() {
     this.menuOpen = !this.menuOpen;

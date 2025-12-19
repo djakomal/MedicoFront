@@ -24,7 +24,7 @@ export class Appoitement {
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
   otherSpecialist!: string; // Optionnel, uniquement si doctorType === 'other'
-  doctor!: Docteur;  // Optionnel, préférence de médecin
+  doctor!: Docteur[];  // Optionnel, préférence de médecin
   appointmentType!: 'in-person' | 'video';
   preferredDate!: string; // Format YYYY-MM-DD
   preferredTime!: 'morning' | 'afternoon' | 'evening';
@@ -46,10 +46,10 @@ export class Appoitement {
   // Informations complémentaires
   additionalInfo!: string; // Optionnel
   consent!: boolean;
-  statut!: string;
+
   
   // Champs potentiellement ajoutés par le backend
-  status!: 'pending' | 'confirmed' | 'cancelled';
+  status!: 'pending' | 'started' | 'cancelled'| 'validated';
   createdAt!: string;
   updatedAt!: string;
 
