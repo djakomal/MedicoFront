@@ -127,11 +127,11 @@ export class MesHorairesComponent implements OnInit {
   modifierCreneau(creneau: Creneau): void {
     this.isEditing = true;
     this.editingId = creneau.id || null;
-    this.nouveauCreneau = {
+    this.creneauForm.patchValue({
       date: creneau.date,
       heureDebut: creneau.heureDebut.substring(0, 5),
       heureFin: creneau.heureFin.substring(0, 5)
-    };
+    });
   }
   
   sauvegarderModification(): void {

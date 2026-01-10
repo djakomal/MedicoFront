@@ -10,6 +10,8 @@ import { AppointementService } from '../../../../_helps/appointment/appointement
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../../../_helps/notification.service';
 import { Message } from '../../../../models/Message';
+import { Creneau } from '../../../../models/Creneau';
+import { CreneauService } from '../../../../_helps/Creneau/Creneau.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -36,6 +38,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showMedicalFilePopup: boolean = false;
   selectedMedicalFile: any = null;
   activeSection: string = 'dashboard';
+    creneauxDisponibles: Creneau[] = [];
+     creneauxFiltres: Creneau[] = [];
+     isLoadingCreneaux=false;
   showAlert: boolean = false;
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'info' = 'success';
@@ -166,6 +171,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private jwtService: JwtService,
     private cdr: ChangeDetectorRef,
+    private creneauService: CreneauService,
     private appointementService: AppointementService,
   ) {}
 
@@ -411,4 +417,79 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+
+
+    chargerCreneauxDuMedecin(doctorId: number): void {
+      this.isLoadingCreneaux = true;
+   
+      // Option 2: Récupérer tous les créneaux disponibles et filtrer
+      this.creneauService.getCreneauxDocteur(doctorId).subscribe({
+        next: (creneaux: Creneau[]) => {
+          // Filtrer uniquement les créneaux disponibles et futurs
+          const aujourdhui = new Date();
+          aujourdhui.setHours(0, 0, 0, 0);
+          
+          this.creneauxDisponibles = creneaux.filter(c => 
+            c.disponible && 
+            new Date(c.date) >= aujourdhui
+          );
+          
+          this.creneauxFiltres = [...this.creneauxDisponibles];
+          this.isLoadingCreneaux = false;
+          console.log('Créneaux chargés:', this.creneauxDisponibles);
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement des créneaux:', error);
+          this.isLoadingCreneaux = false;
+          alert('Erreur lors du chargement des créneaux disponibles');
+        }
+      });
+    }
+  
+    // Filtrer les créneaux par date
+    filtrerCreneauxParDate(date: string): void {
+      if (!date) {
+        this.creneauxFiltres = [...this.creneauxDisponibles];
+        return;
+      }
+  
+      this.creneauxFiltres = this.creneauxDisponibles.filter(c => c.date === date);
+    }
+  
+    // Grouper les créneaux par date pour un meilleur affichage
+    getCreneauxGroupesParDate(): { date: string; creneaux: Creneau[] }[] {
+      const groupes = new Map<string, Creneau[]>();
+  
+      this.creneauxFiltres.forEach(creneau => {
+        if (!groupes.has(creneau.date)) {
+          groupes.set(creneau.date, []);
+        }
+        groupes.get(creneau.date)?.push(creneau);
+      });
+  
+      // Convertir en tableau et trier par date
+      return Array.from(groupes.entries())
+        .map(([date, creneaux]) => ({
+          date,
+          creneaux: creneaux.sort((a, b) => a.heureDebut.localeCompare(b.heureDebut))
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+    }
+  
+    // Formater la date pour l'affichage
+    formatDate(dateStr: string): string {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+  
+    // Formater l'heure
+    formatHeure(heureStr: string): string {
+      return heureStr.substring(0, 5);
+    }
 }

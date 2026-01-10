@@ -1,124 +1,69 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Creneau } from "../../models/Creneau";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, Observable, tap } from 'rxjs';
+import { Creneau } from '../../models/Creneau';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CreneauService {
   
-  private apiUrl = 'http://localhost:8080/medico/api/creneaux';
-  
+  private baseURL = 'http://localhost:8080/medico/api/creneaux';
+
   constructor(private http: HttpClient) {}
-  
-  // Obtenir les headers avec le token JWT
+
+  //  Headers avec le token JWT
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken') || 
+                  localStorage.getItem('token') || 
+                  localStorage.getItem('jwtToken');
+    
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
   }
-  
-  // Récupérer tous les créneaux disponibles (pour les patients)
-  getCreneauxDisponibles(): Observable<Creneau[]> {
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<Creneau[]>(`${this.apiUrl}/disponibles`, { 
-      headers: headers 
-    });
-  }
-  
-  // Récupérer les créneaux du docteur connecté
+
+  //  RÉCUPÉRER MES CRÉNEAUX (docteur connecté)
   getMesCreneaux(): Observable<Creneau[]> {
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<Creneau[]>(`${this.apiUrl}/disponibles`, { 
-      headers: headers 
+    return this.http.get<Creneau[]>(`${this.baseURL}/mes-creneaux`, {
+      headers: this.getHeaders()
     });
   }
-  
-  // Récupérer les créneaux d'un docteur spécifique
-  getCreneauxByDoctor(doctorId: number): Observable<Creneau[]> {
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<Creneau[]>(`${this.apiUrl}/doctor/${doctorId}`, { 
-      headers: headers
-    });
-  }
-  
-  // Ajouter un créneau
+
+  //  AJOUTER UN CRÉNEAU
   ajouterCreneau(creneau: Creneau): Observable<Creneau> {
-
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.post<Creneau>(`${this.apiUrl}`, creneau, { 
-      headers: headers 
+    return this.http.post<Creneau>(this.baseURL, creneau, {
+      headers: this.getHeaders()
     });
   }
-  
-  // Modifier un créneau
+
+  //  MODIFIER UN CRÉNEAU
   modifierCreneau(id: number, creneau: Creneau): Observable<Creneau> {
-
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.put<Creneau>(`${this.apiUrl}/${id}`, creneau, { 
-      headers: headers 
+    return this.http.put<Creneau>(`${this.baseURL}/${id}`, creneau, {
+      headers: this.getHeaders()
     });
   }
-  
-  // Supprimer un créneau
+
+  //  SUPPRIMER UN CRÉNEAU
   supprimerCreneau(id: number): Observable<void> {
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { 
-      headers: headers 
+    return this.http.delete<void>(`${this.baseURL}/${id}`, {
+      headers: this.getHeaders()
     });
   }
-  
-  // Rendre un créneau indisponible
-  rendreIndisponible(id: number): Observable<void> {
 
-    const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.put<void>(`${this.apiUrl}/${id}/indisponible`, {}, { 
-      headers: headers
-    });
+  //  RÉCUPÉRER LES CRÉNEAUX D'UN DOCTEUR SPÉCIFIQUE (pour les patients)
+  getCreneauxDocteur(docteurId: number): Observable<Creneau[]> {
+    return this.http.get<Creneau[]>(`${this.baseURL}/docteur/${docteurId}`,{
+      headers: this.getHeaders()
+    }).pipe(
+      tap(creneaux => {
+        console.log(' Réponse API reçue:', creneaux);
+      }),
+      catchError(error => {
+        console.error('❌ Erreur API créneaux:', error);
+        throw error;
+      })
+    );
+  };
   }
-}

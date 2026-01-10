@@ -64,8 +64,13 @@
           </div>
 
           <div class="form-group">
-            <label for="gender" >Sexe</label>
-            <select id="gender"formControlName="gender"(change)="onGenderChange($event)" class="form-select">
+            <label for="gender">Sexe</label>
+            <select
+              id="gender"
+              formControlName="gender"
+              (change)="onGenderChange($event)"
+              class="form-select"
+            >
               <option value="">Sélectionner</option>
               <option value="male">Homme</option>
               <option value="female">Femme</option>
@@ -173,21 +178,21 @@
 
           <div class="form-group">
             <label for="doctor">Médecin (si vous avez une préférence)</label>
-            <select id="doctor" formControlName="doctor">
-              <option [ngValue]="null">Sélectionner</option>
-              <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
-                Dr. {{ doctor.name }}
-              </option>
+            <select id="doctor" formControlName="doctorId">
+              <option [ngValue]="null">Selectionnez</option>
+               <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+                 Dr. {{ doctor.name }}
+               </option>
               <option [ngValue]="null">
                 N'importe quel médecin disponible
               </option>
             </select>
           </div>
-          >
+          
 
           <div class="form-group">
             <label for="appointmentType" class="required"
-              >Type de consultation</label
+              >Mode de consultation</label
             >
             <select id="appointmentType" formControlName="appointmentType">
               <option value="">Sélectionner</option>
@@ -205,14 +210,14 @@
             </div>
           </div>
 
-          <div class="form-group">
+           <!-- <div class="form-group">
             <label for="preferredDate" class="required">Date souhaitée</label>
             <input
               type="date"
               id="preferredDate"
               formControlName="preferredDate"
-            />
-            <p class="hint">
+            /> -->
+            <!-- <p class="hint">
               Veuillez sélectionner une date à partir de demain
             </p>
             <div
@@ -223,38 +228,119 @@
               class="error-message"
             >
               Ce champ est obligatoire.
-            </div>
-          </div>
+            </div> -->
+          </div> 
 
+          <!-- Section de sélection des créneaux -->
           <div class="form-group">
-            <label for="preferredTime" class="required"
-              >Créneau horaire préféré</label
-            >
-            <select id="preferredTime" formControlName="preferredTime">
-              <option value="">Sélectionner</option>
-              <option value="morning">Matin (8h-12h)</option>
-              <option value="afternoon">Après-midi (13h-17h)</option>
-              <option value="evening">Soirée (17h-20h)</option>
-            </select>
+            <label class="required">Sélectionner un créneau disponible</label>
+
+            <!-- Message de chargement -->
+            <div *ngIf="isLoadingCreneaux" class="loading-message">
+              <p>⏳ Chargement des créneaux disponibles...</p>
+            </div>
+
+            <!-- Message si aucun médecin sélectionné -->
             <div
               *ngIf="
-                appointmentForm.get('preferredTime')?.invalid &&
-                appointmentForm.get('preferredTime')?.touched
+                !appointmentForm.get('doctorId')?.value && !isLoadingCreneaux
+              "
+              class="info-message"
+            >
+              <p>
+                ℹ️ Veuillez d'abord sélectionner un médecin pour voir les
+                créneaux disponibles
+              </p>
+            </div>
+
+            <!-- Message si aucun créneau disponible -->
+            <div 
+              *ngIf="
+                appointmentForm.get('doctorId')?.value &&
+                creneauxFiltres.length === 0 &&
+                !isLoadingCreneaux
+              "
+              class="warning-message"
+            >
+              <p>
+                ⚠️ Aucun créneau disponible pour ce médecin. Veuillez en
+                sélectionner un autre ou contacter le cabinet.
+              </p>
+            </div>
+<!-- 
+            Filtre par date (optionnel) -->
+            <!-- <div *ngIf="creneauxDisponibles.length > 0" class="date-filter">
+              <label for="dateFilter">Filtrer par date (optionnel) :</label>
+              <input
+                type="date"
+                id="dateFilter"
+                [formControl]="dateFilterControl"
+                class="form-control"
+                [min]="getMinDate()"
+              />
+            </div>  -->
+
+            <!-- Liste des créneaux groupés par date -->
+            <div *ngIf="creneauxFiltres.length > 0" class="creneaux-container">
+              <div
+                *ngFor="let groupe of getCreneauxGroupesParDate()"
+                class="date-group"
+              >
+                <h4 class="date-header">
+                  {{ formatDate(groupe.date) }}
+                </h4>
+                <div class="creneaux-grid">
+                  <div
+                    *ngFor="let creneau of groupe.creneaux"
+                    class="creneau-card"
+                    [class.selected]="isCreneauSelected(creneau.id)"
+                    (click)="selectCreneau(creneau)"
+                  >
+                    <div class="creneau-time">
+                      <span class="time-icon">🕐</span>
+                      <span class="time-text">
+                        {{ formatHeure(creneau.heureDebut) }} -
+                        {{ formatHeure(creneau.heureFin) }}
+                      </span>
+                    </div>
+
+                    <div class="creneau-status">
+                      <span class="badge-disponible">✓ Disponible</span>
+                    </div>
+
+                    <div
+                      *ngIf="isCreneauSelected(creneau.id)"
+                      class="selected-indicator"
+                    >
+                      ✓ Sélectionné
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> 
+
+            <!---Afficher le creneaux en fonction du docteur -->
+
+
+
+            <!-- Message d'erreur si aucun créneau sélectionné -->
+            <div
+              *ngIf="
+                appointmentForm.get('creneauId')?.invalid &&
+                appointmentForm.get('creneauId')?.touched
               "
               class="error-message"
             >
-              Ce champ est obligatoire.
+              Veuillez sélectionner un créneau disponible.
             </div>
           </div>
-        </div>
-
         <!-- Informations médicales -->
         <div class="form-section">
           <h3 class="section-title">Informations médicales</h3>
 
           <div class="form-group">
             <label for="reason" class="required"
-              >Motif de la consultation</label
+              >Type  de  consultation</label
             >
             <select id="reason" formControlName="reason">
               <option value="">Sélectionner</option>
@@ -367,16 +453,26 @@
             type="button"
             class="btn btn-secondary"
             (click)="previousStep()"
+            [disabled]="isSubmitting"
           >
             Précédent
           </button>
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="appointmentForm.invalid"
+            [disabled]="appointmentForm.invalid || isSubmitting"
           >
-            Envoyer la demande
+            <span *ngIf="isSubmitting">Envoi en cours...</span>
+            <span *ngIf="!isSubmitting">Envoyer la demande</span>
           </button>
+        </div>
+
+        <div *ngIf="submitSuccess" class="success-message">
+          Votre demande de rendez-vous a été envoyée avec succès. Nous vous contacterons bientôt pour confirmer.
+        </div>
+        
+        <div *ngIf="submitError" class="error-message">
+          {{ submitError }}
         </div>
       </div>
     </form>

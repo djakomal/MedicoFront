@@ -5,6 +5,7 @@ export class Conseil {
     auteur!: string;
     datePublication?: Date;
     imageUrl?: string;
+    docteurId?: number;
     tags!: string[];
     categorie!: string;
     publie?: boolean;

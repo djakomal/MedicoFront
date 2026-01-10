@@ -26,70 +26,42 @@ export class JwtService {
     this.startAutoRefresh();
   }
 
-  // ✅ SYSTÈME DE RAFRAÎCHISSEMENT AUTOMATIQUE
-  // Vérifie toutes les 5 minutes et rafraîchit 5 minutes avant expiration
   private startAutoRefresh(): void {
-    // NE PAS vérifier immédiatement au démarrage (laisse le temps de se connecter)
-    // this.checkAndRefresh(); // ❌ ENLEVÉ
-
-    // Vérifier toutes les 5 minutes (300000 ms)
     interval(300000).subscribe(() => {
       this.checkAndRefresh();
     });
-
-    console.log('✅ Système de rafraîchissement automatique activé (vérification toutes les 5 min)');
+    console.log('✅ Système de rafraîchissement automatique activé');
   }
 
-  // ✅ VÉRIFIER ET RAFRAÎCHIR SI NÉCESSAIRE
   private checkAndRefresh(): void {
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
 
-    // Pas de token = pas connecté
-    if (!token || !refreshToken) {
-      return;
-    }
-
-    // Token déjà en cours de rafraîchissement
-    if (this.isRefreshing) {
+    if (!token || !refreshToken || this.isRefreshing) {
       return;
     }
 
     try {
       const decoded: any = jwtDecode(token);
-      const exp = decoded.exp * 1000; // ✅ CORRECTION: multiplier par 1000, pas 6000000
+      const exp = decoded.exp * 1000;
       const now = Date.now();
       const timeLeft = exp - now;
-      const minutesLeft = Math.floor(timeLeft / 60000); // ✅ CORRECTION: diviser par 60000 (60s * 1000ms)
+      const minutesLeft = Math.floor(timeLeft / 60000);
 
-      // ✅ SI MOINS DE 5 MINUTES RESTANTES → RAFRAÎCHIR AUTOMATIQUEMENT
       if (minutesLeft <= 5 && minutesLeft > 0) {
-        console.log(`⚠️ Token expire dans ${minutesLeft} minutes - RAFRAÎCHISSEMENT AUTOMATIQUE...`);
+        console.log(`⚠️ Token expire dans ${minutesLeft} minutes - RAFRAÎCHISSEMENT...`);
+        this.doRefresh();
+      } else if (timeLeft <= 0) {
+        console.log('❌ Token expiré - RAFRAÎCHISSEMENT IMMÉDIAT...');
         this.doRefresh();
       }
-      // ✅ SI TOKEN EXPIRÉ → RAFRAÎCHIR IMMÉDIATEMENT
-      else if (timeLeft <= 0) {
-        console.log('❌ Token expiré - RAFRAÎCHISSEMENT AUTOMATIQUE IMMÉDIAT...');
-        this.doRefresh();
-      }
-      // Token OK
-      else if (minutesLeft > 5) {
-        // Log uniquement toutes les minutes pour ne pas polluer
-        if (minutesLeft % 10 === 0) {
-          console.log(`✅ Token valide - ${minutesLeft} minutes restantes`);
-        }
-      }
-
     } catch (error) {
       console.error('❌ Erreur de vérification du token:', error);
     }
   }
 
-  // ✅ EFFECTUER LE RAFRAÎCHISSEMENT
   private doRefresh(): void {
-    if (this.isRefreshing) {
-      return;
-    }
+    if (this.isRefreshing) return;
 
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
@@ -107,12 +79,10 @@ export class JwtService {
       next: (response: any) => {
         if (response && response.jwt) {
           this.saveToken(response.jwt);
-          
           if (response.refreshToken) {
             this.saveRefreshToken(response.refreshToken);
           }
-
-          console.log('✅ TOKEN RAFRAÎCHI AUTOMATIQUEMENT AVEC SUCCÈS !');
+          console.log('✅ TOKEN RAFRAÎCHI AVEC SUCCÈS !');
           this.refreshTokenSubject.next(response.jwt);
         }
         this.isRefreshing = false;
@@ -125,25 +95,27 @@ export class JwtService {
     });
   }
 
-  // ✅ DÉCONNEXION
   private handleLogout(): void {
     console.warn('⚠️ Session expirée - redirection vers login');
     this.removeToken();
     this.router.navigateByUrl('/connex');
   }
 
-  // 🔹 LOGIN UTILISATEUR
+  // 🔹 LOGIN UTILISATEUR (avec role="USER")
   login(credentials: { username: string; password: string }): Observable<any> {
-    const normalizedCredentials = {
-      ...credentials,
-      email: credentials.username.trim().toLowerCase()
+    const loginData = {
+      username: credentials.username.trim().toLowerCase(),
+      password: credentials.password,
+      role: 'USER' // ✅ ROLE SPÉCIFIÉ
     };
 
-    return this.http.post(this.baseURL + '/login/login', normalizedCredentials, {
+    console.log('🔐 Login USER:', loginData.username);
+
+    return this.http.post(this.baseURL + '/login/login', loginData, {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
       tap((response: any) => {
-        console.log("✅ Login réussi");
+        console.log("✅ Login USER réussi");
         
         if (response && response.jwt) {
           this.saveToken(response.jwt);
@@ -151,27 +123,41 @@ export class JwtService {
           if (response.refreshToken) {
             this.saveRefreshToken(response.refreshToken);
           }
+
+          // Sauvegarder le rôle
+          localStorage.setItem('userRole', 'USER');
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur de connexion:', error);
+        console.error('❌ Erreur de connexion USER:', error);
+        
+        // Message d'erreur plus clair
+        if (error.status === 403) {
+          error.errorMessage = 'Ce compte n\'est pas un compte utilisateur';
+        } else if (error.error?.message) {
+          error.errorMessage = error.error.message;
+        }
+        
         return throwError(() => error);
       })
     );
   }
 
-  // 🔹 LOGIN DOCTEUR
+  // 🔹 LOGIN DOCTEUR (avec role="DOCTOR")
   loginDoc(credentials: { username: string; password: string }): Observable<any> {
-    const normalizedCredentials = {
-      ...credentials,
-      username: credentials.username.trim().toLowerCase()
+    const loginData = {
+      username: credentials.username.trim().toLowerCase(),
+      password: credentials.password,
+      role: 'DOCTOR' // ✅ ROLE SPÉCIFIÉ
     };
 
-    return this.http.post(this.baseURL + '/docteur/login', normalizedCredentials, {
+    console.log('🔐 Login DOCTOR:', loginData.username);
+
+    return this.http.post(this.baseURL + '/login/login', loginData, {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
       tap((response: any) => {
-        console.log("✅ Login docteur réussi");
+        console.log("✅ Login DOCTOR réussi");
         
         if (response && response.jwt) {
           this.saveToken(response.jwt);
@@ -179,10 +165,21 @@ export class JwtService {
           if (response.refreshToken) {
             this.saveRefreshToken(response.refreshToken);
           }
+
+          // Sauvegarder le rôle
+          localStorage.setItem('userRole', 'DOCTOR');
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur de connexion docteur:', error);
+        console.error('❌ Erreur de connexion DOCTOR:', error);
+        
+        // Message d'erreur plus clair
+        if (error.status === 403) {
+          error.errorMessage = 'Ce compte n\'est pas un compte docteur';
+        } else if (error.error?.message) {
+          error.errorMessage = error.error.message;
+        }
+        
         return throwError(() => error);
       })
     );
@@ -204,15 +201,84 @@ export class JwtService {
 
   // 🔹 RÉCUPÉRER LE TOKEN
   getToken(): string | null {
-    const token = localStorage.getItem(this.tokenKey) || 
-                  localStorage.getItem('token') || 
-                  localStorage.getItem('jwtToken');
-    return token;
+    return localStorage.getItem(this.tokenKey) || 
+           localStorage.getItem('token') || 
+           localStorage.getItem('jwtToken');
   }
 
   // 🔹 RÉCUPÉRER LE REFRESH TOKEN
   getRefreshToken(): string | null {
     return localStorage.getItem(this.refreshTokenKey);
+  }
+
+  // 🔹 RÉCUPÉRER LE RÔLE DE L'UTILISATEUR
+  getUserRole(): string | null {
+    // D'abord vérifier dans localStorage
+    const storedRole = localStorage.getItem('userRole');
+    if (storedRole) {
+      return storedRole;
+    }
+
+    // Sinon décoder le token
+    const decoded = this.getDecodedToken();
+    if (decoded) {
+      // Vérifier dans le token
+      if (decoded.role) {
+        return decoded.role;
+      }
+      
+      // Vérifier dans authorities
+      if (decoded.authorities) {
+        if (Array.isArray(decoded.authorities)) {
+          const authority = decoded.authorities.find((auth: any) => 
+            typeof auth === 'string' ? 
+              (auth === 'ROLE_DOCTOR' || auth === 'ROLE_USER') :
+              (auth.authority === 'ROLE_DOCTOR' || auth.authority === 'ROLE_USER')
+          );
+          
+          if (authority) {
+            const role = typeof authority === 'string' ? 
+              authority.replace('ROLE_', '') : 
+              authority.authority.replace('ROLE_', '');
+            return role;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  getEmail(): string | null {
+    const decodedToken = this.getDecodedToken();
+    
+    if (!decodedToken) {
+      return null;
+    }
+
+    return decodedToken.email ||
+           decodedToken.sub ||
+           null;
+  }
+
+  // 🔹 VÉRIFIER SI L'UTILISATEUR EST UN DOCTEUR
+  isDoctor(): boolean {
+    return this.getUserRole() === 'DOCTOR';
+  }
+  getDoctorId():number |null {  
+    const decodedToken = this.getDecodedToken();
+    
+    if (!decodedToken) {
+      return null;
+    }
+
+    return decodedToken.doctorId ||
+           null;
+  }
+
+  // 🔹 VÉRIFIER SI L'UTILISATEUR EST UN USER
+  isUser(): boolean {
+    return this.getUserRole() === 'USER';
   }
 
   // 🔹 SUPPRIMER LES TOKENS
@@ -221,6 +287,7 @@ export class JwtService {
     localStorage.removeItem('token');
     localStorage.removeItem('jwtToken');
     localStorage.removeItem(this.refreshTokenKey);
+    localStorage.removeItem('userRole');
     this.isRefreshing = false;
     console.log("🗑️ Tokens supprimés");
   }
@@ -255,7 +322,17 @@ export class JwtService {
            decodedToken.preferred_username || 
            null;
   }
+ getDoctortype():string |null {
+   const decodedToken = this.getDecodedToken();
+    
+    if (!decodedToken) {
+      return null;
+    }
 
+    return decodedToken.doctorType ||
+            null;
+
+ }
   // 🔹 VÉRIFIER SI LE TOKEN EST EXPIRÉ
   isTokenExpired(): boolean {
     const token = this.getToken();
@@ -315,7 +392,6 @@ export class JwtService {
     );
   }
 
-  // ✅ S'ASSURER QUE LE TOKEN EST VALIDE AVANT LA REQUÊTE
   private ensureValidToken(): Observable<any> {
     const token = this.getToken();
     
@@ -323,18 +399,16 @@ export class JwtService {
       return of(null);
     }
 
-    // Si le token est expiré ou expire bientôt, rafraîchir d'abord
     try {
       const decoded: any = jwtDecode(token);
-      const exp = decoded.exp * 1000; // ✅ CORRECTION
+      const exp = decoded.exp * 1000;
       const now = Date.now();
-      const minutesLeft = Math.floor((exp - now) / 60000); // ✅ CORRECTION
+      const minutesLeft = Math.floor((exp - now) / 60000);
 
       if (minutesLeft <= 5) {
         console.log('🔄 Token expire bientôt - rafraîchissement avant requête');
         
         if (this.isRefreshing) {
-          // Attendre que le rafraîchissement en cours se termine
           return this.refreshTokenSubject.pipe(
             switchMap(token => token ? of(token) : of(null))
           );
@@ -361,11 +435,13 @@ export class JwtService {
     return this.http.post(this.baseURL + '/signup', signRequest);
   }
 
-  registerDoc(signRequest: any): Observable<any> {
+  registerDoc(signRequest: Docteur): Observable<any> {
     return this.http.post(this.baseURL + '/signup/docteur/add', signRequest);
   }
 
   getAllDocteurs(): Observable<Docteur[]> {
     return this.http.get<Docteur[]>(this.baseURL + '/all');
   }
+
+
 }

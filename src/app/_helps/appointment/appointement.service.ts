@@ -21,67 +21,71 @@ export class AppointementService {
   constructor(private http: HttpClient,
   private jwtService: JwtService) { }
 
-  // Méthode pour récupérer les headers avec le token
-  private getHeaders(): HttpHeaders {
-    const token = this.jwtService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-  }
+    private getHeaders(): HttpHeaders {
+      const token = localStorage.getItem('authToken') || 
+                    localStorage.getItem('token') || 
+                    localStorage.getItem('jwtToken');
+      
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+    }
 
   // Ajouter un rendez-vous
   public addAppoitement(appoitement: Appoitement): Observable<Appoitement> {
     return this.http.post<Appoitement>(
       `${this.matiereUrl}/add`, 
-      appoitement,
-      { headers: this.getHeaders() }
+      appoitement,{
+        headers:this.getHeaders()
+      }
     );
   }
 
   // Récupérer tous les rendez-vous
   public getAllAppointment(): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
-      this.matiereUrl,
-      { headers: this.getHeaders() }
+      this.matiereUrl,{
+        headers:this.getHeaders()
+      }
     );
   }
 
   // Récupérer un rendez-vous par ID
   getAppById(id: number): Observable<Appoitement> {
     return this.http.get<Appoitement>(
-      `${this.matiereUrl}/get/${id}`,
-      { headers: this.getHeaders() }
+      `${this.matiereUrl}/get/${id}`,{
+        headers:this.getHeaders()
+      }
     );
   }
 
-  // Supprimer un rendez-vous
+ 
   // Supprimer un rendez-vous
   deleteAppointment(id: number): Observable<any> {
     console.log('🗑️ Tentative de suppression du rendez-vous ID:', id);
     
-    // ✅ VALIDATION
+    //  VALIDATION
     if (!id || id <= 0) {
-      console.error('❌ ID invalide:', id);
+      console.error(' ID invalide:', id);
       throw new Error('ID de rendez-vous invalide');
     }
 
     return this.http.delete<any>(
       `${this.matiereUrl}/delete/${id}`,
       { 
-        headers: this.getHeaders(),
-        observe: 'response' // ✅ Pour capturer toute la réponse HTTP
+        observe: 'response' //  Pour capturer toute la réponse HTTP
       }
     ).pipe(
       tap((response: any) => {
-        console.log('✅ Rendez-vous supprimé avec succès:', response);
+        console.log(' Rendez-vous supprimé avec succès:', response);
       }),
       catchError(error => {
-        console.error('❌ Erreur lors de la suppression:', error);
+        console.error(' Erreur lors de la suppression:', error);
         if (error.status === 401) {
           console.error('🔒 Token expiré ou invalide');
         } else if (error.status === 404) {
-          console.error('❌ Rendez-vous introuvable');
+          console.error(' Rendez-vous introuvable');
         }
         throw error;
       })
@@ -90,16 +94,16 @@ export class AppointementService {
   // Récupérer les rendez-vous d'aujourd'hui
   public getTodayAppointments(): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
-      `${this.matiereUrl}/today`,
-      { headers: this.getHeaders() }
+      `${this.matiereUrl}/today`
     );
   }
 
   // Récupérer les rendez-vous d'un médecin
   public getAppointmentsByDoctor(doctorId: number): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
-      `${this.matiereUrl}/doctor/${doctorId}`,
-      { headers: this.getHeaders() }
+      `${this.matiereUrl}/doctor/${doctorId}`,{
+        headers:this.getHeaders()
+      }
     );
   }
 
@@ -107,7 +111,9 @@ export class AppointementService {
   public getAppointmentsByPatient(patientId: number): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
       `${this.matiereUrl}/patient/${patientId}`,
-      { headers: this.getHeaders() }
+      {
+        headers:this.getHeaders()
+      }
     );
   }
 
@@ -115,10 +121,19 @@ export class AppointementService {
   public updateAppointment(id: number, appoitement: Appoitement): Observable<Appoitement> {
     return this.http.put<Appoitement>(
       `${this.matiereUrl}/update/${id}`,
-      appoitement,
-      { headers: this.getHeaders() }
+      appoitement,{
+        headers:this.getHeaders()
+      }
     );
   }
+
+  // Recuperer le rendez-vous en fonction du docteur 
+  // public getAppointmentByDocteur(docteurId: number): Observable<Appoitement[]> {
+  //   return this.http.get<Appoitement[]>(
+  //     `${this.matiereUrl}/doctor/${docteurId}`,
+  //     { headers: this.getHeaders() }
+  //   );
+  // }
 
 
   // NOUVELLES MÉTHODES DE VALIDATION
@@ -127,8 +142,9 @@ export class AppointementService {
   public validateAppointment(id: number): Observable<AppointmentResponse> {
     return this.http.put<AppointmentResponse>(
       `${this.matiereUrl}/${id}/validate`,
-      {},
-      { headers: this.getHeaders() }
+      {},{
+        headers: this.getHeaders()
+      }
     );
   }
 
@@ -136,8 +152,8 @@ export class AppointementService {
   public rejectAppointment(id: number): Observable<AppointmentResponse> {
     return this.http.put<AppointmentResponse>(
       `${this.matiereUrl}/${id}/reject`,
-      {},
-      { headers: this.getHeaders() }
+      {  },
+      {headers: this.getHeaders()}
     );
   }
 
@@ -146,7 +162,7 @@ export class AppointementService {
     return this.http.put<AppointmentResponse>(
       `${this.matiereUrl}/${id}/start`,
       {},
-      { headers: this.getHeaders() }
+      {headers: this.getHeaders()}
     );
   }
 }

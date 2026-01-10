@@ -14,38 +14,30 @@ import { JwtService } from './jwt/jwt.service';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private jwtService: JwtService) {}
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = localStorage.getItem('authToken') || 
+                  localStorage.getItem('token') || 
+                  localStorage.getItem('jwtToken');
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    
-    // ✅ Ignorer les endpoints publics
-    if (this.isPublicUrl(request.url)) {
-      return next.handle(request);
-    }
-
-    // ✅ Ajouter automatiquement le token
-    const token = this.jwtService.getToken();
+                  // ✅ Ignorer les endpoints publics
+     if (this.isPublicUrl(req.url)) {
+       return next.handle(req);
+       }
+          
     if (token) {
-      request = request.clone({
+      console.log('🔐 Interceptor: Ajout du token à la requête', req.url);
+      
+      const clonedRequest = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
+      
+      return next.handle(clonedRequest);
     }
-
-    // ✅ Gérer les erreurs 401
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          console.warn('⚠️ Erreur 401 détectée');
-          // Le système auto-refresh s'occupera du rafraîchissement
-          // Pas besoin de logique complexe ici
-        }
-        return throwError(() => error);
-      })
-    );
+    
+    return next.handle(req);
   }
-
   private isPublicUrl(url: string): boolean {
     const publicUrls = [
       '/login/login',

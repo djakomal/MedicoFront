@@ -116,7 +116,7 @@ export class RegisterComponent implements OnInit {
         if (error.status === 400) {
           alert(error.error.message || 'Données invalides');
         } else if (error.status === 409) {
-          alert('Cet email ou nom d\'utilisateur existe déjà');
+          alert('Cet nom d\'utilisateur existe déjà');
         } else if (error.status === 0) {
           alert('Impossible de se connecter au serveur. Vérifiez votre connexion.');
         } else {

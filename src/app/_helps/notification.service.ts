@@ -3,17 +3,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Message } from '../models/Message';
 
-export interface Notification {
-  id: number;
-  type: 'success' | 'info' | 'alert' | 'error';
-  sender: string;
-  subject: string;
-  content: string;
-  date: string;
-  read: boolean;
-  appointmentId?: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -27,6 +16,7 @@ export class NotificationService {
   constructor() {
     this.loadNotificationsFromStorage();
   }
+  
 
   // Charger les notifications depuis le localStorage
   private loadNotificationsFromStorage(): void {
@@ -131,7 +121,7 @@ export class NotificationService {
   }
 
   // Obtenir toutes les notifications
-  getNotifications(): Notification[] {
+  getNotifications(): Message[] {
     return this.notificationsSubject.value;
   }
 

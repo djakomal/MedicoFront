@@ -2,6 +2,7 @@ import { Time } from "@angular/common";
 import { Injectable } from "@angular/core";
 import { Docteur } from "./docteur";
 import { Speciality } from "./speciality";
+import { Creneau } from "./Creneau";
 
 
 
@@ -11,10 +12,10 @@ import { Speciality } from "./speciality";
 
 export class Appoitement {
 
-  id!: number; // Optionnel, généré par le backend
+  id!: number; 
   firstname!: string;
   lastname!: string;
-  birthdate!: string; // Format YYYY-MM-DD
+  birthdate!: string; 
   gender!: 'male' | 'female' | 'other';
   email!: string;
   phone!: string;
@@ -23,11 +24,13 @@ export class Appoitement {
   
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
-  otherSpecialist!: string; // Optionnel, uniquement si doctorType === 'other'
-  doctor!: Docteur[];  // Optionnel, préférence de médecin
+  otherSpecialist!: string; 
+  doctorId!:number;
+  creneauId!: number; 
+  doctor!: number;  
   appointmentType!: 'in-person' | 'video';
-  preferredDate!: string; // Format YYYY-MM-DD
-  preferredTime!: 'morning' | 'afternoon' | 'evening';
+  preferredDate!: string; 
+  preferredTime!: string;
   
   // Disponibilités alternatives
    altAvailability!: {
@@ -38,13 +41,13 @@ export class Appoitement {
   
   // Informations médicales
   reason!: string;
-  symptoms!: string; // Optionnel
-  firstVisit!: 'yes' | 'no'; // Optionnel
-  allergies!: string; // Optionnel
-  medications!: string; // Optionnel
+  symptoms!: string;
+  firstVisit!: 'yes' | 'no';
+  allergies!: string;
+  medications!: string;
   
   // Informations complémentaires
-  additionalInfo!: string; // Optionnel
+  additionalInfo!: string; 
   consent!: boolean;
 
   

@@ -143,3 +143,207 @@ textarea {
   font-size: 14px;
   margin-top: 5px;
 }
+
+
+/* creneau*/
+/* Messages informatifs */
+.loading-message,
+.info-message,
+.warning-message {
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.loading-message {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #90caf9;
+}
+
+.info-message {
+  background-color: #e8f5e9;
+  color: #388e3c;
+  border: 1px solid #a5d6a7;
+}
+
+.warning-message {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffb74d;
+}
+
+/* Filtre par date */
+.date-filter {
+  margin: 20px 0;
+}
+
+.date-filter label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.date-filter .form-control {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.date-filter .form-control:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+/* Container des créneaux */
+.creneaux-container {
+  margin-top: 20px;
+}
+
+/* Groupe de date */
+.date-group {
+  margin-bottom: 30px;
+}
+
+.date-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4CAF50;
+  text-transform: capitalize;
+}
+
+/* Grille de créneaux */
+.creneaux-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Carte de créneau */
+.creneau-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.creneau-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #4CAF50;
+}
+
+.creneau-card.selected {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Heure du créneau */
+.creneau-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.time-icon {
+  font-size: 20px;
+}
+
+.time-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Statut du créneau */
+.creneau-status {
+  margin-top: 8px;
+}
+
+.badge-disponible {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Indicateur de sélection */
+.selected-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Message d'erreur */
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #ffebee;
+  border-left: 4px solid #d32f2f;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .creneaux-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  .creneau-card {
+    padding: 12px;
+  }
+
+  .time-text {
+    font-size: 14px;
+  }
+
+  .date-header {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .creneaux-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.success-message {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  padding: 15px;
+  margin-top: 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  text-align: center;
+}

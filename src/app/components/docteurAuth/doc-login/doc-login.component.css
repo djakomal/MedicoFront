@@ -501,3 +501,173 @@ body {
         font-size: 1.8rem;
     }
 }
+.close-error {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc3545;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.close-error:hover {
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);
+}
+
+
+/* ============================================
+   STYLES SPÉCIFIQUES AU MESSAGE D'ERREUR
+   ============================================ */
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+    border: 2px solid #fcc;
+    border-left: 4px solid #dc3545;
+    border-radius: 8px;
+    color: #721c24;
+    font-size: 0.95rem;
+    animation: slideDown 0.3s ease-out;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.1);
+}
+
+.error-message svg {
+    flex-shrink: 0;
+    color: #dc3545;
+}
+
+.error-message span {
+    flex: 1;
+    line-height: 1.4;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   STYLES POUR LE BOUTON DE CHARGEMENT
+   ============================================ */
+
+.login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   LIEN DE CHANGEMENT DE CONNEXION
+   ============================================ */
+
+.switch-login {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e1e5eb;
+}
+
+.switch-login p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.switch-login a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    position: relative;
+}
+
+.switch-login a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.switch-login a:hover::after {
+    width: 100%;
+}
+
+.switch-login a:hover {
+    color: var(--primary-dark);
+}
+
+/* ============================================
+   ÉTATS DES CHAMPS AVEC ERREURS
+   ============================================ */
+
+.input-field.ng-invalid.ng-touched {
+    border-color: #dc3545;
+}
+
+.input-field.ng-invalid.ng-touched:focus {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .error-message {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .switch-login {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-message {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .error-message svg {
+        margin-bottom: 0.5rem;
+    }
+}

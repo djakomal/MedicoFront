@@ -1,0 +1,186 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="header-content">
+      <h1>⚙️ Paramètres du compte</h1>
+      <p>Gérez votre nom d'utilisateur et votre sécurité</p>
+    </div>
+    <button class="btn btn-logout" (click)="logout()">
+      🚪 Déconnexion
+    </button>
+  </div>
+
+  <div class="profile-content">
+    <!-- Sidebar -->
+    <div class="profile-sidebar">
+      <div class="user-card">
+        <div class="avatar-placeholder">
+          {{ getInitials() }}
+        </div>
+        
+        <div class="user-info">
+          <h3>{{ userName }}</h3>
+          <p class="user-role">{{ role }}</p>
+          <!-- <p class="user-email">{{ email }}</p> -->
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h4>Actions rapides</h4>
+        <button class="action-btn" (click)="toggleEditUsername()">
+          <span class="icon">✏️</span>
+          <span>Modifier le nom d'utilisateur</span>
+        </button>
+        <button class="action-btn" (click)="logout()">
+          <span class="icon">🚪</span>
+          <span>Se déconnecter</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="profile-main">
+      <!-- Messages de succès/erreur -->
+      <div *ngIf="successMessage" class="alert alert-success">
+        ✓ {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-error">
+        ✕ {{ errorMessage }}
+      </div>
+
+      <!-- Section Nom d'utilisateur -->
+      <div class="card">
+        <div class="card-header">
+          <div class="header-info">
+            <h2>👤 Nom d'utilisateur</h2>
+            <p>Votre identifiant de connexion</p>
+          </div>
+          <button 
+            *ngIf="!isEditingUsername"
+            class="btn btn-secondary"
+            (click)="toggleEditUsername()"
+          >
+            ✏️ Modifier
+          </button>
+        </div>
+
+        <form [formGroup]="usernameForm" (ngSubmit)="onUsernameSubmit()" class="profile-form">
+          <div class="current-value" *ngIf="!isEditingUsername">
+            <label>Nom d'utilisateur actuel</label>
+            <div class="value-display">{{userName}}</div>
+          </div>
+
+          <div *ngIf="isEditingUsername" class="edit-section">
+            <div class="form-group">
+              <label for="username">Nouveau nom d'utilisateur *</label>
+              <input 
+                type="text" 
+                id="username" 
+                formControlName="username"
+                placeholder="Entrez votre nouveau nom d'utilisateur"
+                [class.error]="hasError(usernameForm, 'username', 'required') || hasError(usernameForm, 'username', 'minlength')"
+              />
+              <span *ngIf="hasError(usernameForm, 'username', 'required')" class="error-message">
+                Ce champ est obligatoire
+              </span>
+              <span *ngIf="hasError(usernameForm, 'username', 'minlength')" class="error-message">
+                Le nom d'utilisateur doit contenir au moins 3 caractères
+              </span>
+              <p class="hint">Minimum 3 caractères, sans espaces</p>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="toggleEditUsername()"
+                [disabled]="isSubmitting"
+              >
+                Annuler
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="usernameForm.invalid || isSubmitting"
+              >
+                <span *ngIf="!isSubmitting">💾 Enregistrer</span>
+                <span *ngIf="isSubmitting">⏳ Enregistrement...</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Section Mot de passe -->
+      <div class="card">
+        <div class="card-header">
+          <div class="header-info">
+            <h2>🔒 Mot de passe</h2>
+            <p>Modifiez votre mot de passe pour sécuriser votre compte</p>
+          </div>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="password-form">
+          <div class="form-group">
+            <label for="currentPassword">Mot de passe actuel *</label>
+            <input 
+              type="password" 
+              id="currentPassword" 
+              formControlName="currentPassword"
+              placeholder="Entrez votre mot de passe actuel"
+              [class.error]="hasError(passwordForm, 'currentPassword', 'required')"
+            />
+            <span *ngIf="hasError(passwordForm, 'currentPassword', 'required')" class="error-message">
+              Ce champ est obligatoire
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Nouveau mot de passe *</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              formControlName="newPassword"
+              placeholder="Entrez votre nouveau mot de passe"
+              [class.error]="hasError(passwordForm, 'newPassword', 'required') || hasError(passwordForm, 'newPassword', 'minlength')"
+            />
+            <span *ngIf="hasError(passwordForm, 'newPassword', 'required')" class="error-message">
+              Ce champ est obligatoire
+            </span>
+            <span *ngIf="hasError(passwordForm, 'newPassword', 'minlength')" class="error-message">
+              Le mot de passe doit contenir au moins 8 caractères
+            </span>
+            <p class="hint">Minimum 8 caractères, incluez majuscules, chiffres et symboles</p>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirmer le nouveau mot de passe *</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              formControlName="confirmPassword"
+              placeholder="Confirmez votre nouveau mot de passe"
+              [class.error]="hasError(passwordForm, 'confirmPassword', 'required') || passwordForm.hasError('passwordMismatch')"
+            />
+            <span *ngIf="hasError(passwordForm, 'confirmPassword', 'required')" class="error-message">
+              Ce champ est obligatoire
+            </span>
+            <span *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched" class="error-message">
+              Les mots de passe ne correspondent pas
+            </span>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="passwordForm.invalid || isSubmitting"
+            >
+              <span *ngIf="!isSubmitting">🔒 Changer le mot de passe</span>
+              <span *ngIf="isSubmitting">⏳ Modification...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

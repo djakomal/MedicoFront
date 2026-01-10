@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MesFormationsComponent } from './mes-formations.component';
+import { ProfileComponent } from './ProfileComponent.component';
 
-describe('MesFormationsComponent', () => {
-  let component: MesFormationsComponent;
-  let fixture: ComponentFixture<MesFormationsComponent>;
+describe('ProfileComponent', () => {
+  let component: ProfileComponent;
+  let fixture: ComponentFixture<ProfileComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MesFormationsComponent]
+      imports: [ProfileComponent]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MesFormationsComponent);
+    fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

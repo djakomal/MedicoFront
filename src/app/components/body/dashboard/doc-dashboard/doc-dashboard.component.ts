@@ -2,7 +2,6 @@ import { JwtService } from './../../../../_helps/jwt/jwt.service';
 import { Component, OnInit } from '@angular/core';
 import { filter, forkJoin } from 'rxjs';
 import { Conseil } from '../../../../models/Conseil';
-import { User } from '../../../../models/user';
 import { Appoitement } from '../../../../models/appoitement';
 import { ConseilService } from '../../../../_helps/Docteur/Conseil/Conseil.service';
 import { AppointementService } from '../../../../_helps/appointment/appointement.service';
@@ -33,6 +32,7 @@ export class DocdashboardComponent implements OnInit {
 
   AppoitementAujourdhui: Appoitement[] = [];
   userName: string = '';
+  doctortype: string = '';
   AppoitementSemaine: Appoitement[] = [];
   loading: boolean = false;
   error: string = '';
@@ -61,6 +61,7 @@ export class DocdashboardComponent implements OnInit {
     this.loadDashboardData();
     this.checkRoute(this.router.url);
     this.loadUserName();
+    this.loadDoctorType();
     
     // Écouter les changements de route
     this.router.events.pipe(
@@ -241,7 +242,7 @@ export class DocdashboardComponent implements OnInit {
     this.JwtService.removeToken();
     this.userName = '';
     this.menuOpen = false;
-    this.router.navigateByUrl('/connex');
+    this.router.navigateByUrl('/DocLogin');
   }
 
   
@@ -331,5 +332,12 @@ loadUserName(): void {
   if (this.userName.includes('@')) {
     this.userName = this.userName.split('@')[0];
   }
+}
+
+loadDoctorType():void{
+  const decodedToken = this.JwtService.getDecodedToken();
+  this.doctortype = this.JwtService.getDoctortype() || '';
+  const doctorType = decodedToken ? decodedToken['doctorType'] : '';
+  console.log('Type de médecin chargé :', doctorType);
 }
 }

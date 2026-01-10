@@ -34,6 +34,20 @@ export class ConseilService {
       headers:  headers 
     });
   }
+   getconseilsByDoctorId(doctorId:number):Observable<Conseil>{
+    // ✅ Récupérer le token
+    const token = localStorage.getItem('token');
+    
+    // ✅ Créer les headers avec le token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return  this.http.get<Conseil>(`${this.baseUrl}/doctor/${doctorId}`,
+    {
+      headers: headers
+    });
+   }
 
   // Récupérer tous les conseils
   getAllConseils(): Observable<Conseil[]> {
@@ -45,7 +59,7 @@ export class ConseilService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-    return this.http.get<Conseil[]>(this.baseUrl, { headers });
+    return this.http.get<Conseil[]>(this.baseUrl, { headers :headers});
   }
 
   // Récupérer les conseils publiés

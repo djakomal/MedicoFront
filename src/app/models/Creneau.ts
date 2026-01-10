@@ -3,8 +3,8 @@ export class Creneau {
     id?: number;
     // jour?: string;
     heureDebut!: string;  
-    date!: string;
+    date!: string ;
     heureFin!: string;
     disponible!: boolean;
-    // docteur?: Docteur;
+     docteurId?: number;
   }

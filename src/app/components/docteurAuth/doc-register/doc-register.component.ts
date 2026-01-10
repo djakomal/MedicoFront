@@ -24,7 +24,8 @@ import { Speciality } from '../../../models/speciality';
 export class DocRegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   currentStep: number = 1;
-   message = '';
+  message = '';
+  errorMessage = ''; // ✅ Nouveau : pour afficher les erreurs
   jours: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
   specialities = Object.values(Speciality);
 
@@ -43,7 +44,7 @@ export class DocRegisterComponent implements OnInit {
         tel: [''],
 
         // Step 2: Informations professionnelles
-        speciality: [Speciality.GENERAL, [Validators.required]], // IMPORTANT: Doit être vide au départ
+        speciality: [Speciality.GENERAL, [Validators.required]],
         licence: ['', [Validators.required]],
         professionalAddress: [''],
         anneesExperience: [''],
@@ -62,14 +63,12 @@ export class DocRegisterComponent implements OnInit {
       { validators: this.passwordMatchValidator }
     );
 
-    // Attendre que le DOM soit chargé avant de configurer les gestionnaires d'événements
     setTimeout(() => {
       this.setupStepNavigation();
       this.setupPasswordToggles();
       this.setupFileInputPreviews();
     }, 0);
 
-    // Debug: Observer les changements de spécialité
     this.registerForm.get('speciality')?.valueChanges.subscribe((value) => {
       console.log('Spécialité changée:', value);
     });
@@ -79,7 +78,6 @@ export class DocRegisterComponent implements OnInit {
     return this.registerForm.get('creneaux') as FormArray;
   }
 
-  // Créer un nouveau FormGroup pour un créneau
   creerCreneauFormGroup(): FormGroup {
     return this.fb.group({
       jour: ['', Validators.required],
@@ -88,12 +86,10 @@ export class DocRegisterComponent implements OnInit {
     });
   }
 
-  // Ajouter un nouveau créneau
   ajouterCreneau(): void {
     this.creneaux.push(this.creerCreneauFormGroup());
   }
 
-  // Supprimer un créneau
   supprimerCreneau(index: number): void {
     if (this.creneaux.length > 1) {
       this.creneaux.removeAt(index);
@@ -102,22 +98,18 @@ export class DocRegisterComponent implements OnInit {
     }
   }
 
-  // Validateur pour vérifier que les mots de passe correspondent
   passwordMatchValidator(formGroup: AbstractControl): ValidationErrors | null {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmpassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  // Validateur d'e-mail personnalisé
   emailValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(control.value) ? null : { invalidEmail: true };
   }
 
-  // Navigation entre les étapes
   goToStep(step: number): void {
     console.log(".......DONNEES DE L'ETAPE", step, '........');
 
@@ -130,33 +122,15 @@ export class DocRegisterComponent implements OnInit {
 
       case 3:
         console.log('Licence:', this.registerForm.get('licence')?.value);
-        console.log(
-          'Adresse professionnelle:',
-          this.registerForm.get('professionalAddress')?.value
-        );
-        console.log(
-          "Années d'expérience:",
-          this.registerForm.get('anneesExperience')?.value
-        );
-        console.log(
-          'Jours de congé:',
-          this.registerForm.get('hollyDays')?.value
-        );
+        console.log('Adresse professionnelle:', this.registerForm.get('professionalAddress')?.value);
+        console.log("Années d'expérience:", this.registerForm.get('anneesExperience')?.value);
+        console.log('Jours de congé:', this.registerForm.get('hollyDays')?.value);
         break;
 
       case 4:
-        console.log(
-          "Nom d'utilisateur:",
-          this.registerForm.get('username')?.value
-        );
-        console.log(
-          'Mot de passe:',
-          this.registerForm.get('password')?.value ? '****' : '(vide)'
-        );
-        console.log(
-          'Confirmation:',
-          this.registerForm.get('confirmpassword')?.value ? '****' : '(vide)'
-        );
+        console.log("Nom d'utilisateur:", this.registerForm.get('username')?.value);
+        console.log('Mot de passe:', this.registerForm.get('password')?.value ? '****' : '(vide)');
+        console.log('Confirmation:', this.registerForm.get('confirmpassword')?.value ? '****' : '(vide)');
         break;
 
       case 5:
@@ -164,19 +138,15 @@ export class DocRegisterComponent implements OnInit {
         console.log('CV URL:', this.registerForm.get('cvurl')?.value);
         break;
     }
-    console.log(
-      '....................................................................................'
-    );
+    console.log('..................................................................................');
 
     if (step < 1 || step > 4) return;
 
-    // Masquer toutes les étapes
     const stepContents = document.querySelectorAll('.step-content');
     stepContents.forEach((content) => {
       content.classList.remove('active');
     });
 
-    // Afficher l'étape cible
     const targetStepContent = document.getElementById('step' + step);
     if (targetStepContent) {
       targetStepContent.classList.add('active');
@@ -184,7 +154,6 @@ export class DocRegisterComponent implements OnInit {
       console.error('Step content not found:', 'step' + step);
     }
 
-    // Mettre à jour les indicateurs d'étape
     const steps = document.querySelectorAll('.step');
     steps.forEach((stepElement) => {
       const stepNumber = parseInt(stepElement.getAttribute('data-step') || '0');
@@ -202,9 +171,7 @@ export class DocRegisterComponent implements OnInit {
     this.currentStep = step;
   }
 
-  // Configuration des événements pour la navigation par étapes
   setupStepNavigation(): void {
-    // Supprimer d'abord tous les écouteurs d'événements existants
     const nextButtons = document.querySelectorAll('.next-button');
     const prevButtons = document.querySelectorAll('.prev-button');
 
@@ -218,15 +185,13 @@ export class DocRegisterComponent implements OnInit {
       button.parentNode?.replaceChild(newButton, button);
     });
 
-    // Réattacher les écouteurs d'événements
     document.querySelectorAll('.next-button').forEach((button) => {
       button.addEventListener('click', (event) => {
         const target = event.currentTarget as HTMLElement;
         const targetStep = parseInt(target.getAttribute('data-step') || '1');
         console.log('Next button clicked, target step:', targetStep);
 
-        // VALIDATION AVANT DE PASSER À L'ÉTAPE SUIVANTE
-        const currentStepNumber = targetStep - 1; // L'étape actuelle est celle avant la cible
+        const currentStepNumber = targetStep - 1;
 
         if (this.validateCurrentStep(currentStepNumber)) {
           this.goToStep(targetStep);
@@ -246,7 +211,6 @@ export class DocRegisterComponent implements OnInit {
     });
   }
 
-  // Validation des étapes avec messages d'erreur détaillés
   validateCurrentStep(step: number): boolean {
     let isValid = true;
     let errorMessages: string[] = [];
@@ -283,19 +247,14 @@ export class DocRegisterComponent implements OnInit {
           isValid = false;
         }
         if (!this.registerForm.get('password')?.valid) {
-          errorMessages.push(
-            'Le mot de passe doit contenir au moins 6 caractères'
-          );
+          errorMessages.push('Le mot de passe doit contenir au moins 6 caractères');
           isValid = false;
         }
         if (!this.registerForm.get('confirmpassword')?.valid) {
           errorMessages.push('La confirmation du mot de passe est requise');
           isValid = false;
         }
-        if (
-          this.registerForm.get('password')?.value !==
-          this.registerForm.get('confirmpassword')?.value
-        ) {
+        if (this.registerForm.get('password')?.value !== this.registerForm.get('confirmpassword')?.value) {
           errorMessages.push('Les mots de passe ne correspondent pas');
           isValid = false;
         }
@@ -312,9 +271,8 @@ export class DocRegisterComponent implements OnInit {
     return isValid;
   }
 
-  // Afficher les erreurs de validation
   showValidationErrors(step: number): void {
-  
+    this.message = '';
 
     switch (step) {
       case 1:
@@ -327,18 +285,13 @@ export class DocRegisterComponent implements OnInit {
         break;
 
       case 2:
-      const speciality = this.registerForm.get('speciality');
-      console.log('Value:', speciality?.value);
+        const speciality = this.registerForm.get('speciality');
+        console.log('Value:', speciality?.value);
 
-        if (
-          !this.registerForm.get('licence')?.valid ||
-          !this.registerForm.get('licence')?.value
-        ) {
+        if (!this.registerForm.get('licence')?.valid || !this.registerForm.get('licence')?.value) {
           this.message += '• La licence est requise\n';
-        } if (
-          !this.registerForm.get('speciality')?.valid ||
-          !this.registerForm.get('speciality')?.value
-        ) {
+        }
+        if (!this.registerForm.get('speciality')?.valid || !this.registerForm.get('speciality')?.value) {
           this.message += '• La spécialité est requise\n';
         }
         break;
@@ -350,10 +303,7 @@ export class DocRegisterComponent implements OnInit {
         if (!this.registerForm.get('password')?.valid) {
           this.message += '• Le mot de passe doit contenir au moins 6 caractères\n';
         }
-        if (
-          this.registerForm.get('password')?.value !==
-          this.registerForm.get('confirmpassword')?.value
-        ) {
+        if (this.registerForm.get('password')?.value !== this.registerForm.get('confirmpassword')?.value) {
           this.message += '• Les mots de passe ne correspondent pas\n';
         }
         break;
@@ -362,34 +312,27 @@ export class DocRegisterComponent implements OnInit {
     alert(this.message);
   }
 
-  // Configuration des boutons de basculement de visibilité des mots de passe
   setupPasswordToggles(): void {
     const passwordToggles = document.querySelectorAll('.password-toggle');
 
     passwordToggles.forEach((toggle) => {
       toggle.addEventListener('click', function (this: HTMLElement) {
         const passwordField = this.previousElementSibling as HTMLInputElement;
-        const type =
-          passwordField.getAttribute('type') === 'password'
-            ? 'text'
-            : 'password';
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordField.setAttribute('type', type);
 
         const svg = this.querySelector('svg');
         if (svg) {
           if (type === 'text') {
-            svg.innerHTML =
-              '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
           } else {
-            svg.innerHTML =
-              '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
           }
         }
       });
     });
   }
 
-  // Configuration des aperçus des fichiers importés
   setupFileInputPreviews(): void {
     const fileInputs = document.querySelectorAll('input[type="file"]');
 
@@ -399,8 +342,7 @@ export class DocRegisterComponent implements OnInit {
         const fileName = files && files[0]?.name;
 
         if (fileName) {
-          const uploadText =
-            this.parentElement?.querySelector('.file-upload-text');
+          const uploadText = this.parentElement?.querySelector('.file-upload-text');
           if (uploadText) {
             uploadText.textContent = fileName;
           }
@@ -409,9 +351,12 @@ export class DocRegisterComponent implements OnInit {
     });
   }
 
-  // Méthode d'inscription
+  // ✅ MÉTHODE D'INSCRIPTION AVEC GESTION D'ERREUR
   Register(): void {
-    if (!this.registerForm.valid ) {
+    // Réinitialiser le message d'erreur
+    this.errorMessage = '';
+    
+    if (!this.registerForm.valid) {
       alert('Veuillez remplir correctement tous les champs obligatoires.');
       console.log('Valeur de speciality:', this.registerForm.get('speciality')?.value);
       console.log('Form errors:', this.registerForm.errors);
@@ -423,36 +368,65 @@ export class DocRegisterComponent implements OnInit {
       });
       return;
     }
-    const email = this.registerForm.get('email')?.value;
 
     const registerData = {
       ...this.registerForm.value,
-      creneaux: this.creneaux.value // Assurez-vous que les créneaux sont inclus
+      creneaux: this.creneaux.value
     };
     
     console.log('Données d\'inscription:', registerData);
     
-    // Envoyer les données au service
     this.jwtService.registerDoc(registerData).subscribe({
       next: (response) => {
         alert('Inscription réussie ! Un email de confirmation vous a été envoyé.');
         this.router.navigateByUrl('DocLogin');
-        
       },
 
       error: (error) => {
+        console.error('Erreur complète:', error);
+        
+        //Gestion spécifique des erreurs
         if (error.status === 400) {
-          alert(error.error.message || 'Erreur de validation des données.');
+          // Vérifier si c'est une erreur de username existant
+          const errorMsg = error.error?.message || error.error || 'Erreur de validation';
+          
+          if (typeof errorMsg === 'string') {
+            if (errorMsg.includes('nom d\'utilisateur') || errorMsg.includes('username')) {
+              this.errorMessage = ' Ce nom d\'utilisateur est déjà utilisé. Veuillez en choisir un autre.';
+              alert(this.errorMessage);
+              // Retourner à l'étape 3 (compte)
+              this.goToStep(3);
+            } else if (errorMsg.includes('email')) {
+              this.errorMessage = 'Cet email est déjà utilisé. Veuillez en utiliser un autre.';
+              alert(this.errorMessage);
+              // Retourner à l'étape 1 (informations personnelles)
+              this.goToStep(1);
+            } else {
+              this.errorMessage = ' ' + errorMsg;
+              alert(this.errorMessage);
+            }
+          } else {
+            this.errorMessage = ' Erreur de validation des données.';
+            alert(this.errorMessage);
+          }
+        } else if (error.status === 409) {
+          // Conflit (souvent utilisé pour les doublons)
+          this.errorMessage = ' Ce nom d\'utilisateur ou cet email existe déjà.';
+          alert(this.errorMessage);
+        } else if (error.status === 0) {
+          // Erreur de connexion au serveur
+          this.errorMessage = 'Impossible de se connecter au serveur. Vérifiez votre connexion.';
+          alert(this.errorMessage);
         } else {
-          alert('Une erreur est survenue lors de l\'inscription. Veuillez réessayer plus tard.');
+          this.errorMessage = ' Une erreur est survenue lors de l\'inscription. Veuillez réessayer plus tard.';
+          alert(this.errorMessage);
         }
+        
         console.error('Erreur d\'inscription:', error);
       }
     });
   }
-  
 
-  // Traitement des fichiers avant envoi
   handleFileInput(event: Event, fieldName: string): void {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
@@ -462,27 +436,6 @@ export class DocRegisterComponent implements OnInit {
     }
   }
 
-  // Génération de enum de speciality dynamiquement
-  
-  // getSpecialityOptions() {
-  // //fonctionne pour tous les types d'enums
-  //     return [
-  //       { value: Speciality.GENERAL, label: 'Médecin généraliste' },
-  //       { value: Speciality.DENTISTE, label: 'Dentiste' },
-  //       { value: Speciality.CARDIOLOGUE, label: 'Cardiologie' },
-  //       { value: Speciality.DERMATOLOGUE, label: 'Dermatologie' },
-  //       { value: Speciality.GYNECOLOGUE, label: 'Gynécologie' },
-  //       { value: Speciality.OPHTALMOLOGUE, label: 'Ophtalmologie' },
-  //       { value: Speciality.PEDIATRE, label: 'Pédiatrie' },
-  //       { value: Speciality.PSYCHIATRE, label: 'Psychiatrie' },
-  //       { value: Speciality.ORL, label: 'ORL' },
-  //       { value: Speciality.RHUMATOLOGUE, label: 'Rhumatologie' },
-  //       { value: Speciality.AUTRE, label: 'Autre spécialité' }
-  //     ];
-  //   }
-  
-
-  // Méthode pour valider avant de passer à l'étape suivante (appelée depuis le HTML)
   validateAndGoToStep(targetStep: number): void {
     const currentStep = targetStep - 1;
 
@@ -492,5 +445,4 @@ export class DocRegisterComponent implements OnInit {
       this.showValidationErrors(currentStep);
     }
   }
-
 }

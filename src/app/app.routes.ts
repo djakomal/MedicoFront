@@ -29,12 +29,11 @@ import { MesConseilsComponent } from './components/body/dashboard/mes-conseils/m
 import { InfosPersonnellesComponent } from './components/body/dashboard/infos-personnelles/infos-personnelles.component';
 import { TypesConsultationsComponent } from './components/body/dashboard/types-consultations/types-consultations.component';
 import { MesHorairesComponent } from './components/body/dashboard/mes-horaires/mes-horaires.component';
-import { MesFormationsComponent } from './components/body/dashboard/mes-formations/mes-formations.component';
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
-
 import { ConseilComponent } from './components/body/conseil/conseil.component';
 import { DocdashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
+import { ProfileComponent } from './components/body/dashboard/ProfileComponent/ProfileComponent.component';
 1
 
 export const routes: Routes = [
@@ -123,7 +122,8 @@ export const routes: Routes = [
   {
     path: 'UserDah',
     component: UserDashboardComponent,
-    //  canActivate: [authGuard],
+    canActivate: [authGuard],
+    data: { role: 'USER' }
   },
 
   {
@@ -167,8 +167,8 @@ export const routes: Routes = [
         component: MesHorairesComponent,
       },
       {
-        path: 'MesFormations',
-        component: MesFormationsComponent,
+        path: 'ProfileComponent',
+        component: ProfileComponent,
       },
       {
         path: 'Publications',
@@ -180,6 +180,7 @@ export const routes: Routes = [
       },
     ]
      ,canActivate: [authGuard],
+     data: { role: 'DOCTOR' } 
   },
 
   {

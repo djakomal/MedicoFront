@@ -4,6 +4,7 @@ import {Speciality} from './speciality'
 export class Docteur {
   id!: number;
   name!: string;
+  username!: string;
   hollyDays!: string;
   email!: string;
   tel!: string;
@@ -11,11 +12,11 @@ export class Docteur {
   licence!: string;
 
     // specialite?: string;
- speciality!: Speciality;
+  speciality!: Speciality;
   numeroLicence!: string;
   anneesExperience!: string;
   photoUrl!: string;
- creneau?: Creneau[];
+  creneau?: Creneau[];
   cvurl!: string;
   password!: string;
   confirmpassword!: string;

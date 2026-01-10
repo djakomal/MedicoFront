@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDICO - Connexion</title>
-
+    <title>MEDICO - Connexion Docteur</title>
 </head>
+
 <body>
     <div class="left-panel">
         <div class="logo">
@@ -13,39 +14,44 @@
                 <text x="0" y="38" font-family="Arial" font-size="28" font-weight="bold" fill="#ffffff">MEDICO</text>
             </svg>
         </div>
-        
+
         <div class="welcome-content">
             <div class="welcome-text">
-                <h1>Bienvenue sur MEDICO!</h1>
-                <p>Votre espace de santé personnel et sécurisé. Accédez à vos données médicales en toute simplicité.</p>
+                <h1>Espace Docteur</h1>
+                <p>Accédez à votre espace professionnel MEDICO pour gérer vos patients et rendez-vous.</p>
             </div>
-            
+
             <div class="features">
                 <div class="feature">
                     <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </div>
                     <div class="feature-text">
-                        <h3>Suivi médical</h3>
-                        <p>Consultez vos rendez-vous et suivis médicaux en temps réel</p>
+                        <h3>Gestion des patients</h3>
+                        <p>Accédez aux dossiers médicaux de vos patients</p>
                     </div>
                 </div>
-                
+
                 <div class="feature">
                     <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                     </div>
                     <div class="feature-text">
-                        <h3>Sécurité garantie</h3>
-                        <p>Vos données médicales sont chiffrées et sécurisées</p>
+                        <h3>Planning optimisé</h3>
+                        <p>Gérez vos rendez-vous et consultations</p>
                     </div>
                 </div>
-                
+
                 <div class="feature">
                     <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
@@ -53,98 +59,79 @@
                         </svg>
                     </div>
                     <div class="feature-text">
-                        <h3>Disponibilité 24/7</h3>
-                        <p>Accédez à votre espace santé où que vous soyez</p>
+                        <h3>Sécurité médicale</h3>
+                        <p>Conformité RGPD et secret médical</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="right-panel">
         <div class="login-form-container">
             <div class="login-header">
-                <h2>Connexion</h2>
-                <p>Accédez à votre espace personnel MEDICO</p>
-                <a href="DocRegist" class="register-link">Créer un compte</a>
+                <h2>Connexion Docteur</h2>
+                <p>Accédez à votre espace professionnel MEDICO</p>
+                <a href="/DocRegist" class="register-link">Créer un compte docteur</a>
             </div>
-            
-            <form  [formGroup]="loginForm" (ngSubmit)="submitForm()">
+
+            <!-- ✅ MESSAGE D'ERREUR -->
+            <div *ngIf="errorMessage" class="error-message">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ errorMessage }}</span>
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
                 <div class="form-group">
                     <label for="username">Nom d'Utilisateur</label>
-                    <input type="text" id="username" class="input-field" placeholder="Entrez votre nom d'utilisateur" formControlName="username"  required>
+                    <input type="text" id="username" class="input-field" placeholder="Entrez votre nom d'utilisateur"
+                        formControlName="username" [disabled]="isLoading" required>
                     <div class="input-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" class="input-field" placeholder="Entrez votre mot de passe" formControlName="password" required>
-                    <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <input [type]="showPassword ? 'text' : 'password'" id="password" class="input-field"
+                        placeholder="Entrez votre mot de passe" formControlName="password" [disabled]="isLoading"
+                        required>
+                    <button type="button" class="password-toggle" (click)="togglePasswordVisibility()"
+                        [disabled]="isLoading" aria-label="Toggle password visibility">
+                        <svg *ngIf="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
+                        <svg *ngIf="showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                            </path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
                     </button>
                 </div>
-                
+
                 <div class="forgot-password">
                     <a href="#">Mot de passe oublié ?</a>
                 </div>
-                
-                <button type="submit" class="login-button">
-                    Se connecter
+
+                <button type="submit" class="login-button" [disabled]="isLoading" [class.loading]="isLoading">
+                    <span *ngIf="!isLoading">Se connecter</span>
+                    <span *ngIf="isLoading">Connexion en cours...</span>
                 </button>
             </form>
         </div>
     </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const passwordToggle = document.querySelector('.password-toggle');
-            const passwordInput = document.getElementById('password');
-            const form = document.getElementById('loginForm');
-            
-            // Toggle password visibility with animation
-            if (passwordToggle && passwordInput) {
-                passwordToggle.addEventListener('click', function() {
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
-                    
-                    const svg = this.querySelector('svg');
-                    if (type === 'text') {
-                        svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-                    } else {
-                        svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-                    }
-                });
-            }
-
-            // Form submission with animation
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const button = this.querySelector('.login-button');
-                button.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    button.style.transform = '';
-                }, 200);
-            });
-
-            // Input focus animations
-            const inputs = document.querySelectorAll('.input-field');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.querySelector('label').style.color = 'var(--primary)';
-                });
-                input.addEventListener('blur', function() {
-                    this.parentElement.querySelector('label').style.color = 'var(--text-dark)';
-                });
-            });
-        });
-    </script>
 </body>
+
 </html>

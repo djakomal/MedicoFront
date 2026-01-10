@@ -31,7 +31,6 @@ export class MesRendezVousComponent  implements OnInit {
   
     }
    ngOnInit(): void {
-    
     this.getAppointment();
    }
    getAppointment() {
@@ -138,7 +137,8 @@ export class MesRendezVousComponent  implements OnInit {
     const labels: any = {
       'pending': 'En attente',
       'validated': 'Validé',
-      'cancelled': 'Annulé'
+      'rejected': 'Rejeté',  
+      'started': 'En cours'
     };
     return labels[status] || status;
   }
