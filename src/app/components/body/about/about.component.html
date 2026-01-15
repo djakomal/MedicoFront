@@ -87,8 +87,8 @@
             </div>
 
             <!-- Mission -->
-            <div class="accordion_item active">
-                <div class="accordion_header" onclick="toggleAccordion(this)">
+            <div class="accordion_item active" [class.active]="activeIndex === 0">
+                <div class="accordion_header" (click)="toggleAccordion(0)">
                     <h3 class="accordion_title mission">NOTRE MISSION</h3>
                     <div class="accordion_icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,8 +104,8 @@
             </div>
 
             <!-- Vision -->
-            <div class="accordion_item">
-                <div class="accordion_header" onclick="toggleAccordion(this)">
+            <div class="accordion_item" [class.active]="activeIndex === 1">
+                <div class="accordion_header" (click)="toggleAccordion(1)">
                     <h3 class="accordion_title vision">NOTRE VISION</h3>
                     <div class="accordion_icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,8 +121,8 @@
             </div>
 
             <!-- Values -->
-            <div class="accordion_item">
-                <div class="accordion_header" onclick="toggleAccordion(this)">
+            <div class="accordion_item" [class.active]="activeIndex === 2">
+                <div class="accordion_header" (click)="toggleAccordion(2)">
                     <h3 class="accordion_title values">NOS VALEURS</h3>
                     <div class="accordion_icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,23 +165,6 @@
             </div>
         </div>
     </section>
-
-    <script>
-        function toggleAccordion(header) {
-            const item = header.parentElement;
-            const allItems = document.querySelectorAll('.accordion_item');
-            
-            // Fermer tous les autres items
-            allItems.forEach(otherItem => {
-                if (otherItem !== item) {
-                    otherItem.classList.remove('active');
-                }
-            });
-            
-            // Toggle l'item cliqué
-            item.classList.toggle('active');
-        }
-    </script>
 </body>
 
 </html>

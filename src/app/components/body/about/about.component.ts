@@ -11,4 +11,10 @@ import { HeaderComponent } from "../../header/header.component";
 })
 export class AboutComponent {
 
+  activeIndex: number | null = 0; // mission ouverte par défaut
+
+  toggleAccordion(index: number): void {
+    this.activeIndex = this.activeIndex === index ? null : index;
+  }
+
 }
