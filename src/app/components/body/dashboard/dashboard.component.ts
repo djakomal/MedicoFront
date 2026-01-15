@@ -5,11 +5,13 @@ import { FooterComponent } from "../../footer/footer.component";
 import { ContactComponent } from "../contact/contact.component";
 import { FormBuilder } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Language, TranslationService } from '../../../_helps/translation-service.service';
+import { TranslatePipe } from "../../../_helps/translate.pipe";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent,CommonModule],
+  imports: [HeaderComponent, FooterComponent, CommonModule, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -20,11 +22,26 @@ export class DashboardComponent {
   // Gestion des popups
   showPopup: boolean = false;
   popupType: string = '';
+    languageMenuOpen: boolean = false;
+    currentLang: string = 'fr';
+    currentLanguage: Language | undefined;
+    languages: Language[] = [];
+    isTranslating: boolean = false;
   popupContent: any = {};
+  
 
 
   constructor(private cdr: ChangeDetectorRef,
+    private  translationService: TranslationService
   ) {}
+
+ngOnInit(){
+  this.translationService.currentLang$.subscribe(lang => {
+    this.currentLang = lang;
+    this.currentLanguage = this.translationService.getLanguage(lang);
+    this.cdr.detectChanges();
+  });
+}
   showSection(section: string, event?: Event) {
     if (event) {
       event.preventDefault();

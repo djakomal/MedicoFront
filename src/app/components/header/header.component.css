@@ -46,8 +46,8 @@
     position: relative;
     top: 0;
     left: 0;
-    right: 0;
-    margin-left: 110px;
+    right: 10px;
+    margin-left: 80px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
@@ -91,6 +91,60 @@
     justify-content: center;
     align-items: center;
     flex: 1;
+}
+
+/* nav {
+    background-color: #9FC6FE;
+} */
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav a {
+    display: block;
+    padding: 14px 20px;
+    color: rgba(0, 0, 0, 0.712);
+    text-decoration: none;
+}
+
+nav ul ul :hover {
+    background-color: #9FC6FE;
+}
+
+/* Sous-menu caché par défaut */
+nav ul ul {
+    display: none;
+    position: absolute;
+    font-family:bold;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    min-width: 180px;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+/* Affichage au survol */
+nav ul li:hover > ul {
+    display: flex;
+}
+
+/* Responsive : menu vertical sur petit écran */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+    }
+    nav ul ul {
+        position: static;
+    }
 }
 
 .navbar-nav {
@@ -522,3 +576,269 @@
         font-size: 16px;
     }
 }
+/* ============================
+   TRADUCTEUR DE LANGUE
+   ============================ */
+/* .language-selector {
+    position: relative;
+    margin-left: 15px;
+} */
+
+/* .language-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 2px solid #e8ecf4;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.language-btn:hover:not(:disabled) {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+    transform: translateY(-1px);
+} */
+
+/* .language-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.language-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.language-btn.translating .chevron {
+    animation: pulse 1s infinite;
+}
+
+.language-btn .flag {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.language-btn .lang-name {
+    display: inline-block;
+} */
+
+/* .language-btn .chevron {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.language-btn .chevron.open {
+    transform: rotate(180deg);
+}
+
+/* Dropdown */
+/* .language-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    padding: 8px;
+    min-width: 220px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: 1px solid rgba(0,0,0,0.05);
+    max-height: 400px;
+    overflow-y: auto;
+} */
+/* 
+.language-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.language-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    transform: rotate(45deg);
+    border-left: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(0,0,0,0.05);
+} */
+
+/* .language-header {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #667eea;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 8px;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    position: relative;
+}  */
+
+/* .language-option:hover {
+    background: rgba(102,126,234,0.08);
+    transform: translateX(3px);
+}
+
+.language-option.active {
+    background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%);
+}
+
+.language-option .flag {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+} */
+
+/* .language-option .name {
+    flex: 1;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.language-option.active .name {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.language-option .check-icon {
+    color: #667eea;
+    flex-shrink: 0;
+    animation: checkIn 0.3s ease;
+} */
+
+/* Animations */
+/* @keyframes pulse {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg); 
+    }
+    50% { 
+        transform: scale(1.1) rotate(180deg); 
+    } */
+/* } */
+
+/* @keyframes checkIn {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+} */
+
+/* Responsive pour le traducteur
+@media (max-width: 1200px) {
+    .language-btn .lang-name {
+        display: none;
+    }
+    
+    .language-btn {
+        padding: 10px 14px;
+    }
+} */
+
+/* @media (max-width: 991px) {
+    .language-selector {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .language-btn .lang-name {
+        display: inline-block;
+    }
+    
+    .language-dropdown {
+        right: auto;
+        left: 0;
+    }
+    
+    .language-dropdown::before {
+        right: auto;
+        left: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .language-btn {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .language-dropdown {
+        left: 0;
+        right: 0;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .language-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .language-btn .flag {
+        font-size: 18px;
+    }
+    
+    .language-dropdown {
+        min-width: 200px;
+    }
+    
+    .language-option {
+        padding: 10px 14px;
+    }
+    
+    .language-option .flag {
+        font-size: 20px;
+    }
+    
+    .language-option .name {
+        font-size: 13px;
+    }
+} */
+
+/* Scrollbar personnalisée pour le dropdown */
+/* .language-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.language-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.language-dropdown::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+} */
+
+/* .language-dropdown::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+} */

@@ -1,100 +1,115 @@
 
-<div class="container">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conseils - Medico</title>
 
-  <!-- Barre de recherche et filtres -->
-  <div class="search-filters">
-    <div class="search-bar">
-      <input 
-        type="text" 
-        [(ngModel)]="searchQuery"
-        placeholder="Rechercher un conseil..." 
-      />
-      <button (click)="searchConseils()">🔍 Rechercher</button>
+</head>
+<body>
+
+    <header class="main_header">
+        <div class="header_content">
+            <app-header></app-header>
+        </div>
+    </header>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="#">Accueil</a>
+                <span>›</span>
+                <span>Conseils</span>
+            </div>
+            <h1 class="hero-title">Conseils</h1>
+        </div>
     </div>
-    
-    <div class="categories-filter">
-      <button 
-        *ngFor="let cat of categories"
-        [class.active]="selectedCategorie === cat"
-        (click)="filterByCategorie(cat)"
-      >
-        {{ cat }}
-      </button>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-layout">
+            <!-- Articles Section -->
+            <div class="articles-section" >
+                <!-- Article 1: DENGUE -->
+                <div class="article-card"  *ngFor="let conseil of conseils">
+                    <div class="article-image">
+                        <img *ngIf="conseil.imageUrl" 
+                        [src]="conseil.imageUrl" 
+                        [alt]="conseil.titre"
+                        onerror="this.style.display='none'">
+                    </div>
+                    <div class="article-content">
+                        <div class="article-meta">
+                          <span>👤 {{ conseil.auteur }}</span>
+                          <span>📅 {{ formatDate(conseil.datePublication) }}</span>
+                        </div>
+                        <h3 class="article-title">{{ conseil.titre }}</h3>
+                        <p class="article-excerpt">
+                          {{ conseil.contenu?.substring(0, 150) }}...
+                        </p>
+                        <a href="#" class="read-more">Lire plus →</a>
+                    </div>
+                    <div *ngIf="!loading && !error && conseils.length === 0" class="no-results">
+                      <div class="no-results-icon">🔍</div>
+                      <h3>Aucun conseil n'a été publié</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Categories -->
+            <aside class="sidebar">
+                <h2 class="sidebar-title">Catégories</h2>
+                
+                <div class="category-item" *ngFor="let cat of categories"
+                [class.active]="selectedCategorie === cat"
+                (click)="filterByCategorie(cat)">
+                    <span class="category-name"> {{ cat }}</span>
+                    <div class="category-arrow">›</div>
+                </div>
+
+            </aside>
+        </div>
     </div>
-  </div>
 
-  <!-- Indicateur de chargement -->
-  <div *ngIf="loading" class="loading">
-    <p>⏳ Chargement des conseils...</p>
-  </div>
+    <script>
+        // Animation au scroll
+        const cards = document.querySelectorAll('.article-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
 
-  <!-- Message d'erreur -->
-  <div *ngIf="error && !loading" class="error">
-    <p>❌ {{ error }}</p>
-    <button (click)="loadConseils()" class="btn-retry">🔄 Réessayer</button>
-  </div>
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
 
-  <!-- Grille des articles -->
-  <div *ngIf="!loading && !error && conseils.length > 0" class="articles-grid">
-    <div 
-      *ngFor="let conseil of conseils" 
-      class="article-card"
-    >
-      <!-- Image ou placeholder -->
-      <div class="article-image">
-        <img 
-          *ngIf="conseil.imageUrl" 
-          [src]="conseil.imageUrl" 
-          [alt]="conseil.titre"
-          onerror="this.style.display='none'"
-        />
-        <div *ngIf="!conseil.imageUrl" class="image-placeholder">
-          <span class="placeholder-icon">📄</span>
-        </div>
-      </div>
-      
-      <!-- Contenu de l'article -->
-      <div class="article-content">
-        <div class="article-meta">
-          <span>👤 {{ conseil.auteur }}</span>
-          <span>📅 {{ formatDate(conseil.datePublication) }}</span>
-        </div>
-        
-        <h3 class="article-title">{{ conseil.titre }}</h3>
-        
-        <p class="article-excerpt">
-          {{ conseil.contenu?.substring(0, 150) }}...
-        </p>
-        
-        <!-- Tags -->
-        <div class="article-tags">
-          <span 
-            *ngFor="let tag of conseil.tags" 
-            [ngClass]="['tag', getTagClass(tag)]"
-          >
-            {{ tag }}
-          </span>
-        </div>
-        
-        <!-- Footer avec vues -->
-        <div class="article-footer">
-          <span class="views">👁️ {{ conseil.nombreVues || 0 }} vues</span>
-          <a href="#" class="read-more" (click)="$event.preventDefault()">
-            Lire plus →
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+        // Click sur catégorie
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                console.log('Catégorie sélectionnée:', item.querySelector('.category-name').textContent);
+            });
+        });
 
-  <!-- Message aucun résultat -->
-  <div *ngIf="!loading && !error && conseils.length === 0" class="no-results">
-    <div class="no-results-icon">🔍</div>
-    <h3>Aucun conseil trouvé</h3>
-    <p>Essayez de modifier vos critères de recherche</p>
-    <button (click)="loadConseils()" class="btn-reset">
-      🔄 Réinitialiser
-    </button>
-  </div>
-</div>
+        // Click sur article
+        document.querySelectorAll('.article-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('read-more')) {
+                    console.log('Article cliqué:', card.querySelector('.article-title').textContent);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
 

@@ -1,0 +1,124 @@
+<div class="container">
+    <!-- Notification -->
+    <div *ngIf="showAlert" class="alert alert-{{ alertType }}">
+      {{ alertMessage }}
+      <button class="alert-close" (click)="hideNotification()">×</button>
+    </div>
+  
+    <div class="header-section">
+      <h1>Gestion des Conseils</h1>
+      <p>Gérez efficacement vos conseils</p>
+    </div>
+  
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>Total des conseils créés</h3>
+        <div class="number">{{ conseils?.length || 0 }}</div>
+      </div>
+    </div>
+  
+    <div class="card">
+      <div class="card-header">
+        <h2>📋 Liste des conseils</h2>
+        <span class="badge-count">{{ conseils?.length || 0 }} Conseils</span>
+      </div>
+  
+      <div class="table-container">
+        <table *ngIf="conseils && conseils.length > 0">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Titre</th>
+              <th scope="col">Contenu</th>
+              <th scope="col">Auteur</th>
+              <th scope="col">Date</th>
+              <th scope="col">Image</th>
+              <th scope="col">Catégorie</th>
+              <th scope="col">Publié</th>
+              <th scope="col">Vues</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let conseil of conseils">
+              <td class="id-cell">{{ conseil.id }}</td>
+              
+              <td class="text-cell">
+                <div class="text-cell ">
+                  {{ conseil.titre }}
+                </div>
+              </td>
+              
+              <td class="contenu-cell">
+                <div class="contenu-preview">
+                  {{ conseil.contenu | slice:0:100 }}{{ conseil.contenu && conseil.contenu.length > 100 ? '...' : '' }}
+                </div>
+              </td>
+              
+              <td class="auteur-cell">
+                <div class="auteur-info">
+                  {{ conseil.auteur }}
+                </div>
+              </td>
+              
+              <td>
+                <div class="date-cell"> 
+                  <span class="date-badge">{{ conseil.datePublication | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </td>
+              
+              <td class="image-cell">
+                <div class="image-preview" *ngIf="conseil.imageUrl">
+                  <img [src]="conseil.imageUrl" [alt]="conseil.titre" />
+                </div>
+                <span *ngIf="!conseil.imageUrl">Aucune image</span>
+              </td>
+              
+              <td>
+                <span class="categorie-badge">{{ conseil.categorie }}</span>
+              </td>
+              
+              <td>
+                <span class="status-badge" [class.published]="conseil.publie" [class.draft]="!conseil.publie">
+                  {{ conseil.publie ? 'Publié' : 'Brouillon' }}
+                </span>
+              </td>
+              
+              <td class="vues-cell">
+                <span class="vues-count">👁️ {{ conseil.nombreVues || 0 }}</span>
+              </td>
+              
+              <td>
+                <div class="action-buttons">
+                  <button 
+                    class="btn btn-primary" 
+                    (click)="conseil.id && updateconseils(conseil.id)"
+                    title="Modifier">
+                    ✏️ Modifier
+                  </button>
+                  <button 
+                    class="btn btn-danger" 
+                    (click)="conseil.id && deleteconseils(conseil.id)"
+                    title="Supprimer">
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <div class="empty-state" *ngIf="!conseils || conseils.length === 0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <h3>Aucun conseil</h3>
+          <p>Créez votre premier conseil pour commencer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

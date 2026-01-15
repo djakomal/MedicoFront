@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Medico - Créer une actualité</title>
+</head>
+<body>
+    <header class="main_header">
+        <div class="header_content">
+            <h2>🏥 Medico</h2>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h2>✍️ Créer un nouveau Actualité</h2>
+        <p class="form-subtitle">Partagez vos connaissances en santé et bien-être</p>
+
+        <!-- Alerts -->
+        <div *ngIf="success" class="alert alert-success">
+            ✅ {{ success }}
+            <button class="alert-close" (click)="success = ''">×</button>
+        </div>
+        <div *ngIf="error" class="alert alert-error">
+            ❌ {{ error }}
+            <button class="alert-close" (click)="error = ''">×</button>
+        </div>
+
+        <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">
+            
+            <!-- Titre -->
+            <div class="form-group">
+                <label for="titre">
+                    📝 Titre de l'Actualité <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="titre" 
+                    formControlName="titre"
+                    placeholder="Ex: Comment prévenir les maladies cardiovasculaires"
+                    [class.is-invalid]="submitted && f['titre'].errors"
+                />
+                <div class="invalid-feedback" *ngIf="submitted && f['titre'].errors">
+                    <div *ngIf="f['titre'].errors['required']">Le titre est requis</div>
+                    <div *ngIf="f['titre'].errors['minlength']">
+                        Le titre doit contenir au moins 5 caractères
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auteur (Auto-rempli) -->
+            <!-- <div class="form-group">
+                <label for="auteur">
+                    👨‍⚕️ Auteur <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="auteur" 
+                    formControlName="auteur"
+                    placeholder="Votre nom sera automatiquement ajouté"
+                    [class.is-invalid]="submitted && f['auteur'].errors"
+                    readonly
+                />
+                <small class="form-text">Ce champ est automatiquement rempli avec votre nom</small>
+            </div> -->
+
+            <!-- Contenu -->
+            <div class="form-group">
+                <label for="contenu">
+                    📄 Contenu de l'actualité <span class="required">*</span>
+                </label>
+                <textarea 
+                    id="contenu" 
+                    formControlName="contenu"
+                    rows="10"
+                    placeholder="Rédigez le contenu détaillé de votre conseil (minimum 50 caractères)"
+                    [class.is-invalid]="submitted && f['contenu'].errors"
+                ></textarea>
+                <div class="char-count" [style.color]="publicationForm.value.contenu?.length >= 50 ? '#28a745' : '#666'">
+                    {{ publicationForm.value.contenu?.length || 0 }} / 50 caractères minimum
+                </div>
+                <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
+                    <div *ngIf="f['contenu'].errors['required']">Le contenu est requis</div>
+                    <div *ngIf="f['contenu'].errors['minlength']">
+                        Le contenu doit contenir au moins 50 caractères
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image URL -->
+            <div class="form-group">
+                <label for="image">📷 Image (optionnel)</label>
+                <input
+                  type="file"
+                  id="image"
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                  class="form-control"
+                />
+                <small class="form-text">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
+              
+                <!-- Aperçu de l'image -->
+                <div class="image-preview" *ngIf="imagePreview">
+                  <img [src]="imagePreview" alt="Aperçu" style="max-width: 300px; margin-top: 10px; border-radius: 8px;" />
+                </div>
+            </div>
+              
+
+            <!-- Date de publication (auto) -->
+            <div class="form-group">
+                <label>
+                     Date de publication
+                </label>
+                <div class="info-box">
+                    <span class="info-icon">ℹ️</span>
+                    <span>La date sera automatiquement définie à la création</span>
+                </div>
+            </div>
+            <!-- Résumé -->
+            <div class="summary-section">
+                <h3>📋 Aperçu de votre actualité</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-label"> Titre:</div>
+                        <div class="summary-value">{{ publicationForm.value.titre  }}</div>
+                    </div>
+                    <div class="summary-item full-width">
+                        <div class="summary-label"> Contenu:</div>
+                        <div class="summary-value content-preview">
+                            {{ publicationForm.value.contenu | slice:0:150 }}
+                            {{ publicationForm.value.contenu?.length > 150 ? '...' : '' }}
+                        </div>
+                    </div>
+                    <div class="summary-item full-width" *ngIf="publicationForm.value.imageUrl">
+                        <div class="summary-label"> Image:</div>
+                        <div class="summary-value">
+                            <img [src]="publicationForm.value.imageUrl"
+                                 alt="Aperçu"
+                                 class="summary-image"
+                                 (error)="onImageError()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="onReset()">
+                    🔄 Réinitialiser
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="loading">
+                    <span *ngIf="!loading">✨ Créer le conseil</span>
+                    <span *ngIf="loading">⏳ Création en cours...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

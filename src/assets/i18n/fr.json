@@ -1,0 +1,23 @@
+{
+    "welcome": {
+      "title": "Bienvenue",
+      "message": "Bienvenue dans notre application de gestion d'utilisateurs",
+      "description": "Gérez facilement vos utilisateurs"
+    },
+    "user": {
+      "name": "Nom",
+      "email": "Email",
+      "username": "Nom d'utilisateur",
+      "actions": {
+        "create": "Créer un utilisateur",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "save": "Enregistrer"
+      }
+    },
+    "common": {
+      "loading": "Chargement...",
+      "error": "Une erreur est survenue",
+      "success": "Opération réussie"
+    }
+  }

@@ -7,6 +7,9 @@ import { Message } from '../models/Message';
   providedIn: 'root'
 })
 export class NotificationService {
+  success(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   private notificationsSubject = new BehaviorSubject<Message[]>([]);
   public notifications$ = this.notificationsSubject.asObservable();
 

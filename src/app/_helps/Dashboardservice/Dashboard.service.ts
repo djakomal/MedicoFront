@@ -1,13 +1,16 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Appoitement } from '../../models/appoitement';
 import { Conseil } from '../../models/Conseil';
 import { User } from '../../models/user';
+import { Publication } from './../../models/Publication';
 
 export interface DashboardStats {
   nombreAppoitementAujourdhui: number;
   nombrePatientsActifs: number;
+  nombrePubPublier:number,
   nombreConseilsPublies: number;
   tendanceAppoitement: number;
   tendancePatientsActifs: number;
@@ -41,7 +44,8 @@ export class DashboardService {
   calculateDashboardStats(
     appoitements: Appoitement[], 
     conseils: Conseil[], 
-    patients: User[]
+    publication:Publication[],
+    patients: User[],
   ): DashboardStats {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -189,6 +193,7 @@ export class DashboardService {
       nombreRendezvousAujourdhui: appoitementsAujourdhui.length, // Même valeur
       nombrePatientsActifs: patientsAvecRdvCeMois.size,
       nombreConseilsPublies: conseils.length, // ✅ Tous les conseils créés (publiés + brouillons)
+      nombrePubPublier:publication.length,
       tendanceAppoitement: appoitementsAujourdhui.length - appoitementsHier.length,
       tendanceRendezvous: appoitementsAujourdhui.length - appoitementsHier.length, // Même valeur
       tendancePatientsActifs: patientsAvecRdvCeMois.size - patientsAvecRdvMoisDernier.size,

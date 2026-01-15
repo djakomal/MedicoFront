@@ -1,4 +1,4 @@
-import { WeekDay } from './week-day';
+import { WeekDay } from './WeekDay';
 
 describe('WeekDay', () => {
   it('should create an instance', () => {

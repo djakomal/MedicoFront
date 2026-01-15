@@ -4,16 +4,16 @@
       <div class="logo">
         <div class="logo-icon">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#gradient1)"/>
-            <path d="M2 17L12 22L22 17V7L12 12L2 7V17Z" fill="url(#gradient2)"/>
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#gradient1)" />
+            <path d="M2 17L12 22L22 17V7L12 12L2 7V17Z" fill="url(#gradient2)" />
             <defs>
               <linearGradient id="gradient1" x1="2" y1="2" x2="22" y2="12">
-                <stop offset="0%" stop-color="#667eea"/>
-                <stop offset="100%" stop-color="#764ba2"/>
+                <stop offset="0%" stop-color="#667eea" />
+                <stop offset="100%" stop-color="#764ba2" />
               </linearGradient>
               <linearGradient id="gradient2" x1="2" y1="7" x2="22" y2="22">
-                <stop offset="0%" stop-color="#667eea"/>
-                <stop offset="100%" stop-color="#764ba2"/>
+                <stop offset="0%" stop-color="#667eea" />
+                <stop offset="100%" stop-color="#764ba2" />
               </linearGradient>
             </defs>
           </svg>
@@ -21,53 +21,128 @@
         <span class="logo-text">Medico</span>
       </div>
     </div>
-    
+
     <nav class="sidebar-nav">
       <a [routerLink]="['/DocDash']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+          <path d="M12 4l-8 7h2v7h5v-4h2v4h5v-7h2z"/>
+
         </svg>
         <span>Tableau de bord</span>
       </a>
-      
+
       <a [routerLink]="['MesRendezVous']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
+          <path
+            d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" />
         </svg>
         <span>Mes rendez-vous</span>
       </a>
-      
+
       <a [routerLink]="['MesPatients']" class="menu-item" routerLinkActive="active">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          <path
+            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
         </svg>
         <span>Mes patients</span>
       </a>
+
+      <!-- Menu principal avec sous-menu -->
+      <div class="menu-item-wrapper">
+        <a class="menu-item" (click)="toggleSubmenu()" [class.active]="isSubmenuOpen">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+          </svg>
+          <span>Mes conseils</span>
+          <svg class="arrow-icon" [class.rotate]="isSubmenuOpen" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+          </svg>
+        </a>
+
+        <!-- Sous-menu -->
+        <div class="submenu" [class.show]="isSubmenuOpen">
+          <a [routerLink]="['getConseils']" class="submenu-item" routerLinkActive="active-submenu">
+            <svg class="submenu-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+            </svg>
+            <span>Tous les conseils</span>
+          </a>
+
+          <a [routerLink]="['MesConseils']" class="submenu-item" routerLinkActive="active-submenu">
+            <svg class="submenu-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>
+            </svg>
+            <span>Créer un conseil</span>
+          </a>
+
+          <a [routerLink]="['updateconseils']" class="submenu-item" routerLinkActive="active-submenu">
+            <svg class="submenu-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/>
+
+            </svg>
+            <span> Mise a Jours</span>
+          </a>
+        </div>
+      </div>
+      <!--Actualité santé     -->
+      <div class="menu-item-wrapper">
+        <a class="menu-item" (click)="toggleSubmenus()" [class.active]="isSubmenuOpens">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+
+          </svg>
+          <span>Actualité</span>
+          <svg class="arrow-icon" [class.rotate]="isSubmenuOpens" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+          </svg>
+        </a>
       
-      <a [routerLink]="['MesConseils']" class="menu-item" routerLinkActive="active">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-        </svg>
-        <span>Mes conseils</span>
-      </a>
-      
-      <div class="menu-section">Paramètres</div>
-      
-      <a [routerLink]="['ProfileComponent']" class="menu-item">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
-        <span>Mon profil</span>
-      </a>
-      
+      <div class="submenu" [class.show]="isSubmenuOpens">
+        <a [routerLink]="['addpub']" class="menu-item" routerLinkActive="active">
+          <svg class="submenu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>>
+          </svg>
+          <span>Creer une actualité</span>
+        </a>
+
+        <a [routerLink]="['getpub']" class="menu-item" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+          </svg>
+          <span>Liste des actualités</span>
+        </a>
+        <a [routerLink]="['updatepub']" class="menu-item" routerLinkActive="active">
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/>
+
+          </svg>
+          <span>Mise a jour </span>
+        </a>
+      </div>
+      </div>
+
       <a [routerLink]="['MesHoraires']" class="menu-item">
         <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+          <path
+            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
         </svg>
         <span>Mes horaires</span>
       </a>
+
+      <div class="menu-section">Paramètres</div>
+
+      <a [routerLink]="['ProfileComponent']" class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+        <span>Mon profil</span>
+      </a>
+
     </nav>
-    
+
     <div class="user-info">
       <div class="user-avatar">{{ userName.charAt(0) }}{{ userName.charAt(1) }}</div>
       <div class="user-details">
@@ -79,7 +154,7 @@
       </div>
     </div>
   </aside>
-  
+
   <main class="main-content">
     <!-- Contenu du Dashboard (visible uniquement sur la route /DocDash) -->
     <div *ngIf="isDashboard" class="dashboard-container">
@@ -108,7 +183,8 @@
           <div class="card-header">
             <div class="card-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/>
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z" />
               </svg>
             </div>
           </div>
@@ -116,8 +192,25 @@
             <div class="card-number">{{ stats.nombrePatientsActifs }}</div>
             <div class="card-label">Rendez-vous</div>
             <div class="card-trend" [ngClass]="getTrendClass(stats.tendancePatientsActifs)">
-              {{ getTrendIcon(stats.tendancePatientsActifs) }} 
+              {{ getTrendIcon(stats.tendancePatientsActifs) }}
               {{ stats.tendancePatientsActifs > 0 ? '+' : '' }}{{ stats.tendancePatientsActifs }} ce mois
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z" />
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombreConseilsPublies }}</div>
+            <div class="card-label">Conseils créés</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
+              {{ getTrendIcon(stats.tendanceConseils) }}
+              {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
             </div>
           </div>
         </div>
@@ -126,15 +219,15 @@
           <div class="card-header">
             <div class="card-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/>
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z" />
               </svg>
             </div>
           </div>
           <div class="card-content">
-            <div class="card-number">{{ stats.nombreConseilsPublies }}</div>
-            <div class="card-label">Conseils créés</div>
+            <div class="card-number">{{ stats.nombrePubPublier }}</div>
+            <div class="card-label">Actualité créés</div>
             <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
-              {{ getTrendIcon(stats.tendanceConseils) }} 
+              {{ getTrendIcon(stats.tendanceConseils) }}
               {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
             </div>
           </div>
@@ -150,21 +243,19 @@
             <button>→</button>
           </div>
         </div>
-        
+
         <div class="calendar-days">
-          <div class="calendar-day" 
-              *ngFor="let day of weekDays"
-              [class.active]="day.isToday">
+          <div class="calendar-day" *ngFor="let day of weekDays" [class.active]="day.isToday">
             <div class="day-name">{{ day.name }}</div>
             <div class="day-number">{{ day.number }}</div>
           </div>
         </div>
-        
+
         <div class="appointment-slots">
           <div *ngIf="AppoitementAujourdhui.length === 0" class="no-appointments">
-          Vous Avez  {{stats.nombrePatientsActifs}} rendez-vous aujourd'hui.
+            Vous Avez {{stats.nombrePatientsActifs}} rendez-vous aujourd'hui.
           </div>
-          
+
           <div class="appointment-slot" *ngFor="let app of AppoitementAujourdhui">
             <div class="appointment-time">
               🕐 {{ formatTime(app.preferredDate) }}

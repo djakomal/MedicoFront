@@ -9,7 +9,8 @@ import { DashboardService, DashboardStats } from '../../../../_helps/Dashboardse
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { WeekDay } from '../../../../models/week-day';
+import { WeekDay } from '../../../../models/WeekDay';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +24,7 @@ export class DocdashboardComponent implements OnInit {
     nombreAppoitementAujourdhui: 0,
     nombrePatientsActifs: 0,
     nombreConseilsPublies: 0,
+    nombrePubPublier:0,
     tendanceAppoitement: 0,
     tendancePatientsActifs: 0,
     tendanceConseils: 0,
@@ -43,6 +45,15 @@ export class DocdashboardComponent implements OnInit {
   allAppointments: Appoitement[] = [];
   allConseils: Conseil[] = [];
   weekDays: WeekDay[] = [];
+  isSubmenuOpen = false;
+  isSubmenuOpens= false;
+
+  toggleSubmenu() {
+    this.isSubmenuOpen = !this.isSubmenuOpen;
+  }
+  toggleSubmenus() {
+    this.isSubmenuOpens = !this.isSubmenuOpens;
+  }
 
   // Dates de la semaine
   rendezVousAujourdhui: any;

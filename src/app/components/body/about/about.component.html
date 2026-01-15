@@ -5,336 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>À Propos - Medico</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            overflow-x: hidden;
-        }
-
-        /* Header Navigation */
-        .main_header {
-            background: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header_content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #0066ff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav_menu {
-            display: flex;
-            gap: 35px;
-            list-style: none;
-        }
-
-        .nav_menu a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        .nav_menu a:hover {
-            color: #0066ff;
-        }
-
-        /* Hero Section */
-        .hero_section {
-          background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
-            padding: 8px 0;
-            position: relative;
-            box-shadow: #333 10px 10px 20px -10px;
-            overflow: hidden;
-        }
-
-        .hero_section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .hero_content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .hero_text h1 {
-            color: white;
-            font-size: 52px;
-            font-weight: 800;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .hero_text p {
-            color: rgba(255,255,255,0.9);
-            font-size: 20px;
-            font-weight: 300;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
-        }
-
-        .hero_image {
-            width: 280px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .hero_image img {
-            width: 100%;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* About Section */
-        .about_section {
-            padding: 100px 0;
-            background: #fafbfc;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .about_grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .about_image {
-            position: relative;
-        }
-
-        .about_image img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease;
-        }
-
-        .about_image:hover img {
-            transform: scale(1.02);
-        }
-
-        .about_image::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
-            border-radius: 20px;
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        .about_text h4 {
-            color: #0066ff;
-            font-size: 16px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        .about_text h2 {
-            font-size: 42px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 25px;
-            line-height: 1.3;
-        }
-
-        .about_text p {
-            font-size: 17px;
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 35px;
-        }
-
-        .btn_primary {
-            display: inline-block;
-            background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
-            color: white;
-            padding: 16px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,102,255,0.3);
-        }
-
-        .btn_primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,102,255,0.4);
-        }
-
-        /* Features Grid */
-        .features_grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .feature_card {
-            background: white;
-            padding: 35px 25px;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        .feature_card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-        }
-
-        .feature_icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 32px;
-        }
-
-        .feature_card h5 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 12px;
-        }
-
-        .feature_card p {
-            font-size: 15px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        /* Stats Section */
-        .stats_section {
-            background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
-            padding: 80px 0;
-            margin: 80px 0;
-        }
-
-        .stats_grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
-        }
-
-        .stat_item {
-            text-align: center;
-            color: white;
-        }
-
-        .stat_number {
-            font-size: 52px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .stat_label {
-            font-size: 16px;
-            font-weight: 300;
-            opacity: 0.9;
-        }
-
-        /* Responsive */
-        @media (max-width: 968px) {
-            .hero_content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero_text h1 {
-                font-size: 48px;
-            }
-
-            .hero_image {
-                width: 280px;
-                margin-top: 40px;
-            }
-
-            .about_grid {
-                grid-template-columns: 1fr;
-                gap: 50px;
-            }
-
-            .features_grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats_grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+   
 </head>
 
 <body>
@@ -353,8 +24,7 @@
                 <p>Votre santé est notre priorité</p>
             </div>
             <div class="hero_image">
-                <svg viewBox="0 0 300 300" src="assets/img/about.png" alt="Hero Image">
-                    <!-- Stethoscope -->
+                <svg viewBox="0 0 300 300">
                     <path d="M150,60 Q160,80 150,100 Q140,80 150,60" fill="none" stroke="#fff" stroke-width="4"/>
                     <circle cx="150" cy="105" r="8" fill="#fff"/>
                     <path d="M150,113 L150,180" stroke="#fff" stroke-width="4"/>
@@ -364,7 +34,6 @@
                     <circle cx="100" cy="225" r="15" fill="#fff"/>
                     <circle cx="200" cy="225" r="25" fill="#fff" opacity="0.3"/>
                     <circle cx="200" cy="225" r="15" fill="#fff"/>
-                    <!-- Medical cross -->
                     <rect x="235" y="80" width="15" height="45" fill="#fff" rx="3"/>
                     <rect x="220" y="95" width="45" height="15" fill="#fff" rx="3"/>
                 </svg>
@@ -377,14 +46,14 @@
         <div class="container">
             <div class="about_grid">
                 <div class="about_image">
-                    <img src="assets/img/about.png" alt="À propos de nous"/>
+                    <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600" alt="À propos de nous"/>
                 </div>
                 <div class="about_text">
                     <h4>À propos de Nous</h4>
                     <h2>Qui sommes-nous ?</h2>
                     <p>Nous sommes une équipe de professionnels de santé dévoués, engagés à fournir des soins médicaux de qualité supérieure. Notre mission est d'offrir à chaque patient une expérience personnalisée et des traitements adaptés à leurs besoins spécifiques.</p>
                     <p>Avec des années d'expertise et une approche centrée sur le patient, nous mettons tout en œuvre pour garantir votre bien-être et votre satisfaction.</p>
-                    <a class="btn_primary" href="#contact">En savoir plus</a>
+                    <a class="btn_primary" href="Cont">En savoir plus</a>
                 </div>
             </div>
 
@@ -404,6 +73,70 @@
                     <div class="feature_icon">⭐</div>
                     <h5>Équipe Compétente</h5>
                     <p>Des professionnels qualifiés et expérimentés à votre service</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Vision Values Section -->
+    <section class="mvv_section">
+        <div class="mvv_container">
+            <div class="section_title">
+                <h2>Notre Engagement</h2>
+                <p>Découvrez ce qui guide nos actions au quotidien</p>
+            </div>
+
+            <!-- Mission -->
+            <div class="accordion_item active">
+                <div class="accordion_header" onclick="toggleAccordion(this)">
+                    <h3 class="accordion_title mission">NOTRE MISSION</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        Offrir à chaque citoyen un accès simple, rapide et sûr à des services de santé de qualité, grâce à des outils numériques adaptés aux réalités africaines.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Vision -->
+            <div class="accordion_item">
+                <div class="accordion_header" onclick="toggleAccordion(this)">
+                    <h3 class="accordion_title vision">NOTRE VISION</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        Devenir la plateforme de référence en Afrique pour la gestion intelligente de la santé, en connectant patients, professionnels et établissements de santé dans un écosystème digital sécurisé et innovant.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Values -->
+            <div class="accordion_item">
+                <div class="accordion_header" onclick="toggleAccordion(this)">
+                    <h3 class="accordion_title values">NOS VALEURS</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        <strong>Excellence :</strong> Fournir des services de santé de la plus haute qualité<br><br>
+                        <strong>Innovation :</strong> Adopter les dernières technologies pour améliorer les soins<br><br>
+                        <strong>Accessibilité :</strong> Rendre les soins de santé disponibles pour tous<br><br>
+                        <strong>Intégrité :</strong> Agir avec transparence et éthique dans toutes nos actions
+                    </p>
                 </div>
             </div>
         </div>
@@ -433,6 +166,22 @@
         </div>
     </section>
 
+    <script>
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const allItems = document.querySelectorAll('.accordion_item');
+            
+            // Fermer tous les autres items
+            allItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle l'item cliqué
+            item.classList.toggle('active');
+        }
+    </script>
 </body>
 
 </html>

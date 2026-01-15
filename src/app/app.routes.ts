@@ -27,13 +27,17 @@ import { MesRendezVousComponent } from './components/body/dashboard/mes-rendez-v
 import { MesPatientsComponent } from './components/body/dashboard/mes-patients/mes-patients.component';
 import { MesConseilsComponent } from './components/body/dashboard/mes-conseils/mes-conseils.component';
 import { InfosPersonnellesComponent } from './components/body/dashboard/infos-personnelles/infos-personnelles.component';
-import { TypesConsultationsComponent } from './components/body/dashboard/types-consultations/types-consultations.component';
 import { MesHorairesComponent } from './components/body/dashboard/mes-horaires/mes-horaires.component';
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
 import { ConseilComponent } from './components/body/conseil/conseil.component';
 import { DocdashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
 import { ProfileComponent } from './components/body/dashboard/ProfileComponent/ProfileComponent.component';
+import { GetConseilsComponent } from './components/body/dashboard/mes-conseils/get-conseils/get-conseils.component';
+import { UpdateConseilsComponent } from './components/body/dashboard/mes-conseils/update-conseils/update-conseils.component';
+import { AddActualiteComponent } from './components/body/dashboard/Actualite/add-actualite/add-actualite.component';
+import { GetActualiteComponent } from './components/body/dashboard/Actualite/get-actualite/get-actualite.component';
+import { UpdateActualiteComponent } from './components/body/dashboard/Actualite/update-actualite/update-actualite.component';
 1
 
 export const routes: Routes = [
@@ -135,8 +139,11 @@ export const routes: Routes = [
     path: 'DocLogin',
     component: DocLoginComponent,
   },
+  {
+    path: 'Publications',
+    component: PublicationsComponent,
+  },
   
-
 
   {
     path: 'DocDash',
@@ -159,10 +166,6 @@ export const routes: Routes = [
         component: InfosPersonnellesComponent,
       },
       {
-        path: 'TypesConsultations',
-        component: TypesConsultationsComponent,
-      },
-      {
         path: 'MesHoraires',
         component: MesHorairesComponent,
       },
@@ -171,13 +174,30 @@ export const routes: Routes = [
         component: ProfileComponent,
       },
       {
-        path: 'Publications',
-        component: PublicationsComponent,
-      },
-      {
         path: 'Associations',
         component: AssociationsComponent,
       },
+      {
+        path: 'getConseils',
+        component: GetConseilsComponent,
+      },
+      {
+        path: 'updateconseils',
+        component: UpdateConseilsComponent,
+      },
+      {
+        path:'addpub',
+        component: AddActualiteComponent,
+      },
+      {
+        path:'getpub',
+        component:GetActualiteComponent
+      },
+      {
+        path:'updatepub',
+        component:UpdateActualiteComponent
+      }
+
     ]
      ,canActivate: [authGuard],
      data: { role: 'DOCTOR' } 

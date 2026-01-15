@@ -244,7 +244,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    border: #5191f0 1px solid;
+    border: #9FC6FE 1px solid;
 }
 
 .btn_2::before {
@@ -338,6 +338,7 @@
 .feature_part h1 {
     animation: fadeInUp 1s ease-out 0.5s both;
 }
+.feature_part
 
 /* Feature Cards */
 .single_feature {
@@ -350,7 +351,6 @@
 
 }
 .single_feature_part h4 {
-
     font-size: 15px;
     text-align: center;
     margin-top: 15px;
@@ -359,14 +359,16 @@
     font-size: small;
     text-align: center;
 }
-.single_feature_part
+.single_feature_part{
+    background-image: url('../../../../assets/img/about_bg.png');
+}
 
 .single_feature:nth-child(1) {
-    animation-delay: 0.2s;
+    animation-delay: 0.1s;
 }
 
 .single_feature:nth-child(2) {
-    animation-delay: 0.4s;
+    animation-delay: 0.2s;
 }
 
 .single_feature_part {
@@ -378,22 +380,22 @@
 }
 
 .single_feature_part:hover {
-    transform: translateY(-10px);
+    transform: translateY(-1px);
     box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
 }
 
 .single_feature_icon {
     box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
     transition: all 0.3s ease;
-    margin-right: 100px;
+    margin-right: 50px;
 
  
 }
 
 .single_feature_part:hover .single_feature_icon {
-    transform: scale(2.2) rotate(5deg);
+    transform: scale(1.5) rotate(2deg);
     box-shadow: 0 8px 25px rgba(107, 130, 228, 0.5);
-    align-items: center;
+    align-content: center;
     justify-content: center;
 }
 
@@ -410,9 +412,9 @@
 
 }
 .single_feature_icon img {
-    font-size: 40px;
-    width: 60px;
-    height: 60px;
+    font-size: 20px;
+    width: 30px;
+    height: 30px;
     justify-content: center;
     align-items: center;
 }
@@ -937,4 +939,414 @@
     top: 15px;
     right: 15px;
   }
+}
+/* ============================
+   NEW SERVICES WITH IMAGE SECTION
+   ============================ */
+
+.services_with_image_section {
+    padding: 80px 20px;
+    background-image: url('../../../../assets/img/banner_bg.png');
+}
+
+.section_header_centered {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 60px;
+}
+
+.section_header_centered h2 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+.section_header_centered p {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.8;
+}
+
+/* Main Grid Layout: Services Grid | Image | Info */
+.services_main_grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1fr 1.2fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Left Side: 2x2 Services Grid */
+.services_left_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.service_icon_card {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.8s ease-out both;
+}
+
+.service_icon_card:nth-child(1) { animation-delay: 0.1s; }
+.service_icon_card:nth-child(2) { animation-delay: 0.2s; }
+.service_icon_card:nth-child(3) { animation-delay: 0.3s; }
+.service_icon_card:nth-child(4) { animation-delay: 0.4s; }
+
+.service_icon_card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.service_icon_circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 15px;
+    transition: all 0.3s ease;
+}
+
+.service_icon_circle.urgence {
+    background:#9FC6FE;
+}
+
+.service_icon_circle.rendez {
+    background:#9FC6FE;
+}
+
+.service_icon_circle.pharmacie {
+    background:#9FC6FE;
+}
+
+.service_icon_circle.garde {
+    background:#9FC6FE;
+}
+
+.service_icon_circle img {
+    width: 45px;
+    height: 45px;
+    filter: brightness(0) invert(1);
+}
+
+.service_icon_card h4 {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+}
+
+.service_icon_card:hover .service_icon_circle {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Center: Patient Image with Floating Icons */
+.central_patient_image {
+    position: relative;
+    animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.central_patient_image img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: block;
+    margin: 0 auto;
+}
+
+.floating_icon {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    font-size: 28px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating_icon.top_left {
+    top: 10%;
+    left: -5%;
+    animation-delay: 0s;
+}
+
+.floating_icon.top_right {
+    top: 15%;
+    right: -5%;
+    animation-delay: 0.5s;
+}
+
+.floating_icon.bottom_left {
+    bottom: 20%;
+    left: -8%;
+    animation-delay: 1s;
+}
+
+.floating_icon.bottom_right {
+    bottom: 10%;
+    right: 0%;
+    animation-delay: 1.5s;
+}
+
+.floating_icon img {
+    width: 35px;
+    height: 35px;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Right Side: Health Record Info */
+.health_record_info {
+    background: rgb(255, 255, 255);
+    padding: 45px 40px;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    animation: fadeInRight 1s ease-out 0.5s both;
+}
+
+.health_record_info h2 {
+    font-size: 36px;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.health_record_info p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.button_group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn_primary_green,
+.btn_secondary_outline {
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn_primary_green {
+    background: #9FC6FE;
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 179, 65, 0.3);
+}
+
+.btn_primary_green:hover {
+    background: #9FC6FE;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 179, 65, 0.4);
+}
+
+.btn_secondary_outline {
+    background: transparent;
+    color: #1a1a1a;
+    border: 2px solid #e0e0e0;
+}
+
+.btn_secondary_outline:hover {
+    border-color: #9FC6FE;
+    color: #9FC6FE;
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .services_main_grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .services_left_grid {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .central_patient_image {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .floating_icon.top_left,
+    .floating_icon.bottom_left {
+        left: -5%;
+    }
+    
+    .floating_icon.top_right,
+    .floating_icon.bottom_right {
+        right: -5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .section_header_centered h2 {
+        font-size: 32px;
+    }
+    
+    .services_left_grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .service_icon_card {
+        padding: 20px 15px;
+    }
+    
+    .service_icon_circle {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+    }
+    
+    .service_icon_circle img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .service_icon_card h4 {
+        font-size: 14px;
+    }
+    
+    .health_record_info {
+        padding: 30px 25px;
+    }
+    
+    .health_record_info h2 {
+        font-size: 28px;
+    }
+    
+    .button_group {
+        flex-direction: column;
+    }
+    
+    .btn_primary_green,
+    .btn_secondary_outline {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .floating_icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .floating_icon img {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 576px) {
+    .section_header_centered h2 {
+        font-size: 26px;
+    }
+    
+    .section_header_centered p {
+        font-size: 16px;
+    }
+    
+    .services_left_grid {
+        grid-template-columns: 1fr;
+        max-width: 300px;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .services_image_grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .services_icons_left,
+    .services_icons_right {
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .service_icon_card {
+        flex: 1;
+        max-width: 200px;
+    }
+    
+    .section_header_centered h2 {
+        font-size: 32px;
+    }
+    
+    .health_record_section {
+        padding: 35px 25px;
+    }
+    
+    .health_record_section h2 {
+        font-size: 28px;
+    }
+    
+    .button_group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn_primary,
+    .btn_secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .services_icons_left,
+    .services_icons_right {
+        flex-direction: column;
+    }
+    
+    .service_icon_card {
+        max-width: 100%;
+    }
+    
+    .section_header_centered h2 {
+        font-size: 26px;
+    }
+    
+    .section_header_centered p {
+        font-size: 16px;
+    }
 }

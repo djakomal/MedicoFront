@@ -560,3 +560,142 @@ body {
     padding: 16px 8px;
   }
 }
+.menu-container {
+  width: 100%;
+}
+
+.menu-item-wrapper {
+  position: relative;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.menu-item:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-item.active {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+
+.arrow-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.arrow-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding-left: 20px;
+}
+
+.submenu.show {
+  max-height: 500px;
+}
+
+.submenu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+.submenu-item:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.submenu-item.active-submenu {
+  background-color: #bbdefb;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.submenu-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  opacity: 0.7;
+}
+
+.submenu-item.active-submenu .submenu-icon {
+  opacity: 1;
+}
+/* Icônes du menu avec dégradé bleu-violet */
+.menu-item .menu-icon {
+    color: #667eea;
+    filter: drop-shadow(0 0 2px rgba(118, 75, 162, 0.3));
+}
+
+.menu-item:hover .menu-icon {
+    color: #764ba2;
+    filter: drop-shadow(0 0 4px rgba(102, 126, 234, 0.5));
+}
+
+.menu-item.active .menu-icon {
+    color: #667eea;
+    filter: drop-shadow(0 0 6px rgba(118, 75, 162, 0.6));
+}
+
+/* Icônes du sous-menu */
+.submenu-item .submenu-icon {
+    color: #667eea;
+    opacity: 0.8;
+}
+
+.submenu-item:hover .submenu-icon {
+    color: #764ba2;
+    opacity: 1;
+}
+
+.submenu-item.active-submenu .submenu-icon {
+    color: #667eea;
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(118, 75, 162, 0.4));
+}
+
+/* Flèche du menu déroulant */
+.arrow-icon {
+    color: #667eea;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.menu-item:hover .arrow-icon {
+    color: #764ba2;
+}
+
+/* Icônes des cartes statistiques avec dégradé */
+.card-icon svg {
+    color: transparent;
+    fill: url(#cardIconGradient);
+}

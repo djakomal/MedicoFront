@@ -12,29 +12,90 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-
                     <div class="collapse navbar-collapse main-menu-item justify-content-center"
                         id="navbarSupportedContent">
                         <ul class="navbar-nav align-items-center">
                             <li class="nav-item active">
-                                <a class="nav-link" routerLink="Dash">Accueil</a>
+                                <a class="nav-link" routerLink="Dash">{{ 'home' | translate }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="Doc">Nos Services</a>
+                                <a class="nav-link" href="conseil">{{ 'wellness' | translate }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="conseil">Conseils bien-être</a>
+                                <a class="nav-link" href="About">{{ 'about' | translate }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="About">À propos</a>
+                                <a class="nav-link" href="Cont">{{ 'contact' | translate }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="Cont">Contact</a>
+                                <a class="nav-link" href="#">{{ 'resources' | translate }}</a>
+                                <ul>
+                                    <li><a href="Doc">{{ 'service' | translate }}</a></li>
+                                    <li><a href="Publications">{{ 'healthNews' | translate }}</a></li>
+                                    <li><a href="#">{{ 'helpCenter' | translate }}</a></li>
+                                </ul>
                             </li>
                         </ul>
                     </div>
+
+                    <!-- TRADUCTEUR DE LANGUE -->
+                    <div class="header-container">
+                        <div class="language-selector">
+                            <!-- <button 
+                                class="language-btn"
+                                (click)="toggleLanguageMenu()"
+                                [disabled]="isTranslating"
+                                [class.translating]="isTranslating"
+                                [attr.aria-label]="'selectLanguage' | translate">
+                                <span class="flag">{{ currentLanguage?.flag }}</span>
+                                <span class="lang-name">{{ currentLanguage?.name }}</span>
+                                <svg 
+                                    class="chevron" 
+                                    [class.open]="languageMenuOpen"
+                                    width="18" 
+                                    height="18" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button> -->
+
+                            <!-- <div class="language-dropdown" [class.show]="languageMenuOpen">
+                                <div class="language-header">
+                                    {{ 'selectLanguage' | translate }}
+                                </div> -->
+                                <!-- <div 
+                                    *ngFor="let lang of languages" 
+                                    class="language-option"
+                                    [class.active]="lang.code === currentLang"
+                                    (click)="changeLanguage(lang.code)"
+                                    role="button"
+                                    tabindex="0"
+                                    [attr.aria-label]="lang.name">
+                                    <span class="flag">{{ lang.flag }}</span>
+                                    <span class="name">{{ lang.name }}</span>
+                                    <svg 
+                                        *ngIf="lang.code === currentLang"
+                                        class="check-icon" 
+                                        width="18" 
+                                        height="18" 
+                                        viewBox="0 0 24 24" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div> -->
+                            </div>
+                        </div>
+
+                        <!-- Profil utilisateur (si vous en avez un) -->
+                    <!-- </div> -->
                 </nav>
             </div>
         </div>
     </div>
 </header>
+<!--::header part end::-->
