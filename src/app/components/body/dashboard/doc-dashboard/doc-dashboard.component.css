@@ -284,6 +284,7 @@ body {
 .header p {
   font-size: 16px;
   opacity: 0.9;
+  color: #070707;
   position: relative;
   z-index: 1;
 }

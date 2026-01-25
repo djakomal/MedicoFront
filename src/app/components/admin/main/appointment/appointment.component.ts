@@ -39,16 +39,16 @@ export class AppointmentComponent  implements OnInit{
  getAppointment() {
   this.appointementService.getAllAppointment().subscribe({
     next: (data) => {
-      console.log("📌 Données reçues :", data);
+      console.log(" Données reçues :", data);
       
       if (Array.isArray(data)) {
         this.tableauClasse = data;
       } else {
-        console.error("❌ Format des données incorrect :", data);
+        console.error("Format des données incorrect :", data);
       }
     },
     error: (error) => {
-      console.error("❌ Erreur API :", error);
+      console.error("Erreur API :", error);
     }
   });
 }
@@ -86,7 +86,7 @@ redirection(){
   rejeterRendezVous(id: number) {
     const appointement = this.tableauClasse.find(app => app.id === id);
     if (appointement) {
-      appointement.status = 'cancelled';
+      appointement.status = 'rejected';
       this.notificationService.showNotification(`Rendez-vous ${id} rejeté.`, 'error');
     }
     // votre logique pour rejeter le rendez-vous

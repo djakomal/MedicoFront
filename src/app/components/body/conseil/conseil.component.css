@@ -94,20 +94,20 @@ body {
 .content-layout {
     display: grid;
     grid-template-columns: 1fr 200px;
-    gap: 60px;
+    gap: 20px;
 }
 
 /* Articles Grid */
 .articles-section {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
+    gap: 35px;
 }
 
 .article-card {
     background: white;
     border-radius: 20px;
-    height: 75%;
+    height: 95%;
     overflow: hidden;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     transition: all 0.3s ease;

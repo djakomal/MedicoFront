@@ -28,10 +28,11 @@ export class Appoitement {
   doctorId!:number;
   creneauId!: number; 
   doctor!: number;  
-  appointmentType!: 'in-person' | 'video';
+  appointmentType!: string;
   preferredDate!: string; 
   preferredTime!: string;
-  
+  meetingUrl!:string;
+  zoomMeetingId!:string;
   // Disponibilités alternatives
    altAvailability!: {
     morning: boolean;
@@ -52,7 +53,7 @@ export class Appoitement {
 
   
   // Champs potentiellement ajoutés par le backend
-  status!: 'pending' | 'started' | 'cancelled'| 'validated';
+  status!: 'pending' | 'started' | 'rejected'| 'validated';
   createdAt!: string;
   updatedAt!: string;
 

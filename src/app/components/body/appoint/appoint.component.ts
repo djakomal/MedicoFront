@@ -1,3 +1,4 @@
+import { ZoomMeeting } from './../../../_helps/appointment/ZOOM/ZoomSimpleService';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -10,6 +11,7 @@ import { CreneauService } from '../../../_helps/Creneau/Creneau.service';
 import { Creneau } from '../../../models/Creneau';
 import { debounceTime } from 'rxjs/operators';
 import { Speciality } from '../../../models/speciality';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-appoint',
@@ -113,7 +115,7 @@ export class AppointComponent implements OnInit {
       // Mettre à jour la date et la période du créneau
       this.appointmentForm.patchValue({
         preferredDate: creneau.date,
-        preferredTime: this.getPeriodeJournee(creneau.heureDebut)
+        preferredTime: creneau.heureDebut
       });
     });
     
@@ -221,25 +223,28 @@ export class AppointComponent implements OnInit {
       creneauId: formValue.creneauId,
       appointmentType: formValue.appointmentType,
       preferredDate: formValue.preferredDate,
+      preferredTime: formValue.preferredTime,
       altAvailability: formValue.altAvailability,
       reason: formValue.reason?.trim(),
       symptoms: formValue.symptoms?.trim() || '',
       firstVisit: formValue.firstVisit || 'no',
       allergies: formValue.allergies?.trim() || '',
       medications: formValue.medications?.trim() || '',
-
+      zoomMeetingId:formValue.ZoomMeetingId?.trim()||'',
       additionalInfo: formValue.additionalInfo?.trim() || '',
       consent: formValue.consent,
       status: 'pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),  
       doctor: 0,
-      preferredTime: ''
+      meetingUrl:formValue.meetingUrl?.trim()||'',
+      
     };
     console.log(' Step 4: appointmentData construit');
     console.log('📋 JSON COMPLET:', JSON.stringify(appointmentData, null, 2));
     console.log('📤 Données envoyées au backend:', appointmentData);
     console.log('👨‍⚕️ Doctor ID sélectionné:', formValue.doctorId);
+    console.log('creneau selectionner:',formValue.creneauId)
     console.log(' Step 5: logs affichés, appel service en cours...');
   
     this.appointmentService.addAppoitement(appointmentData).subscribe({
@@ -247,7 +252,7 @@ export class AppointComponent implements OnInit {
         console.log(' Réponse du serveur:', response);
         this.submitSuccess = true;
         this.isSubmitting = false;
-        
+          // affecter l'id de creneau a preferredTime
         // Marquer le créneau comme indisponible APRÈS la réussite
         creneau.disponible = false;
         this.filtrerCreneauxParDate(this.dateFilterControl.value);
@@ -379,14 +384,17 @@ export class AppointComponent implements OnInit {
     return heureStr.substring(0, 5);
   }
   isCreneauSelected(creneauId: number | undefined): boolean {
+    
     return this.appointmentForm.get('creneauId')?.value === creneauId;
+
   }
   selectCreneau(creneau: Creneau): void {
     this.appointmentForm.patchValue({
       creneauId: creneau.id,
       preferredDate: creneau.date,
-      preferredTime: this.getPeriodeJournee(creneau.heureDebut)
+      preferredTime: creneau.heureDebut
     });
+   
     
     console.log(` Créneau ID ${creneau.id} sélectionné`);
   }

@@ -160,11 +160,8 @@
     <div *ngIf="isDashboard" class="dashboard-container">
       <!-- Header -->
       <div class="header">
-        <h1>Bonjour, Dr. {{userName}}👋</h1>
+        <h1>Bonjour, Dr. {{userName}}</h1>
         <p>Voici un aperçu de votre journée</p>
-        <button *ngIf="!loading" class="refresh-btn" (click)="refreshData()">
-          🔄 Actualiser
-        </button>
       </div>
 
       <!-- Message d'erreur -->

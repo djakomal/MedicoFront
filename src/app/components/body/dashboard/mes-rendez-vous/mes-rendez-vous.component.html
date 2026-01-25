@@ -36,11 +36,11 @@
           <tr>
             <th scope="col">ID</th>
             <th scope="col">NOM PRENOM </th>
-            <th scope="col"> DATE HEURE</th>
+            <th scope="col"> DATE</th>
             <th scope="col">TYPE</th>
             <th scope="col">SYMPTÔMES</th>
             <th scope="col">PREMIER RENDEZ VOUS </th>
-            <th scope="col">MOMENTS</th>
+            <th scope="col">Heure</th>
             <th scope="col">ALERGIE</th>
             <th scope="col">MEDICAMENT PRIS</th>
             <th scope="col">INFORMATION SUPPLEMENTAIRE</th>
@@ -60,7 +60,7 @@
             </td>
             <td class="date-cell">
               <div class="date-time">
-                {{ app.preferredDate || app.preferredTime }}
+                {{ app.preferredDate  }}
               </div>
             </td>
             <td>
@@ -74,7 +74,7 @@
               </div>
             </td>
             <td>{{ app.firstVisit }}</td>
-            <td>{{ app.altAvailability }}</td>
+            <td>{{ app.preferredTime }}</td>
             <td>{{ app.allergies }}</td>
             <td>{{app.medications}}</td>
             <td>{{app.additionalInfo}}</td>
@@ -84,7 +84,7 @@
                 [ngClass]="{
                   'status-pending': app.status === 'pending',
                   'status-validated': app.status === 'validated',
-                  'status-cancelled': app.status === 'cancelled'
+                  'status-rejected': app.status === 'rejected'
                 }">
                 {{ getStatusLabel(app.status) }}
               </span>

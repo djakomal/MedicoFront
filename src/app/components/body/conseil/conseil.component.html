@@ -18,7 +18,7 @@
     <div class="hero-section">
         <div class="hero-content">
             <div class="breadcrumb">
-                <a href="#">Accueil</a>
+                <a href="/Dash">Accueil</a>
                 <span>›</span>
                 <span>Conseils</span>
             </div>
@@ -50,10 +50,14 @@
                         </p>
                         <a href="#" class="read-more">Lire plus →</a>
                     </div>
-                    <div *ngIf="!loading && !error && conseils.length === 0" class="no-results">
-                      <div class="no-results-icon">🔍</div>
-                      <h3>Aucun conseil n'a été publié</h3>
+                    <div *ngIf="loading" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Chargement des conseils...</p>
                     </div>
+                    <div *ngIf="error" class="error-state">
+                        <p>❌ {{ error }}</p>
+                        <button (click)="loadConseils()">Réessayer</button>
+                      </div>
                 </div>
             </div>
 

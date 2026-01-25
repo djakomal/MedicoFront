@@ -34,6 +34,7 @@ export class ConseilComponent implements OnInit, OnDestroy {
     'PÉDIATRIE / PARENTALITÉ',
     'SANTÉ'
   ];
+  
 
   constructor(
     private conseilService: ConseilService,
@@ -62,7 +63,7 @@ export class ConseilComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
     
-    this.conseilService.getConseilsPublies().subscribe({
+    this.conseilService.getAllConseils().subscribe({
       next: (data) => {
         this.conseils = data;
         this.loading = false;

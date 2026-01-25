@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { WeekDay } from '../../../../models/WeekDay';
+import { PublicationService } from '../../../../_helps/publication.service';
+import { Publication } from '../../../../models/Publication';
 
 
 @Component({
@@ -43,6 +45,7 @@ export class DocdashboardComponent implements OnInit {
 
   // Données brutes
   allAppointments: Appoitement[] = [];
+  allpublication:Publication[]=[];
   allConseils: Conseil[] = [];
   weekDays: WeekDay[] = [];
   isSubmenuOpen = false;
@@ -62,6 +65,7 @@ export class DocdashboardComponent implements OnInit {
     private router: Router,
     private dashboardService: DashboardService,
     private conseilService: ConseilService,
+    private publicationService:PublicationService,
     private AppoitementService: AppointementService,
     private JwtService: JwtService
 
@@ -124,11 +128,13 @@ export class DocdashboardComponent implements OnInit {
     // Charger les rendez-vous et les conseils en parallèle
     Promise.all([
       this.AppoitementService.getAllAppointment().toPromise(),
-      this.conseilService.getAllConseils().toPromise()
+      this.conseilService.getAllConseils().toPromise(),
+      this.publicationService.getAllPublications().toPromise()
     ])
-    .then(([appointments, conseils]) => {
+    .then(([appointments, conseils,publication]) => {
       this.allAppointments = appointments || [];
       this.allConseils = conseils || [];
+      this.allpublication= publication||[];
       
       // Calculer les statistiques
       this.calculateStats();
@@ -189,6 +195,9 @@ export class DocdashboardComponent implements OnInit {
 
     // Conseils publiés (tous les conseils ou seulement les publiés selon votre modèle)
     this.stats.nombreConseilsPublies = this.allConseils.length;
+
+    // Publications publiées <-- AJOUT IMPORTANT
+    this.stats.nombrePubPublier = this.allpublication.length; // <-- ICI
 
     // Conseils créés cette semaine
     const conseilsThisWeek = this.allConseils.filter(conseil => {

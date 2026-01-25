@@ -61,7 +61,7 @@ body {
 /* Hero Section */
 .hero_section {
     background: linear-gradient(135deg, #0066ff 0%, #9FC6FE 100%);
-    padding: 10px 0;
+    padding: 05px 0;
     position: relative;
     box-shadow: #333 10px 10px 20px -10px;
     overflow: hidden;
@@ -81,7 +81,7 @@ body {
 .hero_content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 10px;
     position: relative;
     z-index: 2;
     display: flex;
@@ -304,7 +304,7 @@ padding: 0 30px 30px;
 
 .section_title p {
     font-size: 18px;
-    color: #666;
+    color: #4285a3;
 }
 
 .accordion_item {
@@ -398,7 +398,7 @@ padding: 0 30px 30px;
 
 /* Stats Section */
 .stats_section {
-    background: linear-gradient(135deg, #9FC6FE 0%, #9FC6FE 100%);
+    background: linear-gradient(135deg, #0066ff 0%, #9FC6FE 100%);
     padding: 15px 0;
     margin: 80px 0;
 }
