@@ -33,6 +33,7 @@ export class Appoitement {
   preferredTime!: string;
   meetingUrl!:string;
   zoomMeetingId!:string;
+  duration!:number;
   // Disponibilités alternatives
    altAvailability!: {
     morning: boolean;

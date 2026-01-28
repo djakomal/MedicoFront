@@ -232,6 +232,7 @@ export class AppointComponent implements OnInit {
       medications: formValue.medications?.trim() || '',
       zoomMeetingId:formValue.ZoomMeetingId?.trim()||'',
       additionalInfo: formValue.additionalInfo?.trim() || '',
+      duration:formValue.duration,
       consent: formValue.consent,
       status: 'pending',
       createdAt: new Date().toISOString(),
@@ -414,7 +415,7 @@ export class AppointComponent implements OnInit {
   loadAllDoctors(): void {
     this.docteurService.getAllDocteurs().subscribe({
       next: (data: Docteur[]) => {
-        console.log('✅ Données reçues:', data);
+        console.log(' Données reçues:', data);
         this.doctors = data;
         console.log('📊 Nombre de docteurs chargés:', this.doctors.length);
       },

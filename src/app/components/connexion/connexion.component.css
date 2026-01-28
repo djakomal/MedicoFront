@@ -84,7 +84,7 @@ body {
     justify-content: flex-start;
     padding: 2rem 4rem;
     color: white;
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.95), rgba(0, 170, 255, 0.95));
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
     z-index: 1;
     overflow: hidden;

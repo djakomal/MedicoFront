@@ -1,140 +1,186 @@
 <div class="container">
-  <h2>Gérer mes horaires de consultation</h2>
-  
-  <!-- Formulaire d'ajout/modification -->
-  <div class="form-section">
-    <h3>{{ isEditing ? 'Modifier un créneau' : 'Ajouter un nouveau créneau' }}</h3>
-    
-    <form [formGroup]="creneauForm" (ngSubmit)="submitForm()">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="date">Date :</label>
-          <input 
-            type="date" 
-            id="date" 
-            formControlName="date"
-            required
-            class="form-control"
-          >
-        </div>
-        
-        <div class="form-group">
-          <label for="heureDebut">Heure de début :</label>
-          <input 
-            type="time" 
-            id="heureDebut" 
-            formControlName ="heureDebut"
-            class="form-control"
-          >
-        </div>
-        
-        <div class="form-group">
-          <label for="heureFin">Heure de fin :</label>
-          <input 
-            type="time" 
-            id="heureFin" 
-            formControlName ="heureFin"
-            class="form-control"
-          >
-        </div>
-      </div>
-      
-      <div class="button-group">
-        <button type="submit" class="btn btn-primary">
-          {{ isEditing ? '💾 Sauvegarder' : '➕ Ajouter' }}
-        </button>
-        
-        <button 
-          *ngIf="isEditing" 
-          type="button" 
-          class="btn btn-secondary"
-          (click)="annulerModification()"
-        >
-          ❌ Annuler
-        </button>
-      </div>
-    </form>
+  <!-- En-tête amélioré -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1><i class="icon-calendar"></i> Gérer mes horaires de consultation</h1>
+      <p class="header-subtitle">Planifiez et gérez vos disponibilités en temps réel</p>
+    </div>
   </div>
   
-  <!-- Liste des créneaux groupés par date -->
-  <div class="horaires-section">
-    <h3>Mes créneaux de consultation</h3>
-    
-    <div *ngIf="horaires.length === 0" class="empty-state">
-      <p>Aucun créneau enregistré. Commencez par en ajouter un !</p>
+  <!-- Section Formulaire améliorée -->
+  <div class="card form-section">
+    <div class="card-header">
+      <h3><i class="icon-edit"></i> {{ isEditing ? 'Modifier un créneau' : 'Ajouter un nouveau créneau' }}</h3>
     </div>
     
-    <div *ngFor="let date of getDates()" class="date-section">
-      <h4 class="date-titre">
-        {{ formatDate(date) }} - {{ getJourSemaine(date) }}
-      </h4>
-      
-      <div class="creneaux-list">
-        <div 
-          *ngFor="let creneau of getHorairesParDate(date)" 
-          class="creneau-card"
-          [class.indisponible]="!creneau.disponible"
-        >
-          <div class="creneau-info">
-            <div class="creneau-horaire">
-              <span class="badge">
-                {{ formatHeure(creneau.heureDebut) }} - {{ formatHeure(creneau.heureFin) }}
-              </span>
-            </div>
-            
-            <div class="creneau-status">
-              <span [class]="creneau.disponible ? 'status-disponible' : 'status-occupe'">
-                {{ creneau.disponible ? '✓ Disponible' : '✗ Réservé' }}
-              </span>
-            </div>
+    <div class="card-body">
+      <form [formGroup]="creneauForm" (ngSubmit)="submitForm()" class="elegant-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date" class="form-label">
+              <i class="icon-date"></i> Date
+            </label>
+            <input 
+              type="date" 
+              id="date" 
+              formControlName="date"
+              required
+              class="form-control elegant-input"
+            >
           </div>
           
-          <div class="creneau-actions">
-            <button 
-              class="btn btn-edit"
-              (click)="modifierCreneau(creneau)"
-              [disabled]="!creneau.disponible"
-              title="{{ !creneau.disponible ? 'Impossible de modifier un créneau réservé' : 'Modifier' }}"
+          <div class="form-group">
+            <label for="heureDebut" class="form-label">
+              <i class="icon-clock"></i> Heure de début
+            </label>
+            <input 
+              type="time" 
+              id="heureDebut" 
+              formControlName="heureDebut"
+              class="form-control elegant-input"
             >
-              ✏️ Modifier
-            </button>
+          </div>
+          
+          <div class="form-group">
+            <label for="heureFin" class="form-label">
+              <i class="icon-clock"></i> Heure de fin
+            </label>
+            <input 
+              type="time" 
+              id="heureFin" 
+              formControlName="heureFin"
+              class="form-control elegant-input"
+            >
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-elegant">
+            <i class="icon-save"></i> {{ isEditing ? 'Sauvegarder' : 'Ajouter' }}
+          </button>
+          
+          <button 
+            *ngIf="isEditing" 
+            type="button" 
+            class="btn btn-secondary btn-elegant"
+            (click)="annulerModification()"
+          >
+            <i class="icon-cancel"></i> Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Section Horaires améliorée -->
+  <div class="card horaires-section">
+    <div class="card-header">
+      <h3><i class="icon-list"></i> Mes créneaux de consultation</h3>
+    </div>
+    
+    <div class="card-body">
+      <!-- État vide -->
+      <div *ngIf="horaires.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="icon-empty"></i>
+        </div>
+        <h4>Aucun créneau enregistré</h4>
+        <p>Commencez par ajouter vos premiers créneaux de disponibilité</p>
+      </div>
+      
+      <!-- Liste des créneaux -->
+      <div *ngFor="let date of getDates()" class="date-section">
+        <div class="date-header">
+          <h4 class="date-title">
+            <i class="icon-date-small"></i> 
+            {{ formatDate(date) }}
+            <span class="date-day">- {{ getJourSemaine(date) }}</span>
+          </h4>
+          <span class="badge-count">{{ getHorairesParDate(date).length }} créneau(s)</span>
+        </div>
+        
+        <div class="creneaux-grid">
+          <div 
+            *ngFor="let creneau of getHorairesParDate(date)" 
+            class="creneau-card"
+            [class.creneau-indisponible]="!creneau.disponible"
+          >
+            <div class="creneau-main">
+              <div class="creneau-time">
+                <span class="time-icon"><i class="icon-time"></i></span>
+                <span class="time-range">{{ formatHeure(creneau.heureDebut) }} - {{ formatHeure(creneau.heureFin) }}</span>
+              </div>
+              
+              <div class="creneau-status">
+                <span 
+                  class="status-badge"
+                  [class.status-disponible]="creneau.disponible"
+                  [class.status-occupe]="!creneau.disponible"
+                >
+                  <i [class]="creneau.disponible ? 'icon-check' : 'icon-cross'"></i>
+                  {{ creneau.disponible ? 'Disponible' : 'Réservé' }}
+                </span>
+              </div>
+            </div>
             
-            <button 
-              class="btn btn-delete"
-              (click)="supprimerCreneau(creneau.id)"
-              title="Supprimer"
-            >
-              🗑️ Supprimer
-            </button>
+            <div class="creneau-actions">
+              <button 
+                class="btn-action btn-edit"
+                (click)="modifierCreneau(creneau)"
+                [disabled]="!creneau.disponible"
+                [title]="!creneau.disponible ? 'Impossible de modifier un créneau réservé' : 'Modifier'"
+              >
+                <i class="icon-edit-small"></i> Modifier
+              </button>
+              
+              <button 
+                class="btn-action btn-delete"
+                (click)="supprimerCreneau(creneau.id)"
+                title="Supprimer"
+              >
+                <i class="icon-delete"></i> Supprimer
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
   
-  <!-- Vue alternative : par jour de la semaine -->
-  <div class="horaires-section vue-alternative">
-    <h3>Vue par jour de la semaine</h3>
+  <!-- Vue alternative améliorée -->
+  <div class="card vue-alternative">
+    <div class="card-header">
+      <h3><i class="icon-grid"></i> Vue par jour de la semaine</h3>
+    </div>
     
-    <div *ngFor="let jour of jours" class="jour-section">
-      <ng-container *ngIf="getHorairesParJour(jour).length > 0">
-        <h4 class="jour-titre">{{ jour }}</h4>
-        
-        <div class="creneaux-list">
-          <div 
-            *ngFor="let creneau of getHorairesParJour(jour)" 
-            class="creneau-card-simple"
-          >
-            <span class="date-petit">{{ formatDate(creneau.date) }}</span>
-            <span class="horaire-petit">
-              {{ formatHeure(creneau.heureDebut) }} - {{ formatHeure(creneau.heureFin) }}
-            </span>
-            <span [class]="creneau.disponible ? 'status-disponible' : 'status-occupe'">
-              {{ creneau.disponible ? '✓' : '✗' }}
-            </span>
-          </div>
+    <div class="card-body">
+      <div class="jours-grid">
+        <div *ngFor="let jour of jours" class="jour-section">
+          <ng-container *ngIf="getHorairesParJour(jour).length > 0">
+            <h4 class="jour-titre">{{ jour }}</h4>
+            
+            <div class="creneaux-list-compact">
+              <div 
+                *ngFor="let creneau of getHorairesParJour(jour)" 
+                class="creneau-compact"
+                [class.compact-indisponible]="!creneau.disponible"
+              >
+                <span class="compact-date">{{ formatDate(creneau.date) }}</span>
+                <span class="compact-time">
+                  {{ formatHeure(creneau.heureDebut) }} - {{ formatHeure(creneau.heureFin) }}
+                </span>
+                <span 
+                  class="compact-status"
+                  [class.status-disponible]="creneau.disponible"
+                  [class.status-occupe]="!creneau.disponible"
+                >
+                  <i [class]="creneau.disponible ? 'icon-check-small' : 'icon-cross-small'"></i>
+                </span>
+              </div>
+            </div>
+          </ng-container>
         </div>
-      </ng-container>
+      </div>
     </div>
   </div>
 </div>

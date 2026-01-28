@@ -37,7 +37,7 @@
 
 .btn-logout {
   padding: 0.75rem 1.5rem;
-  background-color: #e74c3c;
+  background-color: #c51805;
   color: white;
   border: none;
   border-radius: 8px;
@@ -142,9 +142,7 @@
   transform: translateX(5px);
 }
 
-.action-btn .icon {
-  font-size: 1.2rem;
-}
+
 
 .profile-main {
   display: flex;

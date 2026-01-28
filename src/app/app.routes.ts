@@ -38,7 +38,6 @@ import { UpdateConseilsComponent } from './components/body/dashboard/mes-conseil
 import { AddActualiteComponent } from './components/body/dashboard/Actualite/add-actualite/add-actualite.component';
 import { GetActualiteComponent } from './components/body/dashboard/Actualite/get-actualite/get-actualite.component';
 import { UpdateActualiteComponent } from './components/body/dashboard/Actualite/update-actualite/update-actualite.component';
-1
 
 export const routes: Routes = [
   {
@@ -143,6 +142,30 @@ export const routes: Routes = [
     path: 'Publications',
     component: PublicationsComponent,
   },
+
+
+
+  // {
+  //   path: 'login',
+  //   component: ZoomAuthComponent
+  // },
+  // {
+  //   path: 'meetings',
+  //   component: MeetingListComponent,
+  //   canActivate: [ZoomAuthGuard]
+  // },
+  // {
+  //   path: 'meetings/create',
+  //   component: MeetingCreateComponent,
+   
+  // },
+  // {
+  //   path: 'meetings/:id',
+  //   component: MeetingDetailComponent,
+  //   canActivate: [ZoomAuthGuard]
+  // },
+
+
   
 
   {

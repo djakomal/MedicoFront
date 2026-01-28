@@ -59,8 +59,7 @@ export class AppointementService {
       }
     );
   }
-
- 
+  
   // Supprimer un rendez-vous
   deleteAppointment(id: number): Observable<any> {
     console.log('🗑️ Tentative de suppression du rendez-vous ID:', id);

@@ -67,7 +67,7 @@ export class ConseilComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.conseils = data;
         this.loading = false;
-        console.log('✅ Conseils chargés:', data.length); // Debug
+        console.log(' Conseils chargés:', data.length); // Debug
       },
       error: (err) => {
         this.error = 'Erreur lors du chargement des conseils';

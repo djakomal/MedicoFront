@@ -186,7 +186,7 @@ export class ProfileComponent implements OnInit {
 
   logout(): void {
     if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-      console.log('🚪 Déconnexion en cours...');
+      console.log('Déconnexion en cours...');
       
       // Nettoyer localStorage et sessionStorage
       this.jwtService.removeToken();
@@ -203,7 +203,7 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['/connex']);
       }
       
-      console.log('✅ Déconnexion réussie');
+      console.log(' Déconnexion réussie');
     }
   }
 

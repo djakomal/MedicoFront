@@ -989,7 +989,7 @@
 .service_icon_card {
     background: white;
     padding: 30px 20px;
-    border-radius: 20px;
+    border-radius: 24px;
     text-align: center;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;

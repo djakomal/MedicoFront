@@ -7,4 +7,5 @@ export class Message {
   date!: string;
   read!: boolean;
   appointmentId!: number;
+  userId!: number;
 }

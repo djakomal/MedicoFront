@@ -5,7 +5,7 @@
       <p>Gérez votre nom d'utilisateur et votre sécurité</p>
     </div>
     <button class="btn btn-logout" (click)="logout()">
-      🚪 Déconnexion
+       Déconnexion
     </button>
   </div>
 
@@ -27,11 +27,9 @@
       <div class="quick-actions">
         <h4>Actions rapides</h4>
         <button class="action-btn" (click)="toggleEditUsername()">
-          <span class="icon">✏️</span>
           <span>Modifier le nom d'utilisateur</span>
         </button>
         <button class="action-btn" (click)="logout()">
-          <span class="icon">🚪</span>
           <span>Se déconnecter</span>
         </button>
       </div>
@@ -51,7 +49,7 @@
       <div class="card">
         <div class="card-header">
           <div class="header-info">
-            <h2>👤 Nom d'utilisateur</h2>
+            <h2>Nom d'utilisateur</h2>
             <p>Votre identifiant de connexion</p>
           </div>
           <button 
@@ -59,7 +57,7 @@
             class="btn btn-secondary"
             (click)="toggleEditUsername()"
           >
-            ✏️ Modifier
+             Modifier
           </button>
         </div>
 
@@ -83,11 +81,10 @@
                 Ce champ est obligatoire
               </span>
               <span *ngIf="hasError(usernameForm, 'username', 'minlength')" class="error-message">
-                Le nom d'utilisateur doit contenir au moins 3 caractères
+                Le nom d'utilisateur doit contenir au moins  10caractères
               </span>
-              <p class="hint">Minimum 3 caractères, sans espaces</p>
+              <p class="hint">Minimum 10 caractères, sans espaces</p>
             </div>
-
             <div class="form-actions">
               <button 
                 type="button" 
@@ -102,8 +99,8 @@
                 class="btn btn-primary"
                 [disabled]="usernameForm.invalid || isSubmitting"
               >
-                <span *ngIf="!isSubmitting">💾 Enregistrer</span>
-                <span *ngIf="isSubmitting">⏳ Enregistrement...</span>
+                <span *ngIf="!isSubmitting">Enregistrer</span>
+                <span *ngIf="isSubmitting">Enregistrement...</span>
               </button>
             </div>
           </div>
@@ -175,8 +172,8 @@
               class="btn btn-primary"
               [disabled]="passwordForm.invalid || isSubmitting"
             >
-              <span *ngIf="!isSubmitting">🔒 Changer le mot de passe</span>
-              <span *ngIf="isSubmitting">⏳ Modification...</span>
+              <span *ngIf="!isSubmitting">Changer le mot de passe</span>
+              <span *ngIf="isSubmitting">Modification...</span>
             </button>
           </div>
         </form>

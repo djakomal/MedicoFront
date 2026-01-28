@@ -22,18 +22,18 @@ export class JwtService {
     private http: HttpClient,
     private router: Router
   ) {
-    console.log('🚀 Démarrage du système de rafraîchissement automatique');
+    console.log(' Démarrage du système de rafraîchissement automatique');
     this.startAutoRefresh();
   }
 
-  private startAutoRefresh(): void {
+   startAutoRefresh(): void {
     interval(300000).subscribe(() => {
       this.checkAndRefresh();
     });
-    console.log('✅ Système de rafraîchissement automatique activé');
+    console.log(' Système de rafraîchissement automatique activé');
   }
 
-  private checkAndRefresh(): void {
+   checkAndRefresh(): void {
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
 
@@ -49,29 +49,29 @@ export class JwtService {
       const minutesLeft = Math.floor(timeLeft / 60000);
 
       if (minutesLeft <= 5 && minutesLeft > 0) {
-        console.log(`⚠️ Token expire dans ${minutesLeft} minutes - RAFRAÎCHISSEMENT...`);
+        console.log(` Token expire dans ${minutesLeft} minutes - RAFRAÎCHISSEMENT...`);
         this.doRefresh();
       } else if (timeLeft <= 0) {
-        console.log('❌ Token expiré - RAFRAÎCHISSEMENT IMMÉDIAT...');
+        console.log(' Token expiré - RAFRAÎCHISSEMENT IMMÉDIAT...');
         this.doRefresh();
       }
     } catch (error) {
-      console.error('❌ Erreur de vérification du token:', error);
+      console.error(' Erreur de vérification du token:', error);
     }
   }
 
-  private doRefresh(): void {
+   doRefresh(): void {
     if (this.isRefreshing) return;
 
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
-      console.error('❌ Pas de refresh token - déconnexion');
+      console.error(' Pas de refresh token - déconnexion');
       this.handleLogout();
       return;
     }
 
     this.isRefreshing = true;
-    console.log('🔄 RAFRAÎCHISSEMENT EN COURS...');
+    console.log(' RAFRAÎCHISSEMENT EN COURS...');
 
     this.http.post(`${this.baseURL}/login/refresh-token`, { refreshToken }, {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -82,21 +82,21 @@ export class JwtService {
           if (response.refreshToken) {
             this.saveRefreshToken(response.refreshToken);
           }
-          console.log('✅ TOKEN RAFRAÎCHI AVEC SUCCÈS !');
+          console.log(' TOKEN RAFRAÎCHI AVEC SUCCÈS !');
           this.refreshTokenSubject.next(response.jwt);
         }
         this.isRefreshing = false;
       },
       error: (error) => {
-        console.error('❌ Échec du rafraîchissement:', error);
+        console.error(' Échec du rafraîchissement:', error);
         this.isRefreshing = false;
         this.handleLogout();
       }
     });
   }
 
-  private handleLogout(): void {
-    console.warn('⚠️ Session expirée - redirection vers login');
+   handleLogout(): void {
+    console.warn(' Session expirée - redirection vers login');
     this.removeToken();
     this.router.navigateByUrl('/connex');
   }
@@ -106,7 +106,7 @@ export class JwtService {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
-      role: 'USER' // ✅ ROLE SPÉCIFIÉ
+      role: 'USER' //  ROLE SPÉCIFIÉ
     };
 
     console.log('🔐 Login USER:', loginData.username);
@@ -115,7 +115,7 @@ export class JwtService {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
       tap((response: any) => {
-        console.log("✅ Login USER réussi");
+        console.log(" Login USER réussi");
         
         if (response && response.jwt) {
           this.saveToken(response.jwt);
@@ -129,7 +129,7 @@ export class JwtService {
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur de connexion USER:', error);
+        console.error(' Erreur de connexion USER:', error);
         
         // Message d'erreur plus clair
         if (error.status === 403) {
@@ -148,7 +148,7 @@ export class JwtService {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
-      role: 'DOCTOR' // ✅ ROLE SPÉCIFIÉ
+      role: 'DOCTOR' //  ROLE SPÉCIFIÉ
     };
 
     console.log('🔐 Login DOCTOR:', loginData.username);
@@ -157,7 +157,7 @@ export class JwtService {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     }).pipe(
       tap((response: any) => {
-        console.log("✅ Login DOCTOR réussi");
+        console.log(" Login DOCTOR réussi");
         
         if (response && response.jwt) {
           this.saveToken(response.jwt);
@@ -171,7 +171,7 @@ export class JwtService {
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur de connexion DOCTOR:', error);
+        console.error(' Erreur de connexion DOCTOR:', error);
         
         // Message d'erreur plus clair
         if (error.status === 403) {
@@ -190,13 +190,13 @@ export class JwtService {
     localStorage.setItem(this.tokenKey, jwt);
     localStorage.setItem('token', jwt);
     localStorage.setItem('jwtToken', jwt);
-    console.log("💾 Token sauvegardé");
+    console.log(" Token sauvegardé");
   }
 
   // 🔹 SAUVEGARDER LE REFRESH TOKEN
   saveRefreshToken(refreshToken: string): void {
     localStorage.setItem(this.refreshTokenKey, refreshToken);
-    console.log("💾 Refresh token sauvegardé");
+    console.log(" Refresh token sauvegardé");
   }
 
   // 🔹 RÉCUPÉRER LE TOKEN
@@ -206,9 +206,28 @@ export class JwtService {
            localStorage.getItem('jwtToken');
   }
 
-  // 🔹 RÉCUPÉRER LE REFRESH TOKEN
+  // RÉCUPÉRER LE REFRESH TOKEN
   getRefreshToken(): string | null {
     return localStorage.getItem(this.refreshTokenKey);
+  }   
+  // RECUPERER LE id
+
+  // Dans JwtService.ts - Ajoutez cette méthode
+
+  getUserId(): number | null {
+    const decodedToken = this.getDecodedToken();
+    
+    if (!decodedToken) {
+      return null;
+    }
+  
+    // Essayez différents noms de champ selon votre backend
+    // Ajoutez console.log pour voir la structure de votre token
+    //  console.log('Token décodé:', decodedToken.userId);
+    
+    return  decodedToken.userId ;
+            // Parfois l'ID est dans "sub"
+        
   }
 
   // 🔹 RÉCUPÉRER LE RÔLE DE L'UTILISATEUR
@@ -392,7 +411,7 @@ export class JwtService {
     );
   }
 
-  private ensureValidToken(): Observable<any> {
+ ensureValidToken(): Observable<any> {
     const token = this.getToken();
     
     if (!token) {

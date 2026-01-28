@@ -295,69 +295,92 @@
             </div>
 
             <!-- Section Statut Zoom (à ajouter dans le dashboard) -->
+            <!-- Section Statut Zoom (dashboard) -->
             <div *ngIf="activeSection === 'dashboard'" class="zoom-status-card card">
               <div class="card-icon">🎥</div>
               <h3>Intégration Zoom</h3>
-
+              
               <div class="zoom-status-indicator" [ngClass]="zoomStatus">
                 <span class="status-dot"></span>
                 <span class="status-text">
                   {{
-                  zoomStatus === 'connected' ? 'Connecté' :
-                  zoomStatus === 'connecting' ? 'Connexion en cours...' :
-                  'Non connecté'
+                    zoomStatus === 'connected' ? 'Connecté à Zoom' :
+                    zoomStatus === 'connecting' ? 'Connexion en cours...' :
+                    'Non connecté à Zoom'
                   }}
                 </span>
               </div>
-
+              
+              <div *ngIf="zoomStatus === 'connected'" class="zoom-connected-info">
+                <p class="text-success">
+                  ✅ Prêt pour les téléconsultations
+                </p>
+                <button class="service-btn btn-info" (click)="disconnectZoom()">
+                  🔓 Déconnecter Zoom
+                </button>
+              </div>
+              
               <div *ngIf="zoomStatus === 'disconnected'" class="zoom-actions">
-                <button class="service-btn" (click)="connectZoom()">
+                <button class="service-btn btn-primary" (click)="connectZoom()">
                   🔗 Connecter Zoom
                 </button>
                 <p class="zoom-help-text">
                   L'intégration Zoom permet de démarrer des téléconsultations vidéo.
                 </p>
               </div>
-
-              <div *ngIf="zoomStatus === 'connected'" class="zoom-actions">
-                <button class="service-btn btn-success" (click)="refreshZoomToken()">
-                  🔄 Rafraîchir la connexion
-                </button>
-                <p class="zoom-help-text">
-                  Zoom est correctement configuré pour les téléconsultations.
-                </p>
-              </div>
             </div>
-
-            <!-- Bouton Commencer avec Zoom (dans la section rendez-vous) -->
+            
+            <!-- Bouton Commencer dans les rendez-vous -->
             <button *ngIf="isStatusValidated(app.status) && app.status !== 'started'"
-              class="service-btn service-btn-start" [disabled]="!canStartAppointment(app)"
-              [class.btn-ready]="canStartAppointment(app) && isZoomAuthenticated"
-              [class.btn-warning]="canStartAppointment(app) && !isZoomAuthenticated"
-               (click)="startTeleconsultation(app)">
-
-              <span *ngIf="canStartAppointment(app) && isZoomAuthenticated">
-                🎥 Commencer la téléconsultation
+                    class="service-btn service-btn-start"
+                    [ngClass]="{
+                      'btn-success': canStartAppointment(app) && isZoomAuthenticated,
+                      'btn-warning': canStartAppointment(app) && !isZoomAuthenticated,
+                      'btn-disabled': !canStartAppointment(app)
+                    }"
+                    [title]="getZoomButtonTooltip(app)"
+                    (click)="startTeleconsultationWithCheck(app)">
+              
+              <span *ngIf="!isZoomAuthenticated">
+                Connecter Zoom
               </span>
-              <span *ngIf="canStartAppointment(app) && !isZoomAuthenticated">
-                ⚠️ Zoom non configuré
+              <span *ngIf="isZoomAuthenticated && !canStartAppointment(app)">
+                ⏳ Bientôt disponible
+              </span>
+              <span *ngIf="isZoomAuthenticated && canStartAppointment(app)">
+                🎥 Démarrer la téléconsultation
               </span>
             </button>
-
-            <!-- Informations de la réunion Zoom -->
-            <div *ngIf="app.status === 'started' && app.meetingUrl" class="zoom-meeting-info">
-              <h4>🔗 Lien de la réunion Zoom</h4>
-              <div class="meeting-link">
-                <a [href]="app.meetingUrl" target="_blank" class="zoom-link">
-                  {{ app.meetingUrl }}
-                </a>
-                <button class="btn-copy" (click)="copyToClipboard(app.meetingUrl)">
-                  📋 Copier
-                </button>
+            
+            <!-- Section liens Zoom -->
+            <div *ngIf="app.meetingUrl" class="zoom-links-section">
+              <h4>🔗 Liens Zoom</h4>
+              
+              <div class="zoom-link-container">
+                <div class="zoom-link-item">
+                  <strong>Lien de participation:</strong>
+                  <div class="link-row">
+                    <a [href]="app.meetingUrl" target="_blank" class="zoom-link">
+                      {{ app.meetingUrl }}
+                    </a>
+                    <button class="btn-copy-small" (click)="copyToClipboard(app.meetingUrl)">
+                      📋
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="zoom-actions-buttons">
+                  <button class="service-btn btn-primary" (click)="joinZoomMeeting(app)">
+                    🎥 Rejoindre maintenant
+                  </button>
+                  
+                  <button *ngIf="!app.meetingUrl && isZoomAuthenticated" 
+                          class="service-btn btn-secondary"
+                          (click)="createZoomLinkForFutureAppointment(app)">
+                    🔗 Générer un lien Zoom
+                  </button>
+                </div>
               </div>
-              <button class="service-btn" (click)="joinExistingZoomMeeting(app)">
-                🎥 Rejoindre la réunion
-              </button>
             </div>
           </div>
         </div>
@@ -459,6 +482,11 @@
       </div>
     </div>
   </div>
+
+
+
+
+
 </body>
 
 </html>

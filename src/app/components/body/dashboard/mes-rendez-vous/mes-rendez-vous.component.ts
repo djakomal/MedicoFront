@@ -68,14 +68,26 @@ export class MesRendezVousComponent  implements OnInit {
     this.router.navigateByUrl("Admin/form")
   }
 
- // Valider un rendez-vous
+  // Dans mes-rendez-vous.component.ts
+
+  // Valider un rendez-vous avec notification
   validerRendezVous(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir valider ce rendez-vous ?')) {
+      // Trouver le rendez-vous pour obtenir l'ID utilisateur
+      const appointment = this.tableauClasse.find(app => app.id === id);
+      
+      if (!appointment) {
+        this.showNotification('Rendez-vous non trouvé', 'error');
+        return;
+      }
+      
       this.appointementService.validateAppointment(id).subscribe({
         next: (response: AppointmentResponse) => {
           if (response.success) {
-            this.showNotification( 'Rendez-vous validé et notification envoyée',
-              'success');
+            // Envoyer une notification à l'utilisateur
+            this.sendValidationNotification(appointment);
+            
+            this.showNotification('Rendez-vous validé et notification envoyée', 'success');
             this.getAppointment(); // Recharger la liste
           } else {
             this.showNotification(response.message, 'error');
@@ -88,13 +100,24 @@ export class MesRendezVousComponent  implements OnInit {
       });
     }
   }
-
-  // Rejeter un rendez-vous
+  
+  // Rejeter un rendez-vous avec notification
   rejeterRendezVous(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir rejeter ce rendez-vous ?')) {
+      // Trouver le rendez-vous pour obtenir l'ID utilisateur
+      const appointment = this.tableauClasse.find(app => app.id === id);
+      
+      if (!appointment) {
+        this.showNotification('Rendez-vous non trouvé', 'error');
+        return;
+      }
+      
       this.appointementService.rejectAppointment(id).subscribe({
         next: (response: AppointmentResponse) => {
           if (response.success) {
+            // Envoyer une notification à l'utilisateur
+            this.sendRejectionNotification(appointment);
+            
             this.showNotification(response.message, 'success');
             this.getAppointment(); // Recharger la liste
           } else {
@@ -108,13 +131,24 @@ export class MesRendezVousComponent  implements OnInit {
       });
     }
   }
-
-  // Débuter un rendez-vous
+  
+  // Débuter un rendez-vous avec notification
   debuterRendezVous(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir débuter ce rendez-vous ?')) {
+      // Trouver le rendez-vous pour obtenir l'ID utilisateur
+      const appointment = this.tableauClasse.find(app => app.id === id);
+      
+      if (!appointment) {
+        this.showNotification('Rendez-vous non trouvé', 'error');
+        return;
+      }
+      
       this.appointementService.startAppointment(id).subscribe({
         next: (response: AppointmentResponse) => {
           if (response.success) {
+            // Envoyer une notification à l'utilisateur
+            this.sendStartNotification(appointment);
+            
             this.showNotification(response.message, 'success');
             this.getAppointment(); // Recharger la liste
           } else {
@@ -128,6 +162,72 @@ export class MesRendezVousComponent  implements OnInit {
       });
     }
   }
+
+
+
+
+  // Méthodes pour envoyer les notifications
+private sendValidationNotification(appointment: Appoitement): void {
+  // Obtenir l'ID utilisateur du rendez-vous
+  const userId = this.getUserIdFromAppointment(appointment);
+  const notifId=Number(userId);
+  
+  if (userId) {
+    this.notificationService.notifyUserAppointmentValidated(userId, appointment);
+    console.log(`Notification de validation envoyée à l'utilisateur ${userId}`);
+  } else {
+    // Fallback: notification sans userId
+    this.notificationService.notifyUserAppointmentValidated(notifId,appointment);
+    console.log(' Notification de validation envoyée (sans userId spécifique)');
+  }
+}
+
+private sendRejectionNotification(appointment: Appoitement): void {
+  const userId = this.getUserIdFromAppointment(appointment);
+  const notifId=Number(userId);
+  
+  if (userId) {
+    this.notificationService.notifyUserAppointmentRejected(userId, appointment);
+    console.log(`❌ Notification de rejet envoyée à l'utilisateur ${userId}`);
+  } else {
+    this.notificationService.notifyUserAppointmentRejected(notifId,appointment);
+    console.log('⚠️ Notification de rejet envoyée (sans userId spécifique)');
+  }
+}
+
+private sendStartNotification(appointment: Appoitement): void {
+  const userId = this.getUserIdFromAppointment(appointment);
+  const notifId=Number(userId);
+  if (userId) {
+    this.notificationService.notifyUserAppointmentStarted(userId, appointment);
+    console.log(`🏥 Notification de démarrage envoyée à l'utilisateur ${userId}`);
+  } else {
+    this.notificationService.notifyUserAppointmentStarted(notifId,appointment);
+    console.log('⚠️ Notification de démarrage envoyée (sans userId spécifique)');
+  }
+}
+
+// Méthode pour extraire l'ID utilisateur d'un rendez-vous
+private getUserIdFromAppointment(appointment: Appoitement): number | null {
+  // Vérifier différents champs possibles
+  if (appointment.id) {
+    return appointment.id;
+  }
+  
+
+  
+  // Vérifier d'autres champs possibles
+  const possibleFields = ['user_id', 'patient_id', 'customer_id', 'clientId'];
+  for (const field of possibleFields) {
+    if (appointment[field as keyof Appoitement]) {
+      const value = appointment[field as keyof Appoitement];
+      return Number(value);
+    }
+  }
+  
+  console.warn(`❌ Aucun ID utilisateur trouvé pour le rendez-vous ${appointment.id}`);
+  return null;
+}
   getCountByStatus(status: string): number {
     if (!this.tableauClasse) return 0;
     return this.tableauClasse.filter(app => app.status === status).length;
