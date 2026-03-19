@@ -22,13 +22,17 @@ export class MesConseilsComponent implements OnInit {
   success = '';
   
   categories = [
-    { value: 'NUTRITION', label: 'NUTRITION', icon: '🥗' },
-    { value: 'BIEN-ÊTRE', label: 'BIEN-ÊTRE', icon: '🧘' },
-    { value: 'VIRUS ET ÉPIDÉMIES', label: 'VIRUS ET ÉPIDÉMIES', icon: '🦠' },
-    { value: 'AMOUR ET SEXO', label: 'AMOUR ET SEXO', icon: '💕' },
-    { value: 'PÉDIATRIE / PARENTALITÉ', label: 'PÉDIATRIE / PARENTALITÉ', icon: '👶' },
-    { value: 'SANTÉ', label: 'SANTÉ', icon: '🏥' }
+    { value: 'nutrition',    label: 'Nutrition' },
+    { value: 'bien-etre',    label: 'Bien-être' },
+    { value: 'virus',        label: 'Virus et épidémies' },
+    { value: 'amour',        label: 'Amour et sexo' },
+    { value: 'pediatrie',    label: 'Pédiatrie / Parentalité' },
+    { value: 'sante',        label: 'Santé générale' },
   ];
+  
+  
+  
+  
 
   constructor(
     private formBuilder: FormBuilder,
@@ -96,10 +100,9 @@ export class MesConseilsComponent implements OnInit {
 
   prevStep(): void {
     this.currentStep = Math.max(1, this.currentStep - 1);
-    this.submitted = false; // Reset validation messages
+    this.submitted = false; 
   }
 
-  // Preview si user upload fichier (optionnel)
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
@@ -116,7 +119,6 @@ export class MesConseilsComponent implements OnInit {
     this.submitted = true;
     this.error = '';
     this.success = '';
-    // Marque tous les contrôles comme touchés
     Object.keys(this.conseilForm.controls).forEach(key => {
       this.conseilForm.get(key)!.markAsTouched();
     });
@@ -144,8 +146,7 @@ export class MesConseilsComponent implements OnInit {
         this.loading = false;
         setTimeout(() => {
           alert("Conseil ajouter avec succes");
-          // this.router.navigate(['/Docdash']);
-          this.router.navigateByUrl("/");
+          this.router.navigateByUrl("/DocDash/getConseils");
         }, 2000);
       },
       error: (err) => {
@@ -174,4 +175,20 @@ export class MesConseilsComponent implements OnInit {
     });
     this.tags.clear();
   }
+
+
+  dropdownOpen = false;
+
+toggleDropdown(): void {
+  this.dropdownOpen = !this.dropdownOpen;
+}
+
+selectCategory(value: string): void {
+  this.conseilForm.patchValue({ categorie: value });
+  this.dropdownOpen = false;
+}
+
+getLabelFromValue(value: string): string {
+  return this.categories.find(c => c.value === value)?.label || '';
+}
 }

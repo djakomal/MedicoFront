@@ -407,3 +407,114 @@
     padding: 1.5rem;
   }
 }
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 32px 16px;
+  background: #f4f6f9;
+}
+
+.password-container {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8ecf0;
+}
+
+.section-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.alert-success { background: #edf7f3; color: #2e7d5e; border: 1px solid #a8d5c2; }
+.alert-error   { background: #fdf2f1; color: #c0392b; border: 1px solid #f5c6c2; }
+
+.form-group { margin-bottom: 18px; }
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #2d3748;
+}
+
+input[type="password"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #e8ecf0;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: #2d3748;
+  background: #f7f8fa;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b6fd4;
+  box-shadow: 0 0 0 3px rgba(59,111,212,0.1);
+  background: white;
+}
+
+input.is-invalid { border-color: #c0392b; }
+
+.invalid-feedback {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  background: #3b6fd4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #2f5bb8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(59,111,212,0.25);
+}
+
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }

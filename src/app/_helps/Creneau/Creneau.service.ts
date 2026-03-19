@@ -28,7 +28,7 @@ export class CreneauService {
   getMesCreneaux(): Observable<Creneau[]> {
         const token = localStorage.getItem('token');
         
-        // ✅ Créer les headers avec le token
+        //  Créer les headers avec le token
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -43,7 +43,7 @@ export class CreneauService {
   ajouterCreneau(creneau: Creneau): Observable<Creneau> {
     const token = localStorage.getItem('token');
         
-    // ✅ Créer les headers avec le token
+    //  Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -58,7 +58,7 @@ export class CreneauService {
   modifierCreneau(id: number, creneau: Creneau): Observable<Creneau> {
     const token = localStorage.getItem('token');
         
-    // ✅ Créer les headers avec le token
+    //  Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -73,7 +73,7 @@ export class CreneauService {
   supprimerCreneau(id: number): Observable<void> {
     const token = localStorage.getItem('token');
         
-    // ✅ Créer les headers avec le token
+    //  Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -89,7 +89,7 @@ export class CreneauService {
 
     const token = localStorage.getItem('token');
         
-    // ✅ Créer les headers avec le token
+    //  Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -107,4 +107,24 @@ export class CreneauService {
       })
     );
   };
+
+
+  // NOUVELLE MÉTHODE : Vérifier la disponibilité d'un créneau
+  verifierDisponibilite(creneauId: number): Observable<{ disponible: boolean }> {
+    return this.http.get<{ disponible: boolean }>(
+      `${this.baseURL}/${creneauId}/disponibilite`,
+      { headers: this.getHeaders() }
+    );
   }
+
+  // NOUVELLE MÉTHODE : Marquer un créneau comme indisponible
+  marquerIndisponible(creneauId: number): Observable<Creneau> {
+    return this.http.put<Creneau>(
+      `${this.baseURL}/${creneauId}/indisponible`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+}
+  

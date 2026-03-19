@@ -50,6 +50,7 @@ export class AppointementService {
       }
     );
   }
+  
 
   // Récupérer un rendez-vous par ID
   getAppById(id: number): Observable<Appoitement> {
@@ -109,7 +110,7 @@ export class AppointementService {
   // Récupérer les rendez-vous d'un patient
   public getAppointmentsByPatient(patientId: number): Observable<Appoitement[]> {
     return this.http.get<Appoitement[]>(
-      `${this.matiereUrl}/patient/${patientId}`,
+      `${this.matiereUrl}/patient/all/${patientId}`,
       {
         headers:this.getHeaders()
       }

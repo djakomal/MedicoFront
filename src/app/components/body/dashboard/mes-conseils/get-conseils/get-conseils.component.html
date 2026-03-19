@@ -4,12 +4,6 @@
       {{ alertMessage }}
       <button class="alert-close" (click)="hideNotification()">×</button>
     </div>
-  
-    <div class="header-section">
-      <h1>Gestion des Conseils</h1>
-      <p>Gérez efficacement vos conseils</p>
-    </div>
-  
     <div class="stats-container">
       <div class="stat-card">
         <h3>Total des conseils créés</h3>
@@ -19,7 +13,7 @@
   
     <div class="card">
       <div class="card-header">
-        <h2>📋 Liste des conseils</h2>
+        <h2>Liste des conseils</h2>
         <span class="badge-count">{{ conseils?.length || 0 }} Conseils</span>
       </div>
   
@@ -85,7 +79,7 @@
               </td>
               
               <td class="vues-cell">
-                <span class="vues-count">👁️ {{ conseil.nombreVues || 0 }}</span>
+                <span class="vues-count">{{ conseil.nombreVues || 0 }}</span>
               </td>
               
               <td>
@@ -94,13 +88,13 @@
                     class="btn btn-primary" 
                     (click)="conseil.id && updateconseils(conseil.id)"
                     title="Modifier">
-                    ✏️ Modifier
+                     Modifier
                   </button>
                   <button 
                     class="btn btn-danger" 
                     (click)="conseil.id && deleteconseils(conseil.id)"
                     title="Supprimer">
-                    🗑️ Supprimer
+                     Supprimer
                   </button>
                 </div>
               </td>

@@ -11,6 +11,8 @@ import { JwtService } from '../jwt/jwt.service';
 export class DocteurService {
 
   private matiereUrl = "http://localhost:8080/medico/signup/docteur";
+  private docteurUrl = `http://localhost:8080/medico/signup`;
+
   
   constructor(
     private http: HttpClient,
@@ -54,6 +56,16 @@ export class DocteurService {
     );
   }
 
+  activateAccount(payload: { code: string }): Observable<any> {
+    return this.http.post(
+      `${this.docteurUrl}/code-activation`,
+      payload,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        responseType: 'text'
+      }
+    );
+  }
   //  RÉCUPÉRER UN DOCTEUR PAR ID
   getDocteurById(id: number): Observable<Docteur> {
     console.log('📋 Requête: Récupération du docteur ID:', id);

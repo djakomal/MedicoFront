@@ -67,7 +67,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class AppComponent implements OnInit{
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    
   }
   title = 'Centre-Medical';
 }

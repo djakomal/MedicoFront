@@ -135,19 +135,14 @@ export class ConnexionComponent implements OnInit {
    */
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
-    const passwordInput = document.getElementById('password') as HTMLInputElement;
-    if (passwordInput) {
-      passwordInput.type = this.showPassword ? 'text' : 'password';
-    }
   }
 
   /**
    * Validateur de username personnalisé
    */
-  useranameValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) {
-      return null;
-    }
+ 
+  usernameValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
     const usernameRegex = /^[^\s]{3,}$/;
     return usernameRegex.test(control.value) ? null : { invalidUsername: true };
   }

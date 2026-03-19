@@ -1,21 +1,22 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Medico - Créer un Conseil</title>
     <link rel="stylesheet" href="./mes-conseils.component.css">
 </head>
+
 <body>
     <header class="main_header">
         <div class="header_content">
-            <h2>🏥 Medico</h2>
-
+            <h2>Conseils</h2>
         </div>
     </header>
 
     <div class="form-container">
-        <h2>✍️ Créer un nouveau conseil</h2>
+        <h2> Créer un nouveau conseil</h2>
         <p class="form-subtitle">Partagez vos connaissances en santé et bien-être</p>
 
         <!-- Progress Steps -->
@@ -39,22 +40,16 @@
         </div>
 
         <form [formGroup]="conseilForm" (ngSubmit)="onSubmit()">
-            
-            <!-- ========================================
-                 ÉTAPE 1: Informations de base
-                 ======================================== -->
+
+
             <div class="form-step" [class.active]="currentStep === 1" *ngIf="currentStep === 1">
-                
+
                 <!-- Titre -->
                 <div class="form-group">
                     <label for="titre">Titre du conseil *</label>
-                    <input 
-                        type="text" 
-                        id="titre" 
-                        formControlName="titre"
+                    <input type="text" id="titre" formControlName="titre"
                         placeholder="Ex: Comment prévenir les maladies cardiovasculaires"
-                        [class.is-invalid]="submitted && f['titre'].errors"
-                    />
+                        [class.is-invalid]="submitted && f['titre'].errors" />
                     <div class="invalid-feedback" *ngIf="submitted && f['titre'].errors">
                         <div *ngIf="f['titre'].errors['required']">Le titre est requis</div>
                         <div *ngIf="f['titre'].errors['minlength']">
@@ -66,70 +61,63 @@
                 <!-- Auteur -->
                 <div class="form-group">
                     <label for="auteur">Nom de l'auteur *</label>
-                    <input 
-                        type="text" 
-                        id="auteur" 
-                        formControlName="auteur"
-                        placeholder="Ex: Dr. Marie Dupont"
-                        [class.is-invalid]="submitted && f['auteur'].errors"
-                    />
+                    <input type="text" id="auteur" formControlName="auteur" placeholder="Ex: Dr. Marie Dupont"
+                        [class.is-invalid]="submitted && f['auteur'].errors" />
                     <div class="invalid-feedback" *ngIf="submitted && f['auteur'].errors">
                         <div *ngIf="f['auteur'].errors['required']">L'auteur est requis</div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="contenu">Description *</label>
-                  <textarea 
-                      id="contenu"
-                      formControlName="contenu"
-                      placeholder="Veuillez saisir le contenu"
-                      rows="4"
-                      [class.is-invalid]="submitted && f['contenu'].errors"
-                  ></textarea>
-                  <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
-                    <div *ngIf="f['contenu'].errors?.['required']">Le contenu est requis</div>
-                    <div *ngIf="f['contenu'].errors?.['minlength']">Le contenu doit contenir au moins 50 caractères</div>
-                  </div>
+                    <label for="contenu">Description *</label>
+                    <textarea id="contenu" formControlName="contenu" placeholder="Veuillez saisir le contenu" rows="4"
+                        [class.is-invalid]="submitted && f['contenu'].errors"></textarea>
+                    <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
+                        <div *ngIf="f['contenu'].errors?.['required']">Le contenu est requis</div>
+                        <div *ngIf="f['contenu'].errors?.['minlength']">Le contenu doit contenir au moins 50 caractères
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Catégorie -->
                 <div class="form-group">
-                    <label for="categorie" >Catégorie *</label>
-                   <select 
-                        id="categorie" 
-                        formControlName="categorie"
-                        [class.is-invalid]="submitted && f['categorie'].errors"
-                    >
-                        <option value="">Sélectionner une catégorie</option>
-                        <option *ngFor="let cat of categories" [value]="cat.value">
-                            {{ cat.icon }} {{ cat.label }}
-                        </option>
-                    </select>
-                    <div class="invalid-feedback" *ngIf="submitted && f['categorie'].errors">
-                        <div *ngIf="f['categorie'].errors['required']">La catégorie est requise</div>
+                    <label>Catégorie *</label>
+                    <div class="custom-select" [class.is-invalid]="submitted && f['categorie'].errors">
+                      <div class="custom-select-trigger" (click)="toggleDropdown()" [class.open]="dropdownOpen">
+                        <span placeholder="">
+                          {{ conseilForm.value.categorie ? getLabelFromValue(conseilForm.value.categorie) : 'Sélectionner une catégorie' }}
+                        </span>
+                      </div>
+                      <div class="custom-select-options" *ngIf="dropdownOpen">
+                        <div class="custom-option"
+                             *ngFor="let cat of categories"
+                             (click)="selectCategory(cat.value)"
+                             [class.selected]="conseilForm.value.categorie === cat.value">
+                          {{ cat.label }}
+                        </div>
+                      </div>
                     </div>
-                </div>
+                    <div class="invalid-feedback" *ngIf="submitted && f['categorie'].errors">
+                      La catégorie est requise
+                    </div>
+                  </div>
+
 
                 <!-- Image URL -->
                 <div class="form-group">
                     <label for="imageUrl">URL de l'image (optionnel)</label>
-                    <input 
-                        type="url" 
-                        id="imageUrl" 
-                        formControlName="imageUrl"
-                        placeholder="https://exemple.com/image.jpg"
-                    />
+                    <input type="url" id="imageUrl" formControlName="imageUrl"
+                        placeholder="https://exemple.com/image.jpg" />
                     <div class="image-preview" *ngIf="conseilForm.value.imageUrl">
-                        <img [src]="conseilForm.value.imageUrl" alt="Aperçu" 
-                             (error)="conseilForm.patchValue({imageUrl: ''})" />
+                        <img [src]="conseilForm.value.imageUrl" alt="Aperçu"
+                            (error)="conseilForm.patchValue({imageUrl: ''})" />
                     </div>
                 </div>
 
                 <!-- Actions Step 1 -->
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" (click)="onReset()">
-                        🔄 Réinitialiser
+                        Réinitialiser
                     </button>
                     <button type="button" class="btn btn-primary" (click)="nextStep()">
                         Suivant →
@@ -137,22 +125,17 @@
                 </div>
             </div>
 
-            <!-- ========================================
-                 ÉTAPE 2: Contenu et publication
-                 ======================================== -->
+
             <div class="form-step" [class.active]="currentStep === 2" *ngIf="currentStep === 2">
-                
+
                 <!-- Contenu -->
                 <div class="form-group">
                     <label for="contenu">Contenu du conseil *</label>
-                    <textarea 
-                        id="contenu" 
-                        formControlName="contenu"
-                        rows="10"
+                    <textarea id="contenu" formControlName="contenu" rows="10"
                         placeholder="Rédigez le contenu détaillé de votre conseil (minimum 50 caractères)"
-                        [class.is-invalid]="submitted && f['contenu'].errors"
-                    ></textarea>
-                    <div class="char-count" [style.color]="conseilForm.value.contenu?.length >= 50 ? '#28a745' : '#666'">
+                        [class.is-invalid]="submitted && f['contenu'].errors"></textarea>
+                    <div class="char-count"
+                        [style.color]="conseilForm.value.contenu?.length >= 50 ? '#28a745' : '#666'">
                         {{ conseilForm.value.contenu?.length || 0 }} / 50 caractères minimum
                     </div>
                     <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
@@ -166,20 +149,16 @@
                 <!-- Tags -->
                 <div class="form-group">
                     <label>Tags (mots-clés)</label>
-                    
+
                     <!-- Liste des tags -->
                     <div class="tags-container" formArrayName="tags">
                         <div class="tag-pill" *ngFor="let tag of tags.controls; let i = index">
-                            <input 
-                                type="text" 
-                                [formControlName]="i" 
-                                placeholder="Tag"
-                                style="background: transparent; border: none; color: white; outline: none; width: auto; padding: 0;"
-                            />
+                            <input type="text" [formControlName]="i" placeholder="Tag"
+                                style="background: transparent; border: none; color: white; outline: none; width: auto; padding: 0;" />
                             <button type="button" (click)="removeTag(i)">✕</button>
                         </div>
                     </div>
-                    
+
                     <!-- Bouton ajouter tag -->
                     <button type="button" class="btn-add-tag" (click)="addTag()">
                         + Ajouter un tag
@@ -196,35 +175,33 @@
 
                 <!-- Résumé -->
                 <div class="summary-section">
-                    <h3>📋 Résumé de votre conseil</h3>
-                    
+                    <h3> Résumé de votre conseil</h3>
+
                     <div class="summary-item">
                         <div class="summary-label">Titre:</div>
                         <div class="summary-value">{{ conseilForm.value.titre || '-' }}</div>
                     </div>
-                    
+
                     <div class="summary-item">
                         <div class="summary-label">Auteur:</div>
                         <div class="summary-value">{{ conseilForm.value.auteur || '-' }}</div>
                     </div>
 
                     <div class="summary-item">
-                      <div class="summary-label">Description:</div>
-                      <div class="summary-value">{{ conseilForm.value.contenu || '-' }}</div>
-                  </div>
-                    
+                        <div class="summary-label">Description:</div>
+                        <div class="summary-value">{{ conseilForm.value.contenu || '-' }}</div>
+                    </div>
+
                     <div class="summary-item">
                         <div class="summary-label">Catégorie:</div>
                         <div class="summary-value">{{ conseilForm.value.categorie || '-' }}</div>
                     </div>
-                    
+
                     <div class="summary-item">
                         <div class="summary-label">Image:</div>
                         <div class="summary-value">
-                            <img *ngIf="conseilForm.value.imageUrl"
-                                 [src]="conseilForm.value.imageUrl"
-                                 alt="Aperçu"
-                                 style="width:150px; height:auto; border-radius:8px;">
+                            <img *ngIf="conseilForm.value.imageUrl" [src]="conseilForm.value.imageUrl" alt="Aperçu"
+                                style="width:150px; height:auto; border-radius:8px;">
                             <span *ngIf="!conseilForm.value.imageUrl">Aucune image</span>
                         </div>
                     </div>
@@ -251,12 +228,13 @@
                         ← Précédent
                     </button>
                     <button type="submit" class="btn btn-primary" [disabled]="loading">
-                        <span *ngIf="!loading">✨ Créer le conseil</span>
-                        <span *ngIf="loading">⏳ Création en cours...</span>
+                        <span *ngIf="!loading">Créer le conseil</span>
+                        <span *ngIf="loading"> Création en cours...</span>
                     </button>
                 </div>
             </div>
         </form>
     </div>
 </body>
+
 </html>

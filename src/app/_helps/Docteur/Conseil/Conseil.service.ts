@@ -10,7 +10,8 @@ import { Conseil } from '../../../models/Conseil';
 export class ConseilService {
   private baseUrl = 'http://localhost:8080/medico/api/conseils';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+  ) { }
 
   // Headers HTTP
   private getHeaders(): HttpHeaders {
@@ -21,10 +22,7 @@ export class ConseilService {
 
   // Créer un nouveau conseil
   creerConseil(conseil: Conseil): Observable<Conseil> {
-    // ✅ Récupérer le token
     const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -35,10 +33,10 @@ export class ConseilService {
     });
   }
    getconseilsByDoctorId(doctorId:number):Observable<Conseil>{
-    // ✅ Récupérer le token
+ 
     const token = localStorage.getItem('token');
     
-    // ✅ Créer les headers avec le token
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -49,12 +47,10 @@ export class ConseilService {
     });
    }
 
-  // Récupérer tous les conseils
+  
   getAllConseils(): Observable<Conseil[]> {
 
     const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -62,11 +58,9 @@ export class ConseilService {
     return this.http.get<Conseil[]>(this.baseUrl, { headers :headers});
   }
 
-  // Récupérer les conseils publiés
+
   getConseilsPublies(): Observable<Conseil[]> {
     const token = localStorage.getItem('token');
-    
-    // ✅ Créer les headers avec le token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

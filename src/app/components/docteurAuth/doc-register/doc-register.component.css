@@ -424,6 +424,27 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}.otp-input {
+  letter-spacing: 8px;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.resend-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.success-alert {
+  background: #d1fae5;
+  border-left: 4px solid #10b981;
+  color: #065f46;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .submit-button:hover {

@@ -106,85 +106,40 @@ export class JwtService {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
-      role: 'USER' //  ROLE SPÉCIFIÉ
     };
-
-    console.log('🔐 Login USER:', loginData.username);
-
-    return this.http.post(this.baseURL + '/login/login', loginData, {
-      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    return this.http.post(this.baseURL + '/login', loginData, {  // ✅ /login pas /login/login
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       tap((response: any) => {
-        console.log(" Login USER réussi");
-        
-        if (response && response.jwt) {
+        if (response?.jwt) {
           this.saveToken(response.jwt);
-          
-          if (response.refreshToken) {
-            this.saveRefreshToken(response.refreshToken);
-          }
-
-          // Sauvegarder le rôle
+          if (response.refreshToken) this.saveRefreshToken(response.refreshToken);
           localStorage.setItem('userRole', 'USER');
         }
       }),
-      catchError(error => {
-        console.error(' Erreur de connexion USER:', error);
-        
-        // Message d'erreur plus clair
-        if (error.status === 403) {
-          error.errorMessage = 'Ce compte n\'est pas un compte utilisateur';
-        } else if (error.error?.message) {
-          error.errorMessage = error.error.message;
-        }
-        
-        return throwError(() => error);
-      })
+      catchError(error => throwError(() => error))
     );
   }
+  
 
-  // 🔹 LOGIN DOCTEUR (avec role="DOCTOR")
   loginDoc(credentials: { username: string; password: string }): Observable<any> {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
-      role: 'DOCTOR' //  ROLE SPÉCIFIÉ
     };
-
-    console.log('🔐 Login DOCTOR:', loginData.username);
-
-    return this.http.post(this.baseURL + '/login/login', loginData, {
-      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    return this.http.post(this.baseURL + '/docteur/login', loginData, {  
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       tap((response: any) => {
-        console.log(" Login DOCTOR réussi");
-        
-        if (response && response.jwt) {
+        if (response?.jwt) {
           this.saveToken(response.jwt);
-          
-          if (response.refreshToken) {
-            this.saveRefreshToken(response.refreshToken);
-          }
-
-          // Sauvegarder le rôle
+          if (response.refreshToken) this.saveRefreshToken(response.refreshToken);
           localStorage.setItem('userRole', 'DOCTOR');
         }
       }),
-      catchError(error => {
-        console.error(' Erreur de connexion DOCTOR:', error);
-        
-        // Message d'erreur plus clair
-        if (error.status === 403) {
-          error.errorMessage = 'Ce compte n\'est pas un compte docteur';
-        } else if (error.error?.message) {
-          error.errorMessage = error.error.message;
-        }
-        
-        return throwError(() => error);
-      })
+      catchError(error => throwError(() => error))
     );
   }
-
   // 🔹 SAUVEGARDER LE TOKEN
   saveToken(jwt: string): void {
     localStorage.setItem(this.tokenKey, jwt);
@@ -199,6 +154,16 @@ export class JwtService {
     console.log(" Refresh token sauvegardé");
   }
 
+  // ✅ Ajouter cette méthode dans JwtService
+activateAccount(payload: { code: string }): Observable<any> {
+  return this.http.post(
+    this.baseURL + '/signup/code-activation',
+    payload,
+    { headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      responseType: 'text' }   // ✅ le backend retourne un String, pas du JSON
+  );
+}
+
   // 🔹 RÉCUPÉRER LE TOKEN
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey) || 
@@ -210,9 +175,6 @@ export class JwtService {
   getRefreshToken(): string | null {
     return localStorage.getItem(this.refreshTokenKey);
   }   
-  // RECUPERER LE id
-
-  // Dans JwtService.ts - Ajoutez cette méthode
 
   getUserId(): number | null {
     const decodedToken = this.getDecodedToken();
@@ -220,33 +182,20 @@ export class JwtService {
     if (!decodedToken) {
       return null;
     }
-  
-    // Essayez différents noms de champ selon votre backend
-    // Ajoutez console.log pour voir la structure de votre token
-    //  console.log('Token décodé:', decodedToken.userId);
-    
     return  decodedToken.userId ;
-            // Parfois l'ID est dans "sub"
-        
   }
 
-  // 🔹 RÉCUPÉRER LE RÔLE DE L'UTILISATEUR
   getUserRole(): string | null {
-    // D'abord vérifier dans localStorage
+    
     const storedRole = localStorage.getItem('userRole');
     if (storedRole) {
       return storedRole;
     }
-
-    // Sinon décoder le token
     const decoded = this.getDecodedToken();
     if (decoded) {
-      // Vérifier dans le token
       if (decoded.role) {
         return decoded.role;
       }
-      
-      // Vérifier dans authorities
       if (decoded.authorities) {
         if (Array.isArray(decoded.authorities)) {
           const authority = decoded.authorities.find((auth: any) => 
@@ -294,13 +243,9 @@ export class JwtService {
     return decodedToken.doctorId ||
            null;
   }
-
-  // 🔹 VÉRIFIER SI L'UTILISATEUR EST UN USER
   isUser(): boolean {
     return this.getUserRole() === 'USER';
   }
-
-  // 🔹 SUPPRIMER LES TOKENS
   removeToken(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('token');
@@ -310,8 +255,6 @@ export class JwtService {
     this.isRefreshing = false;
     console.log("🗑️ Tokens supprimés");
   }
-
-  // 🔹 DÉCODER LE TOKEN
   getDecodedToken(): any | null {
     const token = this.getToken();
     
@@ -325,8 +268,6 @@ export class JwtService {
       return null;
     }
   }
-
-  // 🔹 RÉCUPÉRER LE USERNAME
   getUserName(): string | null {
     const decodedToken = this.getDecodedToken();
     
@@ -352,7 +293,6 @@ export class JwtService {
             null;
 
  }
-  // 🔹 VÉRIFIER SI LE TOKEN EST EXPIRÉ
   isTokenExpired(): boolean {
     const token = this.getToken();
     if (!token) return true;
@@ -370,18 +310,13 @@ export class JwtService {
     }
   }
 
-  // 🔹 VÉRIFIER SI LE TOKEN EST VALIDE
   isTokenValid(): boolean {
     return !this.isTokenExpired();
   }
-
-  // 🔹 VÉRIFIER SI L'UTILISATEUR EST CONNECTÉ
   isLoggedIn(): boolean {
     const token = this.getToken();
     return !!token && !this.isTokenExpired();
   }
-
-  // 🔹 REQUÊTES HTTP AVEC AUTO-REFRESH
   get(url: string): Observable<any> {
     return this.ensureValidToken().pipe(
       switchMap(() => {
@@ -449,7 +384,22 @@ export class JwtService {
   getAllUser(): Observable<User[]> {
     return this.http.get<User[]>(this.baseURL + '/signup');
   }
-
+  changePasswordDocteur(payload: {
+    ancienMotDePasse: string;
+    nouveauMotDePasse: string;
+    confirmation: string;
+  }): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put(
+      `${this.baseURL}/signup/docteur/change-password`,
+      payload,
+      { headers, responseType: 'text' }
+    );
+  }
   register(signRequest: any): Observable<any> {
     return this.http.post(this.baseURL + '/signup', signRequest);
   }

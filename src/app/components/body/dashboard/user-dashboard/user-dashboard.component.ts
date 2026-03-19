@@ -50,17 +50,23 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'info' = 'success';
   private processedAppointments: Set<string> = new Set();
-
   private refreshInterval: any;
-
   userId:number|null=null;
-
   // Variables Zoom
   isZoomAuthenticated: boolean = false;
   zoomStatus: 'disconnected' | 'connecting' | 'connected' = 'disconnected';
   zoomMeetingUrl: string | null = null;
   zoomMeetingPassword: string | null = null;
   currentZoomMeeting: any = null;
+  // Cards dynamiques
+  prochainRdv: Appoitement | null = null;
+  rdvValides:    number = 0;
+  rdvEnAttente:  number = 0;
+  rdvTermines:   number = 0;
+  rdvVideo:      number = 0;
+  rdvPresential: number = 0;
+  // Données du graphe
+  statsGraphe: { label: string; value: number; height: number; color: string }[] = [];
 
   medicalFiles = [
     {
@@ -525,12 +531,12 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
              this.cdr.detectChanges();
            });
 
-           this.resetUnreadCount();
+          //  this.resetUnreadCount();
       
     }
-    resetUnreadCount(): void {
-      this.notificationService.resetUnreadCount();
-    }
+    // resetUnreadCount(): void {
+    //   this.notificationService.resetUnreadCount();
+    // }
 
   private filterUserNotifications(allNotifications: Message[]): Message[] {
     const userId = this.jwtService.getUserId();
@@ -592,24 +598,95 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   loadUserAppointments(): void {
-     this.userId=this.jwtService.getUserId();
-    const  perId=Number(this.userId)
-    this.appointementService.getAppById(perId).subscribe({
+    this.userId = this.jwtService.getUserId();
+    const perId = Number(this.userId);
+  
+    this.appointementService.getAppointmentsByPatient(perId).subscribe({
       next: (data) => {
         const oldAppointments = [...this.tableauClasse];
-        this.tableauClasse=[data];
-
-        // Détecter les changements si ce n'est pas le premier chargement
+        this.tableauClasse = data;
+        this.calculerStatistiques(); // ← AJOUTER ICI
         if (oldAppointments.length > 0) {
-          this.detectStatusChanges(oldAppointments,[data]);
+          this.detectStatusChanges(oldAppointments, data);
         }
       },
       error: (error) => {
-        console.error(' Erreur lors du chargement des rendez-vous :', error);
+        console.error('Erreur chargement rendez-vous :', error);
       },
     });
   }
+  calculerStatistiques(): void {
+    const now = new Date();
+    this.rdvValides = this.tableauClasse.filter(a =>
+      this.isStatusValidated(a.status)
+    ).length;
 
+    this.rdvEnAttente = this.tableauClasse.filter(a =>
+      ['pending', 'en attente'].includes(a.status?.toLowerCase().trim())
+    ).length;
+
+    this.rdvTermines = this.tableauClasse.filter(a =>
+      ['completed', 'terminé'].includes(a.status?.toLowerCase().trim())
+    ).length;
+    const rdvRejetes = this.tableauClasse.filter(a =>
+      ['rejected', 'rejeté', 'refusé'].includes(a.status?.toLowerCase().trim())
+    ).length;
+    this.rdvVideo      = this.tableauClasse.filter(a => a.appointmentType === 'video').length;
+    this.rdvPresential = this.tableauClasse.filter(a => a.appointmentType === 'in-person').length;
+    const rdvFuturs = this.tableauClasse
+      .filter(a => {
+        if (!a.preferredDate || !a.preferredTime) return false;
+        try {
+          const dateRdv = this.buildDate(a.preferredDate, a.preferredTime);
+          const statutActif =
+            this.isStatusValidated(a.status) ||
+            ['pending', 'en attente'].includes(a.status?.toLowerCase().trim());
+          return dateRdv >= now && statutActif;
+        } catch { return false; }
+      })
+      .sort((a, b) => {
+        const da = this.buildDate(a.preferredDate, a.preferredTime);
+        const db = this.buildDate(b.preferredDate, b.preferredTime);
+        return da.getTime() - db.getTime();
+      });
+
+    this.prochainRdv = rdvFuturs.length > 0 ? rdvFuturs[0] : null;
+    const rawValues = [
+      { label: 'Total',   value: this.tableauClasse.length, color: '#60A5FA' },
+      { label: 'Validés', value: this.rdvValides,           color: '#34D399' }, 
+      { label: 'Attente', value: this.rdvEnAttente,         color: '#FCD34D' }, 
+      { label: 'Rejetés', value: rdvRejetes,                color: '#F87171' }, 
+      { label: 'Vidéo',   value: this.rdvVideo,             color: '#2DD4BF' }, 
+    ];
+  
+    const maxVal = Math.max(...rawValues.map(s => s.value), 1);
+    const MAX_HEIGHT = 80; 
+    const MIN_HEIGHT = 6; 
+  
+    this.statsGraphe = rawValues.map(s => ({
+      ...s,
+      height: s.value === 0
+        ? MIN_HEIGHT
+        : Math.max(MIN_HEIGHT, Math.round((s.value / maxVal) * MAX_HEIGHT))
+    }));
+  }
+
+// Utilitaire : construit un objet Date depuis les champs du RDV
+buildDate(dateStr: string, timeStr: string): Date {
+  let date: Date;
+  if (dateStr.includes('-')) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    date = new Date(y, m - 1, d);
+  } else if (dateStr.includes('/')) {
+    const [d, m, y] = dateStr.split('/').map(Number);
+    date = new Date(y, m - 1, d);
+  } else {
+    date = new Date(dateStr);
+  }
+  const [h, min] = timeStr.split(':').map(Number);
+  date.setHours(h, min || 0, 0, 0);
+  return date;
+}
   //  Détecter les changements de statut et créer des notifications
   detectStatusChanges(oldList: Appoitement[], newList: Appoitement[]): void {
     newList.forEach((newApp) => {

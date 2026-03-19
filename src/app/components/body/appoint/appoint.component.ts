@@ -35,7 +35,7 @@ export class AppointComponent implements OnInit {
   submitSuccess = false;
   creneauLoadError = '';
   
-  constructor(
+  constructor(  
     private fb: FormBuilder,
     private appointmentService: AppointementService,
     private creneauService: CreneauService,
@@ -186,7 +186,31 @@ export class AppointComponent implements OnInit {
     this.submitError = '';
 
     const formValue = this.appointmentForm.value;
-    console.log(' Step 1: formValue récupéré');
+    const creneauId = formValue.creneauId;
+
+    // 1. VÉRIFIER LA DISPONIBILITÉ EN TEMPS RÉEL
+    this.creneauService.verifierDisponibilite(creneauId).subscribe({
+      next: (disponibilite) => {
+        if (!disponibilite.disponible) {
+          this.submitError = 'Ce créneau n\'est plus disponible. Veuillez en sélectionner un autre.';
+          this.isSubmitting = false;
+          
+          // Mettre à jour la liste des créneaux
+          const doctorId = this.appointmentForm.get('doctorId')?.value;
+          if (doctorId) {
+            this.chargerCreneauxDuMedecin(doctorId);
+          }
+          return;
+        }
+
+      },
+      error: (error) => {
+        console.error('Erreur vérification disponibilité:', error);
+        this.submitError = 'Erreur de vérification. Veuillez réessayer.';
+        this.isSubmitting = false;
+      }
+    });
+  
 
     // Validation des champs critiques
     if (!formValue.doctorId || !formValue.creneauId) {
@@ -194,9 +218,6 @@ export class AppointComponent implements OnInit {
       this.isSubmitting = false;
       return;
     }
-    console.log(' Step 2: doctorId et creneauId validés');
-
-    // Récupérer le docteur et le créneau sélectionnés
     // const docteur = this.doctors.find(d => d.id === formValue.doctorId);
     const creneau = this.creneauxDisponibles.find(c => c.id === formValue.creneauId);
 
@@ -241,12 +262,12 @@ export class AppointComponent implements OnInit {
       meetingUrl:formValue.meetingUrl?.trim()||'',
       
     };
-    console.log(' Step 4: appointmentData construit');
-    console.log('📋 JSON COMPLET:', JSON.stringify(appointmentData, null, 2));
-    console.log('📤 Données envoyées au backend:', appointmentData);
-    console.log('👨‍⚕️ Doctor ID sélectionné:', formValue.doctorId);
-    console.log('creneau selectionner:',formValue.creneauId)
-    console.log(' Step 5: logs affichés, appel service en cours...');
+    // console.log(' Step 4: appointmentData construit');
+    // console.log('📋 JSON COMPLET:', JSON.stringify(appointmentData, null, 2));
+    // console.log('📤 Données envoyées au backend:', appointmentData);
+    // console.log('👨‍⚕️ Doctor ID sélectionné:', formValue.doctorId);
+    // console.log('creneau selectionner:',formValue.creneauId)
+    // console.log(' Step 5: logs affichés, appel service en cours...');
   
     this.appointmentService.addAppoitement(appointmentData).subscribe({
       next: (response) => {
@@ -280,9 +301,7 @@ export class AppointComponent implements OnInit {
           errorMessage = error.message;
         }
         
-        // Logs détaillés pour le debug
-        console.error('Status:', error.status);
-        console.error('Message d\'erreur final:', errorMessage);
+
         
         this.submitError = errorMessage;
         this.isSubmitting = false;
@@ -316,7 +335,6 @@ export class AppointComponent implements OnInit {
       next: (creneaux: Creneau[]) => {
         console.log(' Créneaux reçus du serveur:', creneaux);
         
-        // Filtrer les créneaux disponibles
         // Le filtre de date strict a été supprimé car les dates n'étaient pas compatibles
         this.creneauxDisponibles = creneaux.filter(c => {
           const isAvailable = Boolean(c.disponible);
@@ -324,7 +342,7 @@ export class AppointComponent implements OnInit {
           return isAvailable;
         });
         
-        console.log('📅 Créneaux disponibles après filtrage:', this.creneauxDisponibles.length);
+        console.log('Créneaux disponibles après filtrage:', this.creneauxDisponibles.length);
         
         // Vérifier s'il y a des créneaux disponibles
         if (this.creneauxDisponibles.length === 0) {
@@ -336,7 +354,7 @@ export class AppointComponent implements OnInit {
         this.isLoadingCreneaux = false;
       },
       error: (error) => {
-        console.error('❌ Erreur lors du chargement des créneaux:', error);
+        console.error('Erreur lors du chargement des créneaux:', error);
         this.isLoadingCreneaux = false;
         this.creneauLoadError = 'Impossible de charger les créneaux pour ce médecin. Veuillez réessayer.';
       }
@@ -385,6 +403,8 @@ export class AppointComponent implements OnInit {
     return heureStr.substring(0, 5);
   }
   isCreneauSelected(creneauId: number | undefined): boolean {
+
+
     
     return this.appointmentForm.get('creneauId')?.value === creneauId;
 
