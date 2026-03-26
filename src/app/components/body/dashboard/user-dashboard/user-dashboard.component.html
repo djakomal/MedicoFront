@@ -151,7 +151,7 @@
     <div id="dashboard-content" [style.display]="isSectionActive('dashboard') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
-          <p>Bienvenue <strong>{{ userName }}</strong></p>
+          <h1>Bienvenue <strong>{{ userName }}</strong></h1>
           <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
           <button class="appointment-btn" (click)="showSection('forms-file', $event)">
             Prendre un rendez-vous
@@ -241,22 +241,22 @@
     <div id="services-content" [style.display]="isSectionActive('services') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
-          <p>Nos services médicaux</p>
+          <h1>Nos services médicaux</h1>
           <p>Découvrez l'ensemble des services proposés par notre plateforme</p>
         </div>
       </div>
 
       <div class="service-categories">
         <div class="service-category">
-          <h3>Consultations</h3>
+          <h2>Consultations</h2>
           <p>Consultations en présentiel ou en téléconsultation</p>
         </div>
         <div class="service-category">
-          <h3>Prévention</h3>
+          <h2>Prévention</h2>
           <p>Bilans de santé et dépistages préventifs</p>
         </div>
         <div class="service-category">
-          <h3>Soins spécialisés</h3>
+          <h2>Soins spécialisés</h2>
           <p>Accès à un réseau de spécialistes</p>
         </div>
       </div>
@@ -304,7 +304,7 @@
     <div id="appointments-content" [style.display]="isSectionActive('appointments') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
-          <p>Mes rendez-vous</p>
+          <h1>Mes rendez-vous</h1>
           <p>Consultez et gérez l'ensemble de vos rendez-vous médicaux</p>
           <button class="appointment-btn" (click)="showSection('forms-file', $event)">
             Nouveau rendez-vous
@@ -443,12 +443,6 @@
 
     <!-- Advice content -->
     <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
-      <div class="welcome-section">
-        <div class="welcome-text">
-          <p>Conseils santé</p>
-          <p>Retrouvez des conseils personnalisés pour maintenir votre santé</p>
-        </div>
-      </div>
       <app-conseil></app-conseil>
     </div>
 
@@ -456,7 +450,7 @@
     <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
-          <p>Mon dossier médical</p>
+          <h1>Mon dossier médical</h1>
           <p>Accédez à vos informations médicales en toute sécurité</p>
           <button class="appointment-btn" (click)="downloadCompleteMedicalFile()">
             📥 Télécharger mon dossier complet

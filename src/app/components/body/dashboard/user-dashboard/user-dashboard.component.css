@@ -9,8 +9,19 @@ body {
   background-color: #f5f5f5;
 }
 
-h2, h3 {
-  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+h2, h3{
+  background: #1B5E20;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+h1{
+  background: #ffffff;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -257,7 +268,6 @@ h2:hover, h3:hover {
   background: #ffffff;
   padding: 0 40px;
   border-radius: 1rem;
-
   size: 1.2px;
   box-shadow: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   /* position:relative; */
@@ -335,7 +345,7 @@ s
 
 .welcome-section {
   display: flex;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(243, 243, 243, 0.952) 100%);
+  background: linear-gradient(135deg, #1B5E20 0%, #1B5E20 100%);
   border-radius: 15px;
   padding: 40px;
   margin-bottom: 40px;
@@ -363,6 +373,7 @@ s
   transform: translate(-4);
 }
 
+
 @keyframes slideInDown {
   from {
     opacity: 0;
@@ -376,20 +387,25 @@ s
 
 .welcome-text {
   flex: 1;
+  color:#ffffff;
   position: relative;
   z-index: 2;
 }
 
 .welcome-text p {
   margin-bottom: 15px;
-  color: #555;
+  color: #ffffff;
   transition: color 0.3s ease;
+}
+
+.welcome-text h2{
+  color: #ffffff;
 }
 
 .welcome-text p:first-child {
   font-size: 26px;
   font-weight: 700;
-  color: #1B5E20;
+  color: #ffffff;
   background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -397,8 +413,8 @@ s
   margin-bottom: 20px;
 }
 .appointment-btn {
-  background: linear-gradient(135deg, #2E7D32 0%, #0A3D10 100%);
-  color: white;
+  background: #ffffff;
+  color: black;
   border: none;
   padding: 14px 32px;
   border-radius: 10px;
@@ -482,7 +498,7 @@ s
   gap: 20px;
 }
 .card {
-  background-color: white;
+  background: linear-gradient(#ecebe8 50%);
   border-radius: 15px;
   padding: 20px;
   box-shadow:linear-gradient(135deg, #0A3D10 50%, #0A3D10 100%);
@@ -542,7 +558,7 @@ s
   transform: translateX(4px);
 }
 .card p {
-  color: #666;
+  color: #070707;
   margin-bottom: 5px;
 }
 
@@ -557,9 +573,10 @@ s
   margin-bottom: 30px;
 }
 .service-category {
-  background-color: white;
+  background-color: #ec8b0d;
   border-radius: 15px;
   padding: 20px;
+  color:white;
   box-shadow:linear-gradient(135deg, #161616 0%, #181818 100%);
   flex: 1;
   min-width: 250px;
@@ -582,7 +599,7 @@ s
 .service-category:hover {
   transform: translateY(-8px) scale(1.05);
   box-shadow: linear-gradient(135deg, #ffffff 0%, #111111 100%);
-  background: linear-gradient(135deg, #ffffff 0%, rgb(255, 255, 255) 100%);
+  background: linear-gradient(135deg, #ec8b0d 0%, rgb(238, 160, 70) 100%);
 }
 
 .service-category:hover::after {
@@ -595,6 +612,17 @@ s
   transition: all 0.3s ease;
   position: relative;
   z-index: 1;
+}
+
+.service-category h2 {
+  color:white;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+.service-category p{
+  color:#ffffff;
 }
 .service-list {
   background: linear-gradient(135deg, #ffffff 0%, rgba(250, 250, 250, 0.3) 100%);
@@ -2188,7 +2216,7 @@ input:focus, textarea:focus, select:focus {
   font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 700;
-  color: #161515 ;
+  color: #ffffff ;
   margin-bottom: 16px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -2225,7 +2253,7 @@ input:focus, textarea:focus, select:focus {
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: 800;
-  color: #050505;
+  color: #ffffff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
@@ -2241,7 +2269,7 @@ input:focus, textarea:focus, select:focus {
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
-  color: #050505;
+  color: #ffffff;
   white-space: nowrap;
   margin-top: 5px;
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -2255,7 +2283,7 @@ input:focus, textarea:focus, select:focus {
   margin-top: 14px;
   font-size: 11px;
   font-weight: 500;
-  color: #131212;
+  color: #ffffff;
   font-family: var(--font-body);
 }
 

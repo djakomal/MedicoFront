@@ -1,10 +1,10 @@
 
 :root {
-  --primary: #2E7D32;
-  --primary-dark: #0A3D10;
+  --primary: #1B5E20;
+  --primary-dark: #1B5E20;
   --secondary: #1B5E20;
   --accent: #f093fb;
-  --success: #4ade80;
+  --success: #1B5E20;
   --warning: #fbbf24;
   --danger: #ef4444;
   --text-dark: #1e293b;
@@ -99,7 +99,7 @@ body {
 .sidebar-logo {
   padding: 24px 20px;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 100%);
 }
 
 .logo {
@@ -139,16 +139,16 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
   padding: 14px 18px;
   border-radius: 8px;
-  color: #64748b;
+  color: #070707;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -204,7 +204,7 @@ body {
   gap: 10px;
   padding: 8px 12px;
   border-radius: 6px;
-  color: #94a3b8;
+  color: #070707;
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -259,7 +259,7 @@ body {
   top: 0;
   height: 100%;
   width: 4px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 100%);
   transform: scaleY(0);
   transition: transform 0.2s ease;
 }
@@ -300,7 +300,7 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary)  100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -339,7 +339,7 @@ body {
 }
 
 .header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 100%);
   color: white;
   padding: 40px;
   border-radius: 24px;
@@ -362,6 +362,7 @@ body {
 
 .header h1 {
   font-size: 32px;
+  color:#ffffff;
   font-weight: 800;
   margin-bottom: 8px;
   position: relative;
@@ -371,7 +372,7 @@ body {
 .header p {
   font-size: 16px;
   opacity: 0.9;
-  color: #070707;
+  color: #ffffff;
   position: relative;
   z-index: 1;
 }
@@ -451,7 +452,7 @@ body {
 
 .card-label {
   font-size: 14px;
-  color: var(--text-light);
+  color:#070707;
   font-weight: 500;
 }
 
@@ -465,7 +466,7 @@ body {
   padding: 6px 12px;
   border-radius: 8px;
   background: rgba(74, 222, 128, 0.1);
-  color: var(--success);
+  color:#1B5E20;
 }
 
 /* Section calendrier */
@@ -511,7 +512,7 @@ body {
 }
 
 .calendar-nav button:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 100%,);
   color: white;
   border-color: transparent;
 }
@@ -540,7 +541,7 @@ body {
 }
 
 .calendar-day.active {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 100%);
   color: white;
   box-shadow: 0 8px 16px rgba(27, 94, 32, 0.3);
 }
