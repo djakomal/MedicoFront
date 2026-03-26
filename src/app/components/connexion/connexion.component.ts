@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { JwtService } from '../../_helps/jwt/jwt.service';
 import { finalize } from 'rxjs/operators';
 
+
 @Component({
   selector: 'app-connexion',
   standalone: true,
@@ -23,7 +24,8 @@ export class ConnexionComponent implements OnInit {
   constructor(
     private jwtService: JwtService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+
   ) { }
 
   ngOnInit(): void {
@@ -33,9 +35,10 @@ export class ConnexionComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6), this.passwordValidator.bind(this)]],
     });
 
-    // Récupérer le nom de l'utilisateur s'il est déjà connecté
     this.userName = this.jwtService.getUserName();
   }
+
+ 
 
   /**
    * Soumission du formulaire avec gestion d'erreur complète
@@ -81,7 +84,7 @@ export class ConnexionComponent implements OnInit {
 
     const credentials = this.loginForm.value;
     
-    console.log('📤 Envoi des credentials USER:', { username: credentials.username });
+
 
     //  APPEL DE login() QUI ENVOIE AUTOMATIQUEMENT role="USER"
     this.jwtService.login(credentials)
@@ -92,27 +95,31 @@ export class ConnexionComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
-          console.log('✅ Réponse du backend:', response);
-          
+        
+        
           if (response && response.jwt) {
-            // Le token est déjà sauvegardé par le service
             this.userName = this.jwtService.getUserName();
             this.errorMessage = '';
-            
-            console.log('🔑 Token stocké:', localStorage.getItem('jwtToken'));
-            console.log('🎭 Rôle:', this.jwtService.getUserRole());
-
-            // Redirection vers dashboard USER
+        
+            const role = this.jwtService.getUserRole(); // "PATIENT" après normalisation
+            console.log(' Rôle reçu:', role);
+        
+            //  Bloquer si ce n'est pas un patient
+            if (role !== 'PATIENT') {
+              this.jwtService.removeToken(); // Nettoyer le token invalide
+              this.errorMessage = 'Ce compte n\'est pas un compte patient. Utilisez la connexion docteur.';
+              return;
+            }
+        
             this.router.navigateByUrl('/UserDah');
           } else {
             this.errorMessage = 'Erreur : Aucun token reçu du serveur.';
-            console.error('❌ Pas de token dans la réponse');
           }
         },
         error: (error) => {
           console.error('❌ Erreur de connexion:', error); 
           
-          // ✅ GESTION DES ERREURS AMÉLIORÉE
+          //  GESTION DES ERREURS AMÉLIORÉE
           if (error.status === 403) {
             this.errorMessage = 'Ce compte n\'est pas un compte utilisateur. Utilisez la connexion docteur.';
           } else if (error.status === 401) {

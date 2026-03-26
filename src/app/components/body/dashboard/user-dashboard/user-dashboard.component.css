@@ -10,7 +10,7 @@ body {
 }
 
 h2, h3 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -28,10 +28,10 @@ h2::after, h3::after {
   left: 0;
   width: 0;
   height: 4px;
-  background: linear-gradient(90deg, #0097a7, #00ff88, #1e88e5);
+  background: linear-gradient(90deg, #1B5E20, #00ff88, #1B5E20);
   border-radius: 2px;
   transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 
 h2:hover::after, h3:hover::after {
@@ -39,15 +39,15 @@ h2:hover::after, h3:hover::after {
 }
 
 h2:hover, h3:hover {
-  filter: drop-shadow(0 0 12px rgba(0, 188, 212, 0.3));
+  filter: drop-shadow(0 0 12px rgba(27, 94, 32, 0.3));
 }
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 20px rgba(30, 136, 229, 0.2), 0 0 40px rgba(30, 136, 229, 0.1);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  box-shadow: 0 4px 20px rgba(27, 94, 32, 0.2), 0 0 40px rgba(27, 94, 32, 0.1);
   position: relative;
   overflow: hidden;
 }
@@ -100,7 +100,7 @@ h2:hover, h3:hover {
 
 .logo-icon {
   background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-  color: #1e88e5;
+  color: #1B5E20;
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -202,7 +202,7 @@ h2:hover, h3:hover {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   cursor: pointer;
   border: 3px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -242,7 +242,7 @@ h2:hover, h3:hover {
   z-index: 10;
 }
 .dropdown-menu button {
-  /* background-color: #1e88e5; */
+  /* background-color: #1B5E20; */
   color: white;
   border: none;
   padding: 8px 15px;
@@ -259,7 +259,7 @@ h2:hover, h3:hover {
   border-radius: 1rem;
 
   size: 1.2px;
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   /* position:relative; */
   top: 0;
   z-index: 100;
@@ -299,7 +299,7 @@ h2:hover, h3:hover {
   left: 0;
   width: 0;
   height: 2px;
-   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
   z-index: 1;
 }
@@ -309,8 +309,8 @@ h2:hover, h3:hover {
 }
 s
 .nav-items a:hover {
-  color: #1e88e5;
-  background: rgba(30, 136, 229, 0.03);
+  color: #1B5E20;
+  background: rgba(27, 94, 32, 0.03);
 }
 
 .nav-items a:hover::after {
@@ -318,14 +318,14 @@ s
 }
 
 .nav-items a.active {
-  color: #1e88e5;
+  color: #1B5E20;
   font-weight: 600;
-  background: rgba(30, 136, 229, 0.05);
+  background: rgba(27, 94, 32, 0.05);
 }
 
 /* .nav-items a.active::after {
   width: 100%;
-  background: #1e88e5;
+  background: #1B5E20;
 } */
 .main-content {
   padding: 40px;
@@ -339,11 +339,11 @@ s
   border-radius: 15px;
   padding: 40px;
   margin-bottom: 40px;
-  box-shadow: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 1px solid rgba(30, 136, 229, 0.08);
+  box-shadow: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  border: 1px solid rgba(27, 94, 32, 0.08);
   animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
-  border: 2px solid rgba(128, 148, 238, 0.1);
+  border: 2px solid rgba(27, 94, 32, 0.1);
   overflow: hidden;
 }
 
@@ -389,15 +389,15 @@ s
 .welcome-text p:first-child {
   font-size: 26px;
   font-weight: 700;
-  color: #1e88e5;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #1B5E20;
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 20px;
 }
 .appointment-btn {
-  background: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #0A3D10 100%);
   color: white;
   border: none;
   padding: 14px 32px;
@@ -435,7 +435,7 @@ s
 
 .appointment-btn:hover {
   transform: translateY(-4px);
-  background: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #0A3D10 100%);
   box-shadow:linear-gradient(135deg, #8c8f9e 0%, #a099a7 100%);
 }
 
@@ -449,7 +449,7 @@ s
 
 .appointment-btn:active {
   transform: translateY(-2px);
-  box-shadow:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow:linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 
 .appointment-btn::before {
@@ -465,7 +465,7 @@ s
 
 .appointment-btn:hover {
   transform: translateY(-3px);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #bebdc0 100%);
+  box-shadow: linear-gradient(135deg, #2E7D32 0%, #bebdc0 100%);
 }
 
 .appointment-btn:hover::before {
@@ -485,7 +485,7 @@ s
   background-color: white;
   border-radius: 15px;
   padding: 20px;
-  box-shadow:linear-gradient(135deg, #364586 50%, #3541ad 100%);
+  box-shadow:linear-gradient(135deg, #0A3D10 50%, #0A3D10 100%);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
@@ -505,7 +505,7 @@ s
 
 .card:hover {
   transform: translateY(-12px) scale(1);
-  box-shadow: linear-gradient(135deg, #667eea 0%, #3541ad 100%);
+  box-shadow: linear-gradient(135deg, #2E7D32 0%, #0A3D10 100%);
 }
 
 .card:hover::before {
@@ -532,7 +532,7 @@ s
 
 .card h3 {
   margin-bottom: 15px;
-  color: #1e88e5;
+  color: #1B5E20;
   font-weight: 700;
   transition: all 0.3s ease;
 }
@@ -620,7 +620,7 @@ s
   align-items: flex-start;
   padding: 20px;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, rgba(30, 136, 229, 0.02) 0%, rgba(0, 188, 212, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(27, 94, 32, 0.02) 0%, rgba(27, 94, 32, 0.02) 100%);
   border-radius: 14px ;
    border: 0.1rem solid #e6e7e7; 
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -668,7 +668,7 @@ s
   margin-bottom: 0;
 }
 .service-icon {
-  background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #E8F5E9 0%, #ffffff 100%);
   width: 70px;
   height: 70px;
   border-radius: 15px;
@@ -677,7 +677,7 @@ s
   justify-content: center;
   font-size: 32px;
   margin-right: 20px;
-  color: #b4d1eb;
+  color: #C8E6C9;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.986);
   border: 2px solid rgba(114, 115, 116, 0.3);
@@ -702,7 +702,7 @@ s
   content: '';
   position: absolute;
   inset: 3px;
-  background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+  background: linear-gradient(135deg, #E8F5E9 0%, #A5D6A7 100%);
   border-radius: 12px;
   z-index: -1;
   pointer-events: none;
@@ -728,7 +728,7 @@ s
 
 .service-details h4 {
   margin: 0 0 8px 0;
-  color: #1e88e5;
+  color: #1B5E20;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -736,8 +736,8 @@ s
 }
 
 .service-item:hover .service-details h4 {
-  color: #545388;
-  text-shadow: 0 0 8px rgba(0, 188, 212, 0.2);
+  color: #1B5E20;
+  text-shadow: 0 0 8px rgba(27, 94, 32, 0.2);
 }
 
 .service-details p {
@@ -752,7 +752,7 @@ s
   color: #333;
 }
 .service-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -762,7 +762,7 @@ s
   font-size: 14px;
   letter-spacing: 0.5px;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 6px 16px rgba(69, 86, 133, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: 0 6px 16px rgba(27, 94, 32, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
   position: relative;
   overflow: hidden;
   z-index: 2;
@@ -792,8 +792,8 @@ s
 
 .service-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(30, 136, 229, 0.45), inset 0 1px 0 rgba(255,255,255,0.3);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 10px 24px rgba(27, 94, 32, 0.45), inset 0 1px 0 rgba(255,255,255,0.3);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 
 .service-btn:hover::before {
@@ -802,7 +802,7 @@ s
 
 .service-btn:active {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
 }
 
 .service-btn:active::after {
@@ -866,7 +866,7 @@ s
 }
 
 .popup-header h2 {
-  color: #1e88e5;
+  color: #1B5E20;
   font-size: 22px;
   margin: 0;
 }
@@ -887,7 +887,7 @@ s
 }
 
 .popup-close:hover {
-  color: #1e88e5;
+  color: #1B5E20;
 }
 
 .popup-content {
@@ -897,7 +897,7 @@ s
 }
 
 .popup-content h3 {
-  color: #1e88e5;
+  color: #1B5E20;
   margin-top: 15px;
   margin-bottom: 10px;
 }
@@ -935,7 +935,7 @@ s
 }
 
 .popup-btn-close {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -946,14 +946,14 @@ s
 }
 
 .popup-btn-close:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 
 /* Appointments section styles */
 .appointment-item {
-  background: linear-gradient(135deg, rgba(30, 136, 229, 0.02) 0%, rgba(0, 188, 212, 0.02) 100%);
-  border: 1px solid rgba(30, 136, 229, 0.1);
-  border-left: 4px solid #1e88e5;
+  background: linear-gradient(135deg, rgba(27, 94, 32, 0.02) 0%, rgba(27, 94, 32, 0.02) 100%);
+  border: 1px solid rgba(27, 94, 32, 0.1);
+  border-left: 4px solid #1B5E20;
   border-radius: 10px;
   padding: 15px;
   margin-bottom: 12px;
@@ -962,8 +962,8 @@ s
 }
 
 .appointment-item:hover {
-  background: linear-gradient(135deg, rgba(30, 136, 229, 0.08) 0%, rgba(0, 188, 212, 0.08) 100%);
-  box-shadow: 0 6px 16px rgba(30, 136, 229, 0.15);
+  background: linear-gradient(135deg, rgba(27, 94, 32, 0.08) 0%, rgba(27, 94, 32, 0.08) 100%);
+  box-shadow: 0 6px 16px rgba(27, 94, 32, 0.15);
   transform: translateX(6px);
 }
 
@@ -993,9 +993,9 @@ button:focus, a:focus {
 }
 
 input:focus, textarea:focus, select:focus {
-  outline: 2px solid #00bcd4;
+  outline: 2px solid #1B5E20;
   outline-offset: 1px;
-  box-shadow: 0 0 8px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 8px rgba(27, 94, 32, 0.3);
 }
 
 /* Smooth transitions for all interactive elements */
@@ -1005,12 +1005,12 @@ input:focus, textarea:focus, select:focus {
 
 /* Enhanced text selection */
 ::selection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
 }
 
 ::-webkit-selection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
 }
 
@@ -1042,7 +1042,7 @@ input:focus, textarea:focus, select:focus {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   align-items: center;
   justify-content: center;
   font-size: 18px;
@@ -1117,7 +1117,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .logout:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 .img-profile{
   width: 100%;
@@ -1156,9 +1156,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 .alert-info {
-  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
-  border-left: 5px solid #17a2b8;
-  color: #0c5460;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border-left: 5px solid #1B5E20;
+  color: #1B5E20;
 }
 
 .alert-content {
@@ -1323,7 +1323,7 @@ input:focus, textarea:focus, select:focus {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   border-radius: 15px 15px 0 0;
 }
 
@@ -1382,7 +1382,7 @@ input:focus, textarea:focus, select:focus {
 
 .sender-name {
   font-weight: 600;
-  color: #667eea;
+  color: #2E7D32;
   font-size: 15px;
 }
 
@@ -1427,13 +1427,13 @@ input:focus, textarea:focus, select:focus {
 
 .messages-list::-webkit-scrollbar-thumb,
 .message-detail-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   border-radius: 10px;
 }
 
 .messages-list::-webkit-scrollbar-thumb:hover,
 .message-detail-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+  background: linear-gradient(135deg, #0A3D10 0%, #1B5E20 100%);
 }
 
 /* Responsive */
@@ -1473,7 +1473,7 @@ input:focus, textarea:focus, select:focus {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
   border-radius: 15px 15px 0 0;
 }
@@ -1540,8 +1540,8 @@ input:focus, textarea:focus, select:focus {
 }
 
 .message-item.unread {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-left-color: #667eea;
+  background: linear-gradient(135deg, rgba(27, 94, 32, 0.1) 0%, rgba(27, 94, 32, 0.1) 100%);
+  border-left-color: #2E7D32;
   font-weight: 600;
 }
 
@@ -1678,7 +1678,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .appointment-started {
-  border-left: 5px solid #2196f3;
+  border-left: 5px solid #1B5E20;
 }
 
 .appointment-rejected,
@@ -1687,7 +1687,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .appointment-completed {
-  border-left: 5px solid #9c27b0;
+  border-left: 5px solid #1B5E20;
 }
 
 /* ========== SECTIONS D'INFORMATION ========== */
@@ -1770,22 +1770,22 @@ input:focus, textarea:focus, select:focus {
 
 /* Bouton Commencer - Actif */
 .service-btn-start.btn-ready {
-  background-color: #2196F3;
+  background-color: #1B5E20;
   cursor: pointer;
   opacity: 1;
   animation: pulse-ready 2s infinite;
 }
 
 .service-btn-start.btn-ready:hover {
-  background-color: #1976D2;
+  background-color: #1B5E20;
 }
 
 @keyframes pulse-ready {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+    box-shadow: 0 0 0 0 rgba(27, 94, 32, 0.7);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+    box-shadow: 0 0 0 10px rgba(27, 94, 32, 0);
   }
 }
 
@@ -1816,11 +1816,11 @@ input:focus, textarea:focus, select:focus {
 
 /* Bouton Détails */
 .btn-details {
-  background-color: #9c27b0;
+  background-color: #1B5E20;
 }
 
 .btn-details:hover {
-  background-color: #7b1fa2;
+  background-color: #1B5E20;
 }
 
 /* ========== MESSAGES DE STATUT ========== */
@@ -1872,16 +1872,16 @@ input:focus, textarea:focus, select:focus {
 
 /* Message en cours */
 .in-progress-message {
-  color: #1565c0;
+  color: #1B5E20;
   font-size: 15px;
   font-weight: 600;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
   padding: 12px 15px;
   border-radius: 8px;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid #1B5E20;
   margin: 15px 0;
   animation: pulse-progress 1.5s infinite;
-  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+  box-shadow: 0 2px 4px rgba(27, 94, 32, 0.2);
 }
 
 /* ========== BADGES DE STATUT ========== */
@@ -1919,11 +1919,11 @@ input:focus, textarea:focus, select:focus {
 
 .status-started {
   display: inline-block;
-  color: #1565c0;
+  color: #1B5E20;
   font-weight: bold;
   padding: 6px 14px;
-  background-color: #e3f2fd;
-  border: 2px solid #2196f3;
+  background-color: #E8F5E9;
+  border: 2px solid #1B5E20;
   border-radius: 20px;
   font-size: 13px;
 }
@@ -1941,11 +1941,11 @@ input:focus, textarea:focus, select:focus {
 
 .status-completed {
   display: inline-block;
-  color: #6a1b9a;
+  color: #1B5E20;
   font-weight: bold;
   padding: 6px 14px;
-  background-color: #f3e5f5;
-  border: 2px solid #9c27b0;
+  background-color: #E8F5E9;
+  border: 2px solid #1B5E20;
   border-radius: 20px;
   font-size: 13px;
 }
@@ -2012,7 +2012,7 @@ input:focus, textarea:focus, select:focus {
 /* Carte statut Zoom */
 .zoom-status-card {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-left: 4px solid #2d8cff;
+  border-left: 4px solid #1B5E20;
 }
 
 .zoom-status-indicator {
@@ -2089,15 +2089,15 @@ input:focus, textarea:focus, select:focus {
 
 /* Informations réunion Zoom */
 .zoom-meeting-info {
-  background: #e3f2fd;
+  background: #E8F5E9;
   border-radius: 10px;
   padding: 15px;
   margin-top: 15px;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid #1B5E20;
 }
 
 .zoom-meeting-info h4 {
-  color: #1976d2;
+  color: #1B5E20;
   margin-bottom: 10px;
   font-size: 16px;
 }
@@ -2115,7 +2115,7 @@ input:focus, textarea:focus, select:focus {
 
 .zoom-link {
   flex: 1;
-  color: #2196f3;
+  color: #1B5E20;
   text-decoration: none;
   font-size: 14px;
   word-break: break-all;

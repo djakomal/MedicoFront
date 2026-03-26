@@ -1,6 +1,6 @@
 :root {
-  --primary: #3b6fd4;
-  --primary-light: #eef3fc;
+  --primary: #1B5E20;
+  --primary-light: #E8F5E9;
   --danger: #c0392b;
   --danger-light: #fdf2f1;
   --success: #2e7d5e;
@@ -117,7 +117,7 @@ body {
 .elegant-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 111, 212, 0.1);
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
   background: white;
 }
 
@@ -148,9 +148,9 @@ body {
 }
 
 .btn-primary:hover {
-  background: #2f5bb8;
+  background: #0A3D10;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 111, 212, 0.25);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25);
 }
 
 .btn-secondary {
@@ -230,7 +230,7 @@ body {
 
 .creneau-card:hover {
   border-color: #b8cef5;
-  box-shadow: 0 4px 12px rgba(59, 111, 212, 0.08);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.08);
   transform: translateY(-2px);
 }
 

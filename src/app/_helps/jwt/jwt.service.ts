@@ -101,40 +101,51 @@ export class JwtService {
     this.router.navigateByUrl('/connex');
   }
 
-  // 🔹 LOGIN UTILISATEUR (avec role="USER")
+  
   login(credentials: { username: string; password: string }): Observable<any> {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
     };
-    return this.http.post(this.baseURL + '/login', loginData, {  // ✅ /login pas /login/login
+    return this.http.post(this.baseURL + '/login', loginData, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       tap((response: any) => {
         if (response?.jwt) {
+          
+          this.removeToken();
+          
           this.saveToken(response.jwt);
           if (response.refreshToken) this.saveRefreshToken(response.refreshToken);
-          localStorage.setItem('userRole', 'USER');
+          const role = (response.role as string)?.replace('ROLE_', '') ?? 'PATIENT';
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('user_id', response.userId?.toString());
         }
       }),
       catchError(error => throwError(() => error))
     );
   }
   
-
   loginDoc(credentials: { username: string; password: string }): Observable<any> {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
       password: credentials.password,
     };
-    return this.http.post(this.baseURL + '/docteur/login', loginData, {  
+    return this.http.post(this.baseURL + '/docteur/login', loginData, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       tap((response: any) => {
         if (response?.jwt) {
+         
+          this.removeToken();
+  
           this.saveToken(response.jwt);
           if (response.refreshToken) this.saveRefreshToken(response.refreshToken);
-          localStorage.setItem('userRole', 'DOCTOR');
+  
+         
+          const role = (response.role as string)?.replace('ROLE_', '') ?? 'DOCTOR';
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('user_id', response.userId?.toString());
         }
       }),
       catchError(error => throwError(() => error))
@@ -154,13 +165,13 @@ export class JwtService {
     console.log(" Refresh token sauvegardé");
   }
 
-  // ✅ Ajouter cette méthode dans JwtService
+ 
 activateAccount(payload: { code: string }): Observable<any> {
   return this.http.post(
     this.baseURL + '/signup/code-activation',
     payload,
     { headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      responseType: 'text' }   // ✅ le backend retourne un String, pas du JSON
+      responseType: 'text' }   
   );
 }
 
@@ -178,7 +189,6 @@ activateAccount(payload: { code: string }): Observable<any> {
 
   getUserId(): number | null {
     const decodedToken = this.getDecodedToken();
-    
     if (!decodedToken) {
       return null;
     }
@@ -229,7 +239,7 @@ activateAccount(payload: { code: string }): Observable<any> {
            null;
   }
 
-  // 🔹 VÉRIFIER SI L'UTILISATEUR EST UN DOCTEUR
+
   isDoctor(): boolean {
     return this.getUserRole() === 'DOCTOR';
   }
@@ -411,6 +421,5 @@ activateAccount(payload: { code: string }): Observable<any> {
   getAllDocteurs(): Observable<Docteur[]> {
     return this.http.get<Docteur[]>(this.baseURL + '/all');
   }
-
 
 }

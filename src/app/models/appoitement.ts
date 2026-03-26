@@ -13,6 +13,10 @@ import { Creneau } from "./Creneau";
 export class Appoitement {
 
   id!: number; 
+  patientId!: number;
+   patient?: {  
+    id: number;
+  };
   firstname!: string;
   lastname!: string;
   birthdate!: string; 

@@ -1,14 +1,11 @@
 import { Component, Injectable, NgModule, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, ResolveEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';  // ← CORRECTION : Importer depuis rxjs/operators
 
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
-
-// import { RegisteDetComponent } from './admin/main/registe-det/registe-det.component';
-
-// import { NotificationComponent } from './admin/notification/notification.component';
-
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NoteConfirmationComponent } from './components/note-confirmation/note-confirmation.component';
 import { ConnexionComponent } from './components/connexion/connexion.component';
 import { SingleBlogComponent } from './components/single-blog/single-blog.component';
@@ -26,14 +23,9 @@ import { ContactComponent } from './components/body/contact/contact.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { AppointmentComponent } from './components/admin/main/appointment/appointment.component';
 import { FormulaireComponent } from './components/admin/formulaire/formulaire.component';
-
 import { RegisterComponent } from './components/register/register.component';
 import { UpdateComponent } from './components/register/update/update.component';
-import { ReactiveFormsModule } from '@angular/forms';
 
-@Injectable({
-  providedIn: 'root',
-})
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -65,9 +57,36 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
 })
-export class AppComponent implements OnInit{
-  ngOnInit(): void {
+export class AppComponent implements OnInit {
+  isDashboardRoute = false;
+
+  constructor(private router: Router) {
+    // Vérification immédiate
+    this.updateRouteStatus(this.router.url);
     
+    // Abonnement aux changements de route
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.updateRouteStatus(event.url);
+    });
   }
+
+  private updateRouteStatus(url: string) {
+    this.isDashboardRoute = url.includes('UserDah') || 
+                           url.includes('DocDash') ||
+                           url.includes('connex') ||
+                           url.includes('regis')||
+                           url.includes('DocLogin')||
+                           url.includes('DocRegist');
+                           
+    
+    console.log('Route actuelle:', url, 'isDashboard:', this.isDashboardRoute);
+  }
+  
+  ngOnInit(): void {
+    // Initialisation si nécessaire
+  }
+  
   title = 'Centre-Medical';
 }

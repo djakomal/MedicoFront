@@ -148,7 +148,7 @@ export class ProfileComponent implements OnInit {
       localStorage.removeItem('user');
       localStorage.removeItem('userRole');
       sessionStorage.clear();
-      this.router.navigate(['/connexDoc']);
+      this.router.navigate(['/Dash']);
     }
   }
 }

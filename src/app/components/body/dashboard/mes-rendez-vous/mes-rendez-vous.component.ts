@@ -40,8 +40,20 @@ export class MesRendezVousComponent  implements OnInit {
         
         if (Array.isArray(data)) {
           this.tableauClasse = data;
-        } else {
-          console.error("❌ Format des données incorrect :", data);
+          
+          // 🔍 Afficher le premier rendez-vous pour voir les champs
+          if (data.length > 0) {
+            console.log('🔍 Tous les champs du premier rendez-vous:', Object.keys(data[0]));
+            console.log('🔍 Contenu complet:', data[0]);
+            
+            // Vérifier spécifiquement patientId
+            if (data[0].patient?.id !== undefined) {
+              console.log('✅ patientId existe:', data[0].patient?.id);
+            } else {
+              console.log('❌ patientId est manquant');
+              console.log('💡 Champs disponibles:', Object.keys(data[0]).join(', '));
+            }
+          }
         }
       },
       error: (error) => {
@@ -209,26 +221,17 @@ private sendStartNotification(appointment: Appoitement): void {
 
 // Méthode pour extraire l'ID utilisateur d'un rendez-vous
 private getUserIdFromAppointment(appointment: Appoitement): number | null {
-  // Vérifier différents champs possibles
-  if (appointment.id) {
-    return appointment.id;
+  // Vérifier si patient existe et a un id
+  if (appointment.patient && appointment.patient.id) {
+    console.log('✅ ID patient trouvé dans l\'objet patient:', appointment.patient.id);
+    return appointment.patient.id;
   }
   
-
-  
-  // Vérifier d'autres champs possibles
-  const possibleFields = ['user_id', 'patient_id', 'customer_id', 'clientId'];
-  for (const field of possibleFields) {
-    if (appointment[field as keyof Appoitement]) {
-      const value = appointment[field as keyof Appoitement];
-      return Number(value);
-    }
-  }
-  
-  console.warn(`❌ Aucun ID utilisateur trouvé pour le rendez-vous ${appointment.id}`);
+  console.warn('❌ Pas de patient lié à ce rendez-vous. patient =', appointment.patient);
   return null;
 }
-  getCountByStatus(status: string): number {
+  
+getCountByStatus(status: string): number {
     if (!this.tableauClasse) return 0;
     return this.tableauClasse.filter(app => app.status === status).length;
   }

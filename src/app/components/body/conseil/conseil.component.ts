@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { HeaderComponent } from '../../header/header.component';
@@ -25,6 +25,7 @@ export class ConseilComponent implements OnInit, OnDestroy {
   
   private routerSubscription?: Subscription;
 
+
   categories = [
     'Tous',
     'NUTRITION',
@@ -38,18 +39,18 @@ export class ConseilComponent implements OnInit, OnDestroy {
 
   constructor(
     private conseilService: ConseilService,
-    private router: Router
+    private router: Router,
+
   ) { }
 
   ngOnInit(): void {
-    // Charger les conseils au démarrage
     this.loadConseils(); 
-    // ✅ SOLUTION 1: Recharger à chaque navigation vers ce composant
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.loadConseils();
     });
+
   }
 
   ngOnDestroy(): void {

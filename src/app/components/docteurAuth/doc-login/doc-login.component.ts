@@ -75,9 +75,9 @@ export class DocLoginComponent implements OnInit {
     this.isLoading = true;
     const credentials = this.loginForm.value;
 
-    console.log('📤 Envoi des credentials DOCTOR:', { username: credentials.username });
 
-    // ✅ APPEL DE loginDoc() QUI ENVOIE AUTOMATIQUEMENT role="DOCTOR"
+
+    //  APPEL DE loginDoc() QUI ENVOIE AUTOMATIQUEMENT role="DOCTOR"
     this.jwtService.loginDoc(credentials)
       .pipe(
         finalize(() => {
@@ -86,27 +86,31 @@ export class DocLoginComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
-          console.log("✅ Réponse du backend:", response);
           
+        
           if (response && response.jwt) {
-            // Le token est déjà sauvegardé par le service
             this.userName = this.jwtService.getUserName();
             this.errorMessage = '';
-
-            console.log("🔑 Token stocké après connexion:", localStorage.getItem('jwtToken'));
-            console.log("🎭 Rôle:", this.jwtService.getUserRole());
-            
-            // Redirection vers dashboard DOCTEUR
+        
+            const role = this.jwtService.getUserRole(); // "DOCTOR" après normalisation
+            console.log(" Rôle reçu:", role);
+        
+            //  Bloquer si ce n'est pas un docteur
+            if (role !== 'DOCTOR') {
+              this.jwtService.removeToken(); // Nettoyer le token invalide
+              this.errorMessage = 'Ce compte n\'est pas un compte docteur. Utilisez la connexion patient.';
+              return;
+            }
+        
             this.router.navigateByUrl("/DocDash");
           } else {
             this.errorMessage = "Erreur : Aucun token reçu du serveur.";
-            console.error("❌ Pas de token dans la réponse");
           }
         },
         error: (error) => {
           console.error('❌ Erreur de connexion docteur:', error);
           
-          // ✅ GESTION DES ERREURS AMÉLIORÉE
+          //  GESTION DES ERREURS AMÉLIORÉE
           if (error.status === 403) {
             this.errorMessage = 'Ce compte n\'est pas un compte docteur. Utilisez la connexion utilisateur.';
           } else if (error.status === 401) {

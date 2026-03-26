@@ -12,6 +12,7 @@ import { Creneau } from '../../../models/Creneau';
 import { debounceTime } from 'rxjs/operators';
 import { Speciality } from '../../../models/speciality';
 import { forkJoin } from 'rxjs';
+import { JwtService } from '../../../_helps/jwt/jwt.service';
 
 @Component({
   selector: 'app-appoint',
@@ -39,7 +40,8 @@ export class AppointComponent implements OnInit {
     private fb: FormBuilder,
     private appointmentService: AppointementService,
     private creneauService: CreneauService,
-    private docteurService: DocteurService
+    private docteurService: DocteurService,
+    private jwtService: JwtService ,
   ) {
     this.appointmentForm = this.fb.group({
       // Étape 1: Informations personnelles
@@ -175,62 +177,137 @@ export class AppointComponent implements OnInit {
       this.submitError = 'Veuillez remplir tous les champs requis correctement';
       return;
     }
-
+  
     if (!this.appointmentForm.get('consent')?.value) {
       this.submitError = 'Vous devez accepter les conditions';
       return;
     }
-
+  
     this.isSubmitting = true;
     this.submitSuccess = false;
     this.submitError = '';
-
+  
     const formValue = this.appointmentForm.value;
     const creneauId = formValue.creneauId;
-
-    // 1. VÉRIFIER LA DISPONIBILITÉ EN TEMPS RÉEL
-    this.creneauService.verifierDisponibilite(creneauId).subscribe({
-      next: (disponibilite) => {
-        if (!disponibilite.disponible) {
-          this.submitError = 'Ce créneau n\'est plus disponible. Veuillez en sélectionner un autre.';
-          this.isSubmitting = false;
-          
-          // Mettre à jour la liste des créneaux
-          const doctorId = this.appointmentForm.get('doctorId')?.value;
-          if (doctorId) {
-            this.chargerCreneauxDuMedecin(doctorId);
-          }
-          return;
-        }
-
-      },
-      error: (error) => {
-        console.error('Erreur vérification disponibilité:', error);
-        this.submitError = 'Erreur de vérification. Veuillez réessayer.';
-        this.isSubmitting = false;
-      }
-    });
   
-
-    // Validation des champs critiques
     if (!formValue.doctorId || !formValue.creneauId) {
       this.submitError = 'Veuillez sélectionner un médecin et un créneau';
       this.isSubmitting = false;
       return;
     }
-    // const docteur = this.doctors.find(d => d.id === formValue.doctorId);
+  
     const creneau = this.creneauxDisponibles.find(c => c.id === formValue.creneauId);
-
     if (!creneau) {
-      this.submitError = 'Médecin ou créneau introuvable';
+      this.submitError = 'Créneau introuvable';
       this.isSubmitting = false;
       return;
     }
-    console.log(' Step 3: docteur et créneau trouvés');
+  
+    //  TOUT le code de soumission est DANS le next du subscribe
+    this.creneauService.verifierDisponibilite(creneauId).subscribe({
+      next: (disponibilite) => {
+  
+        //  Créneau plus disponible → stop
+        if (!disponibilite.disponible) {
+          this.submitError = 'Ce créneau n\'est plus disponible. Veuillez en sélectionner un autre.';
+          this.isSubmitting = false;
+          const doctorId = this.appointmentForm.get('doctorId')?.value;
+          if (doctorId) this.chargerCreneauxDuMedecin(doctorId);
+          return;
+        }
+        const userId = this.jwtService.getUserId();
 
+          // Vérifier que l'utilisateur est connecté
+          if (!userId) {
+            console.error(' Utilisateur non connecté, impossible de créer le rendez-vous');
+            this.submitError = 'Vous devez être connecté pour prendre un rendez-vous';
+            this.isSubmitting = false;
+            return;
+          }
+
+        //  Créneau disponible → soumettre le rendez-vous
+        const appointmentData: Appoitement = {
+          id: 0,
+          firstname: formValue.firstname?.trim(),
+          patientId: userId ,
+          lastname: formValue.lastname?.trim(),
+          birthdate: formValue.birthdate,
+          gender: formValue.gender || 'other',
+          email: formValue.email?.trim(),
+          phone: formValue.phone?.trim(),
+          insurance: formValue.insurance?.trim() || '',
+          speciality: Speciality.GENERAL,
+          doctorType: formValue.doctorType,
+          otherSpecialist: formValue.otherSpecialist?.trim() || '',
+          doctorId: formValue.doctorId,
+          creneauId: formValue.creneauId,
+          appointmentType: formValue.appointmentType,
+          preferredDate: formValue.preferredDate,
+          preferredTime: formValue.preferredTime,
+          altAvailability: formValue.altAvailability,
+          reason: formValue.reason?.trim(),
+          symptoms: formValue.symptoms?.trim() || '',
+          firstVisit: formValue.firstVisit || 'no',
+          allergies: formValue.allergies?.trim() || '',
+          medications: formValue.medications?.trim() || '',
+          zoomMeetingId: formValue.ZoomMeetingId?.trim() || '',
+          additionalInfo: formValue.additionalInfo?.trim() || '',
+          duration: formValue.duration,
+          consent: formValue.consent,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          doctor: 0,
+          meetingUrl: formValue.meetingUrl?.trim() || '',
+        };
+  
+        this.appointmentService.addAppoitement(appointmentData).subscribe({
+          next: (response) => {
+            console.log('Réponse du serveur:', response);
+            this.submitSuccess = true;
+            this.isSubmitting = false;
+            creneau.disponible = false;
+            this.filtrerCreneauxParDate(this.dateFilterControl.value);
+            this.appointmentForm.reset();
+            this.currentStep = 1;
+            setTimeout(() => this.submitSuccess = false, 5000);
+            alert('Rendez-vous ajouté avec succès !');
+          },
+          error: (error) => {
+            console.error('Erreur soumission:', error);
+            let errorMessage = 'Une erreur inattendue est survenue. Veuillez réessayer.';
+            if (error.error) {
+              if (typeof error.error === 'string') errorMessage = error.error;
+              else if (error.error.message) errorMessage = error.error.message;
+            } else if (error.message) {
+              errorMessage = error.message;
+            }
+            this.submitError = errorMessage;
+            this.isSubmitting = false;
+          }
+        });
+      },
+  
+      //  Si la vérification échoue (403 ou autre) → on soumet quand même
+      error: (error) => {
+        console.warn('Vérification disponibilité impossible, soumission directe:', error.status);
+  
+        // Si 403 → le backend ne supporte pas encore cet endpoint, soumettre directement
+        if (error.status === 403 || error.status === 404) {
+          this.soumettreSansVerification(formValue, creneau);
+        } else {
+          this.submitError = 'Erreur de vérification. Veuillez réessayer.';
+          this.isSubmitting = false;
+        }
+      }
+    });
+  }
+  
+  private soumettreSansVerification(formValue: any, creneau: Creneau): void {
     const appointmentData: Appoitement = {
       id: 0,
       firstname: formValue.firstname?.trim(),
+      patientId:0,
       lastname: formValue.lastname?.trim(),
       birthdate: formValue.birthdate,
       gender: formValue.gender || 'other',
@@ -251,64 +328,38 @@ export class AppointComponent implements OnInit {
       firstVisit: formValue.firstVisit || 'no',
       allergies: formValue.allergies?.trim() || '',
       medications: formValue.medications?.trim() || '',
-      zoomMeetingId:formValue.ZoomMeetingId?.trim()||'',
+      zoomMeetingId: '',
       additionalInfo: formValue.additionalInfo?.trim() || '',
-      duration:formValue.duration,
+      duration: formValue.duration,
       consent: formValue.consent,
       status: 'pending',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),  
+      updatedAt: new Date().toISOString(),
       doctor: 0,
-      meetingUrl:formValue.meetingUrl?.trim()||'',
-      
+      meetingUrl: '',
     };
-    // console.log(' Step 4: appointmentData construit');
-    // console.log('📋 JSON COMPLET:', JSON.stringify(appointmentData, null, 2));
-    // console.log('📤 Données envoyées au backend:', appointmentData);
-    // console.log('👨‍⚕️ Doctor ID sélectionné:', formValue.doctorId);
-    // console.log('creneau selectionner:',formValue.creneauId)
-    // console.log(' Step 5: logs affichés, appel service en cours...');
   
     this.appointmentService.addAppoitement(appointmentData).subscribe({
       next: (response) => {
-        console.log(' Réponse du serveur:', response);
         this.submitSuccess = true;
         this.isSubmitting = false;
-          // affecter l'id de creneau a preferredTime
-        // Marquer le créneau comme indisponible APRÈS la réussite
         creneau.disponible = false;
         this.filtrerCreneauxParDate(this.dateFilterControl.value);
-        
         this.appointmentForm.reset();
         this.currentStep = 1;
         setTimeout(() => this.submitSuccess = false, 5000);
         alert('Rendez-vous ajouté avec succès !');
       },
       error: (error) => {
-        console.error('Erreur lors de la soumission du formulaire:', error);
-        console.error(' Détails de l\'erreur:', error.error);
-        
-        // Gestion robuste de l'erreur
-        let errorMessage = 'Une erreur inattendue est survenue lors de la soumission. Veuillez réessayer plus tard.';
-        
-        if (error.error) {
-          if (typeof error.error === 'string') {
-            errorMessage = error.error;
-          } else if (error.error.message) {
-            errorMessage = error.error.message;
-          }
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-        
-
-        
+        let errorMessage = 'Erreur lors de la soumission.';
+        if (error.error?.message) errorMessage = error.error.message;
         this.submitError = errorMessage;
         this.isSubmitting = false;
       }
     });
   }
-    markFormGroupTouched(formGroup: FormGroup) {
+
+  markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
       

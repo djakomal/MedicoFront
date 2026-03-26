@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #82679c 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   min-height: 100vh;
   padding: 40px 20px;
 
@@ -67,7 +67,7 @@ body {
 .stat-card .number {
   font-size: 36px;
   font-weight: 700;
-  color: #667eea;
+  color: #2E7D32;
 }
 
 .card {
@@ -78,7 +78,7 @@ body {
 }
 
 .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   padding: 30px 35px;
   display: flex;
   justify-content: space-between;
@@ -130,10 +130,10 @@ th {
   text-align: left;
   font-size: 12px;
   font-weight: 700;
-  color: #667eea;
+  color: #2E7D32;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 3px solid #667eea;
+  border-bottom: 3px solid #2E7D32;
 }
 
 tbody tr {
@@ -156,7 +156,7 @@ td {
 
 .id-cell {
   font-weight: 700;
-  color: #667eea;
+  color: #2E7D32;
   font-size: 16px;
 }
 
@@ -172,7 +172,7 @@ td {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2E7D32, #1B5E20);
   color: white;
   display: flex;
   align-items: center;
@@ -189,8 +189,8 @@ td {
 
 .time-cell {
   font-weight: 600;
-  color: #667eea;
-  background: #f0f4ff;
+  color: #2E7D32;
+  background: #E8F5E9;
   padding: 6px 12px;
   border-radius: 8px;
   display: inline-block;
@@ -199,8 +199,8 @@ td {
 .type-badge {
   display: inline-block;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  color: #1976d2;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  color: #1B5E20;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -241,8 +241,8 @@ td {
 }
 
 .status-started {
-  background: linear-gradient(135deg, #d1ecf1, #bee5eb);
-  color: #0c5460;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  color: #1B5E20;
 }
 
 .action-buttons {
@@ -286,7 +286,7 @@ td {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #1B5E20, #0A3D10);
   color: white;
 }
 
@@ -301,7 +301,7 @@ td {
   height: 100px;
   margin: 0 auto 25px;
   opacity: 0.4;
-  stroke: #667eea;
+  stroke: #2E7D32;
 }
 
 .empty-state h3 {

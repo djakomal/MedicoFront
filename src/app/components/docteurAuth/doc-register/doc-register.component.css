@@ -6,13 +6,13 @@
 }
 
 :root {
-  --primary: #0066cc;
-  --primary-light: #4d94ff;
-  --primary-dark: #004c99;
-  --secondary: #00aaff;
+  --primary: #1B5E20;
+  --primary-light: #1B5E20;
+  --primary-dark: #0A3D10;
+  --secondary: #1B5E20;
   --text-dark: #333;
   --text-muted: #717171;
-  --background: #f5f9ff;
+  --background: #F1F8E9;
   --white: #ffffff;
   --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   --radius: 12px;
@@ -33,7 +33,7 @@ body {
   justify-content: flex-start;
   padding: 2rem 4rem;
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
   z-index: 1;
 }
@@ -54,6 +54,7 @@ body {
   font-weight: 700;
   margin-bottom: 1.5rem;
   letter-spacing: -0.5px;
+  color: #ffffff;
 }
 
 .welcome-text p {
@@ -166,7 +167,7 @@ body {
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
   background-color: var(--white);
 }
 
@@ -253,7 +254,7 @@ body {
 .register-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
 }
 
 .register-button:active {
@@ -404,7 +405,7 @@ body {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   color: black;
-  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
 }
 
 .submit-button:active {
@@ -413,7 +414,7 @@ body {
 
 .submit-button {
   padding: 0.9rem 1.5rem;
-  background-color: green;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -451,7 +452,7 @@ body {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   color: black;
-  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
 }
 
 .submit-button:active {
@@ -476,7 +477,7 @@ body {
 
 .file-upload:hover {
   border-color: var(--primary-light);
-  background-color: rgba(0, 102, 204, 0.05);
+  background-color: rgba(27, 94, 32, 0.05);
 }
 
 .file-upload input[type="file"] {

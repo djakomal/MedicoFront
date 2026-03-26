@@ -1,9 +1,9 @@
 
 
 :root {
-  --primary: #3b6fd4;
-  --primary-light: #eef3fc;
-  --primary-dark: #2f5bb8;
+  --primary: #1B5E20;
+  --primary-light: #E8F5E9;
+  --primary-dark: #0A3D10;
   --success: #2e7d5e;
   --success-light: #edf7f3;
   --danger: #c0392b;
@@ -23,7 +23,7 @@
 
  body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   max-height: 2px;
 
 } 
@@ -46,19 +46,19 @@
 
 .header_content h2 {
   size: 10%;
-  color: #3333a5;
+  color: #1B5E20;
   font-size: 28px;
 }
 
 .back-link {
-  color: #667eea;
+  color: #2E7D32;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s;
 }
 
 .back-link:hover {
-  color: #764ba2;
+  color: #1B5E20;
 }
 
 .form-container {
@@ -170,7 +170,7 @@ select option {
 }
 
 .step.active .step-circle {
-  background: #667eea;
+  background: #2E7D32;
   transform: scale(1.1);
 }
 
@@ -225,8 +225,8 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #2E7D32;
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
 }
 
 input.is-invalid,
@@ -269,7 +269,7 @@ textarea.is-invalid {
 }
 
 .tag-pill {
-  background: #667eea;
+  background: #2E7D32;
   color: white;
   padding: 8px 15px;
   border-radius: 20px;
@@ -385,14 +385,14 @@ textarea.is-invalid {
 }
 
 .btn-primary {
-  background: #667eea;
+  background: #2E7D32;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #5568d3;
+  background: #0A3D10;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
 }
 
 .btn-primary:disabled {

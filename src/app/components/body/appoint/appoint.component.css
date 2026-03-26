@@ -23,7 +23,7 @@
 }
 
 .section-title {
-  color: #3498db;
+  color: #1B5E20;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
   margin-bottom: 20px;
@@ -106,12 +106,12 @@ textarea {
 }
 
 .btn-primary {
-  background-color: #3498db;
+  background-color: #1B5E20;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #2980b9;
+  background-color: #0A3D10;
 }
 
 .btn-secondary {
@@ -157,9 +157,9 @@ textarea {
 }
 
 .loading-message {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #90caf9;
+  background-color: #E8F5E9;
+  color: #1B5E20;
+  border: 1px solid #A5D6A7;
 }
 
 .info-message {

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { JwtService } from '../../_helps/jwt/jwt.service';
 
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -29,7 +30,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private readonly jwtService: JwtService,
     private readonly fb: FormBuilder,
-    private readonly router: Router
+    private readonly router: Router,
+
   ) {}
 
   ngOnInit(): void {
@@ -40,13 +42,14 @@ export class RegisterComponent implements OnInit {
                              this.passwordValidator]],
       confirmPassword: ['', [Validators.required]],
     }, { validators: this.passwordMatchValidator });
-
-    // ✅ Formulaire OTP : 6 chiffres
     this.otpForm = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(6),
                   Validators.maxLength(6), Validators.pattern(/^\d{6}$/)]]
     });
+
   }
+
+
 
   // ── Étape 1 : Inscription ──────────────────────────────────────────────
 
@@ -80,18 +83,17 @@ export class RegisterComponent implements OnInit {
         console.log('✅ Inscription réussie:', response);
         this.isLoading = false;
         this.successMessage = 'Compte créé ! Vérifiez votre email pour le code OTP.';
-        this.currentStep = 'otp';           // ✅ Passer à l'étape OTP
+        this.currentStep = 'otp';          
       },
       error: (error) => {
         this.isLoading = false;
         console.error('❌ Erreur inscription:', error);
 
         if (error.status === 400) {
-          // ✅ Gère le cas "OTP renvoyé" du backend
           const msg = error.error?.message || error.error || '';
           if (typeof msg === 'string' && msg.includes('code de validation')) {
             this.successMessage = msg;
-            this.currentStep = 'otp';       // ✅ Aller quand même à l'OTP
+            this.currentStep = 'otp';       
           } else {
             this.errorMessage = msg || 'Données invalides.';
           }

@@ -14,6 +14,7 @@
   import { Publication } from '../../../../models/Publication';
 
 
+
   @Component({
     selector: 'app-dashboard',
     imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterOutlet],
@@ -67,7 +68,8 @@
       private conseilService: ConseilService,
       private publicationService:PublicationService,
       private AppoitementService: AppointementService,
-      private JwtService: JwtService
+      private JwtService: JwtService,
+
 
     ) { }
 
@@ -90,7 +92,6 @@
     checkRoute(url: string) {
       this.isDashboard = url === '/DocDash' || url.endsWith('/DocDash');
     }
-
     initializeWeekDays(): void {
       const today = new Date();
       const currentDay = today.getDay();

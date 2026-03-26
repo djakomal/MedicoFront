@@ -87,11 +87,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
   font-size: 2.5rem;
   font-weight: bold;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
 }
 
 .user-info h3 {
@@ -101,7 +101,7 @@
 }
 
 .user-role {
-  color: #3498db;
+  color: #1B5E20;
   font-weight: 600;
   margin-bottom: 0.5rem;
   font-size: 1rem;
@@ -138,7 +138,7 @@
 
 .action-btn:hover {
   background: #e9ecef;
-  border-color: #3498db;
+  border-color: #1B5E20;
   transform: translateX(5px);
 }
 
@@ -181,7 +181,7 @@
   background: #f8f9fa;
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid #1B5E20;
 }
 
 .current-value label {
@@ -228,8 +228,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  border-color: #1B5E20;
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
 }
 
 .form-group input.error {
@@ -279,14 +279,14 @@
 }
 
 .btn-primary {
-  background-color: #3498db;
+  background-color: #1B5E20;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #2980b9;
+  background-color: #0A3D10;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
 }
 
 .btn-secondary {
@@ -333,7 +333,7 @@
 }
 
 .security-tips {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
   border: none;
 }
@@ -479,8 +479,8 @@ input[type="password"] {
 
 input:focus {
   outline: none;
-  border-color: #3b6fd4;
-  box-shadow: 0 0 0 3px rgba(59,111,212,0.1);
+  border-color: #1B5E20;
+  box-shadow: 0 0 0 3px rgba(27, 94, 32,0.1);
   background: white;
 }
 
@@ -500,7 +500,7 @@ input.is-invalid { border-color: #c0392b; }
   gap: 8px;
   width: 100%;
   padding: 11px;
-  background: #3b6fd4;
+  background: #1B5E20;
   color: white;
   border: none;
   border-radius: 8px;
@@ -512,9 +512,9 @@ input.is-invalid { border-color: #c0392b; }
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #2f5bb8;
+  background: #0A3D10;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(59,111,212,0.25);
+  box-shadow: 0 4px 10px rgba(27, 94, 32,0.25);
 }
 
 .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }

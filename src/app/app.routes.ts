@@ -43,6 +43,7 @@ export const routes: Routes = [
   {
     path: 'regis',
     component: RegisterComponent,
+    data: { showHeader: false } 
   },
 
   // {
@@ -53,6 +54,7 @@ export const routes: Routes = [
   {
     path: 'Dash',
     component: DashboardComponent,
+    data: { showHeader: true } 
   },
   {
     path: 'About',
@@ -66,6 +68,7 @@ export const routes: Routes = [
   {
     path: 'Doc',
     component: DoctorComponent,
+    data: { showHeader: false } 
   },
   {
     path: 'Serv',
@@ -116,12 +119,14 @@ export const routes: Routes = [
   {
     path: 'connex',
     component: ConnexionComponent,
+    data: { showHeader: false } 
   },
   
   {
     path: 'conseil',
     component:ConseilComponent,
   },
+
   {
     path: 'UserDah',
     component: UserDashboardComponent,
@@ -132,11 +137,13 @@ export const routes: Routes = [
   {
     path: 'DocRegist',
     component: DocRegisterComponent,
+    data: { showHeader: false } 
   },
 
   {
     path: 'DocLogin',
     component: DocLoginComponent,
+    data: { showHeader: false } 
   },
   {
     path: 'Publications',

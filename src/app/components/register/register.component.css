@@ -6,13 +6,13 @@
 }
 
 :root {
-  --primary: #0066cc;
-  --primary-light: #4d94ff;
-  --primary-dark: #004c99;
-  --secondary: #00aaff;
+  --primary: #1B5E20;
+  --primary-light: #1B5E20;
+  --primary-dark: #0A3D10;
+  --secondary: #43A047;
   --text-dark: #333333;
   --text-muted: #666666;
-  --background: #f5f9ff;
+  --background: #F1F8E9;
   --white: #ffffff;
   --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   --radius: 12px;
@@ -33,14 +33,14 @@ body {
   justify-content: flex-start;
   padding: 2rem 4rem;
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1B5E20 0%, #1B5E20 100%);
   clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
   z-index: 1;
 }
 
 .logo {
-  margin-top: 3rem;
-  margin-bottom: 6rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
 }
@@ -50,6 +50,7 @@ body {
 }
 
 .welcome-text h1 {
+  color:#ffffff;
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -93,6 +94,7 @@ body {
 }
 
 .benefit-text h3 {
+  color:#ffffff;
   font-size: 1.1rem;
   margin-bottom: 0.3rem;
 }
@@ -178,7 +180,7 @@ select.input-field {
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
   background-color: var(--white);
 }
 
@@ -256,7 +258,7 @@ select.input-field {
 .register-button {
   width: 100%;
   padding: 0.9rem;
-  background-color: var(--primary);
+  background-color:#1B5E20;
   color: white;
   border: none;
   border-radius: 8px;
@@ -274,7 +276,7 @@ select.input-field {
 .register-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
 }
 
 .register-button:active {
@@ -282,7 +284,7 @@ select.input-field {
 }
 
 .register-button:disabled {
-  background-color: #cccccc;
+  background-color:#1B5E20;
   cursor: not-allowed;
   transform: none;
 }
@@ -399,6 +401,6 @@ select.input-field {
 
 .alert-success {
   background-color: #f0fff4;
-  color: #27ae60;
-  border-color: #27ae60;
+  color: #1B5E20;
+  border-color: #1B5E20;
 }

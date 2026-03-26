@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   }
   
   .auth-card {
@@ -59,7 +59,7 @@
   }
   
   .zoom-btn {
-    background: #2d8cff;
+    background: #1B5E20;
     border: none;
     padding: 0.75rem 2rem;
     font-size: 1rem;
@@ -67,9 +67,9 @@
   }
   
   .zoom-btn:hover {
-    background: #1a75ff;
+    background: #0A3D10;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(45, 140, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
   }
   
   .zoom-btn i {

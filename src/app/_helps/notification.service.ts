@@ -1,198 +1,459 @@
-// notification.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Message } from '../models/Message';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+import { Appoitement } from '../models/appoitement';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  success(arg0: string) {
-    throw new Error('Method not implemented.');
+
+  private stompClient: Client | null = null;
+  private readonly STORAGE_PREFIX = 'medico.notifications.v1.';
+  private readonly STORAGE_LIMIT = 100;
+
+  constructor() {
+    this.restoreNotificationsFromStorage();
   }
+
+  // ── Flux messages bruts WebSocket (string[]) ─────────────────
+  private messageSubject = new BehaviorSubject<string[]>([]);
+  public messages$ = this.messageSubject.asObservable();
+
+
+  private notiSubject = new BehaviorSubject<number>(0);
+  public notis$ = this.notiSubject.asObservable();
+
+ 
   private notificationsSubject = new BehaviorSubject<Message[]>([]);
   public notifications$ = this.notificationsSubject.asObservable();
+
 
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
 
-  constructor() {
-    this.loadNotificationsFromStorage();
-  }
-  
 
-  // Charger les notifications depuis le localStorage
-  private loadNotificationsFromStorage(): void {
-    const stored = localStorage.getItem('userNotifications');
-    if (stored) {
-      const notifications = JSON.parse(stored);
-      this.notificationsSubject.next(notifications);
-      this.updateUnreadCount();
+
+  connect() {
+    if (this.stompClient?.active || this.stompClient?.connected) {
+      return;
+    }
+
+    // Restaurer les notifications persistées (utile après login sans refresh)
+    this.restoreNotificationsFromStorage();
+
+    const socket = new SockJS('http://localhost:8080/medico/ws');
+    const token =
+      localStorage.getItem('token') ||
+      localStorage.getItem('jwtToken') ||
+      localStorage.getItem('authToken');
+
+    this.stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      debug: (str) => console.log(str),
+  
+      //  AJOUT IMPORTANT
+      connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    this.stompClient.onConnect = (frame) => {
+      console.log('Connected: ' + frame);
+
+      // Messages publics
+      this.stompClient?.subscribe('/topic/messages', (message) => {
+        const parsedMessage = JSON.parse(message.body).messageContent;
+        this.addMessage(parsedMessage);
+      });
+
+      // Messages privés
+      this.stompClient?.subscribe('/user/topic/private-messages', (message) => {
+        const parsedMessage = JSON.parse(message.body).messageContent;
+        this.addMessage(parsedMessage);
+      });
+
+      // Notifications privées
+      this.stompClient?.subscribe('/user/topic/private-noti', (message) => {
+        this.handleNotiMessage(message);
+      });
+
+      // Notifications publiques
+      this.stompClient?.subscribe('/topic/public-noti', (message) => {
+        this.handleNotiMessage(message);
+      });
+
+      //  AJOUT — Notifications structurées par utilisateur
+      this.stompClient?.subscribe('/user/topic/appointment-notifications', (message) => {
+        try {
+          const payload = JSON.parse(message.body);
+          const notification = this.normalizeAppointmentNotification(payload);
+          this.addStructuredNotification(notification);
+        } catch (e) {
+          console.error('Erreur parsing notification appointment:', e, message.body);
+        }
+      });
+
+      // Fallback: certains backends publient sur /topic/notifications/{userId}
+      const storedUserId = localStorage.getItem('user_id');
+      if (storedUserId) {
+        this.stompClient?.subscribe(`/topic/notifications/${storedUserId}`, (message) => {
+          try {
+            const payload = JSON.parse(message.body);
+            const notification = this.normalizeAppointmentNotification(payload);
+            this.addStructuredNotification(notification);
+          } catch (e) {
+            console.error('Erreur parsing notification topic userId:', e, message.body);
+          }
+        });
+      }
+
+      // Fallback: topic public
+      this.stompClient?.subscribe('/topic/appointment-notifications', (message) => {
+        try {
+          const payload = JSON.parse(message.body);
+          // Évite d'afficher des notifications d'autres utilisateurs si le topic est broadcast
+          if (storedUserId) {
+            const payloadUserId = payload?.userId;
+            if (payloadUserId == null) return;
+            if (String(payloadUserId) !== storedUserId) return;
+          }
+          const notification = this.normalizeAppointmentNotification(payload);
+          this.addStructuredNotification(notification);
+        } catch (e) {
+          console.error('Erreur parsing notification topic public:', e, message.body);
+        }
+      });
+    };
+
+    this.stompClient.onStompError = (frame) => {
+      console.error('Broker reported error: ' + frame.headers['message']);
+      console.error('Additional details: ' + frame.body);
+    };
+
+    this.stompClient.activate();
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  ENVOI DE MESSAGES
+  // ════════════════════════════════════════════════════════════
+  disconnect(): void {
+    if (!this.stompClient) return;
+    this.stompClient.deactivate();
+    this.stompClient = null;
+  }
+
+  sendMessage(message: string) {
+    if (this.stompClient?.connected) {
+      this.stompClient?.publish({
+        destination: '/app/message',
+        body: JSON.stringify({ messageContent: message })
+      });
     }
   }
 
-  // Sauvegarder dans le localStorage
-  private saveToStorage(): void {
-    localStorage.setItem('userNotifications', JSON.stringify(this.notificationsSubject.value));
-  }
-
-  // Ajouter une notification
-  addNotification( notification: Omit<Message, 'id' | 'date' | 'read'> & { userId?: number; }): void {
-    const newNotification: Message = {
-      ...notification,
-      id: Date.now(),
-      date: new Date().toLocaleString('fr-FR'),
-      read: false
-    };
-
-    const currentNotifications = this.notificationsSubject.value;
-    this.notificationsSubject.next([newNotification, ...currentNotifications]);
-    this.updateUnreadCount();
-    this.saveToStorage();
-
-    console.log(`📨 Notification créée:`, {
-      id: newNotification.id,
-      userId: newNotification.userId,
-      subject: newNotification.subject
-    });
-  }
-  addUserNotification(userId: number, notificationData: Omit<Message, 'id' | 'date' | 'read' | 'userId'>): void {
-    this.addNotification({
-      ...notificationData,
-      userId: userId // Ici on passe le userId correct
-    });
-    console.log(`📤 Notification envoyée à userId: ${userId}`);
+  sendPrivateMessage(message: string) {
+    if (this.stompClient?.connected) {
+      this.stompClient?.publish({
+        destination: '/app/private-message',
+        body: JSON.stringify({ messageContent: message })
+      });
+    }
   }
 
 
-  // Créer une notification de rendez-vous validé
-  notifyUserAppointmentValidated(userId: number, appointment: any): void {
-    this.addUserNotification(userId, {
-      type: 'success',
-      sender: 'Medico',
-      subject: ' Rendez-vous validé',
-      content: `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été validé avec succès !`,
-      appointmentId: appointment.id
-    });
-  }
-
-  // Créer une notification de rendez-vous rejeté
-  notifyUserAppointmentRejected(userId: number, appointment: any): void {
-    this.addUserNotification(userId, {
-      type: 'alert',
-      sender: 'Medico',
-      subject: '❌ Rendez-vous rejeté',
-      content: `Votre rendez-vous du ${appointment.preferredDate} a été rejeté. Veuillez nous contacter pour plus d'informations.`,
-      appointmentId: appointment.id,
-   
-    });
-  }
-
-  // Créer une notification de rendez-vous débuté
-  notifyUserAppointmentStarted(userId: number, appointment: any): void {
-    this.addUserNotification(userId, {
-      type: 'info',
-      sender: 'Medico',
-      subject: '🏥 Rendez-vous en cours',
-      content: `Votre rendez-vous du ${appointment.preferredDate} a débuté.`,
-      appointmentId: appointment.id,
-      
-    });
-  }
-
-  // Marquer comme lu 
-  markAsRead(notificationId: number): void {
-    const notifications = this.notificationsSubject.value.map(n =>
-      n.id === notificationId ? { ...n, read: true } : n
-    );
-    this.notificationsSubject.next(notifications);
-    this.updateUnreadCount();
-    this.saveToStorage();
-  }
-  /**
-  Marquer tout comme lu
-  */
-  markAllAsRead(): void {
-    const notifications = this.notificationsSubject.value.map(n => ({ ...n, read: true }));
-    this.notificationsSubject.next(notifications);
-    this.updateUnreadCount();
-    this.saveToStorage();
-  }
-
-  /**
- * Marquer comme lu toutes les notifications d'un utilisateur
- */
-markAllAsReadForUser(userId: number): void {
-  const notifications = this.notificationsSubject.value.map(n =>
-    n.userId === userId ? { ...n, read: true } : n
-  );
-  this.notificationsSubject.next(notifications);
-  this.updateUnreadCount();
-  this.saveToStorage();
-  console.log(` Toutes les notifications de l'utilisateur ${userId} marquées comme lues`);
-}
-
-  // Supprimer une notification
-  deleteNotification(notificationId: number): void {
-    const notifications = this.notificationsSubject.value.filter(n => n.id !== notificationId);
-    this.notificationsSubject.next(notifications);
-    this.updateUnreadCount();
-    this.saveToStorage();
-  }
-
-  // Supprimer toutes les notifications
-  clearAllNotifications(): void {
-    this.notificationsSubject.next([]);
-    this.updateUnreadCount();
-    this.saveToStorage();
-  }
-
-  // Mettre à jour le compteur de non lus
-  private updateUnreadCount(): void {
-    const unreadCount = this.notificationsSubject.value.filter(n => !n.read).length;
-    this.unreadCountSubject.next(unreadCount);
-  }
-
-  // Obtenir toutes les notifications
-  getNotifications(): Message[] {
-    return this.notificationsSubject.value;
-  }
-
-  // Obtenir le nombre de notifications non lues
-  getUnreadCount(): number {
-    return this.unreadCountSubject.value;
-  }
-
-  // Afficher une notification toast (méthode existante)
-  showNotification(message: string, type: string): void {
-    // Votre implémentation existante
-    console.log(`[${type}] ${message}`);
-  }
-  resetUnreadCount(): void {
-    // Logique pour réinitialiser côté serveur/back-end si nécessaire
-    this.unreadCountSubject.next(0); // Émettre 0
-}
-
-
-  
-  /**
-  Afficher une notification a un user specifique
-  */
+  //  Récupérer les notifications d'un utilisateur
   getUserNotifications$(userId: number): Observable<Message[]> {
+    const requestedUserId = Number(userId);
     return this.notifications$.pipe(
-      map(notifications => 
-        notifications.filter(n => n.userId === userId)
+      map((notifications) =>
+        notifications.filter((n: any) => {
+          const rawUserId = n?.userId;
+          const notifUserId =
+            typeof rawUserId === 'number' ? rawUserId : Number(rawUserId);
+
+          // Inclure les notifications globales (userId absent/0/NaN),
+          // ou celles qui matchent l'utilisateur connecté.
+          return !notifUserId || notifUserId === requestedUserId;
+        })
       )
     );
   }
-  /**
-  Notification non lu 
-   */
-  getUserUnreadCount$(userId: number): number {
-    return this.notificationsSubject.value.filter(
-      n => n.userId === userId && !n.read
-    ).length;
+  //  utilisé dans appointment.component.ts
+  showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+    const notification: Message = {
+      id: Date.now(),
+      type,
+      sender: 'Système',
+      subject: type === 'success' ? 'Succès' : type === 'error' ? 'Erreur' : 'Info',
+      content: message,
+      date: new Date().toLocaleDateString('fr-FR'),
+      read: false,
+      appointmentId: 0,
+      userId: 0
+    };
+    this.addStructuredNotification(notification);
   }
-  
 
+  //  utilisé dans header.component.ts
+  success(message: string): void {
+    this.showNotification(message, 'success');
+  }
+
+  //  utilisé dans header.component.ts
+  clearAllNotifications(): void {
+    this.notificationsSubject.next([]);
+    this.unreadCountSubject.next(0);
+    this.notiSubject.next(0);
+    this.clearNotificationsStorage();
+  }
+
+  //  Marquer une notification comme lue
+  markAsRead(notificationId: number): void {
+    const current = this.notificationsSubject.value;
+    const updated = current.map(n =>
+      n.id === notificationId ? { ...n, read: true } : n
+    );
+    this.notificationsSubject.next(updated);
+    this.recalculerNonLus();
+    this.persistNotificationsToStorage();
+  }
+
+  //  Marquer toutes les notifications d'un utilisateur comme lues
+  markAllAsReadForUser(userId: number): void {
+    const current = this.notificationsSubject.value;
+    const updated = current.map(n =>
+      (n.userId === userId || !n.userId) ? { ...n, read: true } : n
+    );
+    this.notificationsSubject.next(updated);
+    this.recalculerNonLus();
+    this.persistNotificationsToStorage();
+  }
+
+  //  Supprimer une notification
+  deleteNotification(notificationId: number): void {
+    const current = this.notificationsSubject.value;
+    const updated = current.filter(n => n.id !== notificationId);
+    this.notificationsSubject.next(updated);
+    this.recalculerNonLus();
+    this.persistNotificationsToStorage();
+  }
+
+  //  Reset du compteur (comme AppComponent)
+  resetNotis(): void {
+    this.notiSubject.next(0);
+    this.unreadCountSubject.next(0);
+  }
+
+  //  Notifier validation d'un rendez-vous
+  notifyUserAppointmentValidated(userId: number, appointment: Appoitement): void {
+    const notification: Message = {
+      id: Date.now(),
+      userId,
+      type: 'success',
+      sender: 'Médecin',
+      subject: 'Rendez-vous validé',
+      content: `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été validé.`,
+      date: new Date().toLocaleDateString('fr-FR'),
+      read: false,
+      appointmentId: appointment.id,
+    };
+    this.addStructuredNotification(notification);
+  }
+
+  //  Notifier rejet d'un rendez-vous
+  notifyUserAppointmentRejected(userId: number, appointment: Appoitement): void {
+    const notification: Message = {
+      id: Date.now(),
+      userId,
+      type: 'error',
+      sender: 'Médecin',
+      subject: 'Rendez-vous rejeté',
+      content: `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été rejeté.`,
+      date: new Date().toLocaleDateString('fr-FR'),
+      read: false,
+      appointmentId: appointment.id,
+    };
+    this.addStructuredNotification(notification);
+  }
+
+  //  Notifier démarrage d'un rendez-vous
+  notifyUserAppointmentStarted(userId: number, appointment: Appoitement): void {
+    const notification: Message = {
+      id: Date.now(),
+      userId,
+      type: 'info',
+      sender: 'Médecin',
+      subject: 'Rendez-vous démarré',
+      content: `Votre rendez-vous a débuté. Rejoignez la consultation maintenant.`,
+      date: new Date().toLocaleDateString('fr-FR'),
+      read: false,
+      appointmentId: appointment.id,
+    };
+    this.addStructuredNotification(notification);
+  }
+
+
+  private addMessage(message: string) {
+    const currentMessages = this.messageSubject.value;
+    console.log('MESSAGE ADDED : ' + message);
+    this.messageSubject.next([...currentMessages, message]);
+  }
+
+  private addNoti() {
+    const currentCount = this.notiSubject.value;
+    console.log('NOTIFICATION COUNT INCREMENTED : ' + (currentCount + 1));
+    this.notiSubject.next(currentCount + 1);
+  }
+
+  private addStructuredNotification(notification: Message): void {
+    const current = this.notificationsSubject.value;
+    const alreadyExists = current.some((n) => {
+      if (n.id === notification.id) return true;
+      return (
+        n.appointmentId === notification.appointmentId &&
+        n.userId === notification.userId &&
+        n.subject === notification.subject &&
+        n.content === notification.content &&
+        n.date === notification.date
+      );
+    });
+
+    if (alreadyExists) return;
+
+    this.notificationsSubject.next([notification, ...current]);
+    this.recalculerNonLus();
+    this.addNoti();
+    this.persistNotificationsToStorage();
+  }
+
+  private recalculerNonLus(): void {
+    const nonLus = this.notificationsSubject.value.filter(n => !n.read).length;
+    this.unreadCountSubject.next(nonLus);
+  }
+
+  private normalizeAppointmentNotification(payload: any): Message {
+    const nowId = Date.now();
+    const inferredType =
+      payload?.type ||
+      (payload?.status === 'validated'
+        ? 'success'
+        : payload?.status === 'rejected'
+          ? 'error'
+          : payload?.status === 'started'
+            ? 'info'
+            : 'info');
+
+    const inferredDate =
+      payload?.date ||
+      (payload?.timestamp
+        ? new Date(payload.timestamp).toLocaleDateString('fr-FR')
+        : new Date().toLocaleDateString('fr-FR'));
+
+    const rawUserId = payload?.userId;
+    const userId =
+      typeof rawUserId === 'number' ? rawUserId : Number(rawUserId) || 0;
+
+    return {
+      id: typeof payload?.id === 'number' ? payload.id : nowId,
+      userId,
+      type: inferredType,
+      sender: payload?.sender || 'Système',
+      subject:
+        payload?.subject ||
+        (payload?.status === 'validated'
+          ? 'Rendez-vous validé'
+          : payload?.status === 'rejected'
+            ? 'Rendez-vous rejeté'
+            : payload?.status === 'started'
+              ? 'Rendez-vous démarré'
+              : 'Notification'),
+      content:
+        payload?.content || payload?.message || payload?.messageContent || '',
+      date: inferredDate,
+      read: typeof payload?.read === 'boolean' ? payload.read : false,
+      appointmentId:
+        typeof payload?.appointmentId === 'number'
+          ? payload.appointmentId
+          : Number(payload?.appointmentId) || 0,
+    } as Message;
+  }
+
+  private handleNotiMessage(message: any): void {
+    const body = message?.body;
+    if (!body) {
+      this.addNoti();
+      return;
+    }
+
+    try {
+      const payload = JSON.parse(body);
+      const hasUsefulData =
+        payload?.content ||
+        payload?.message ||
+        payload?.messageContent ||
+        payload?.subject ||
+        payload?.status ||
+        payload?.type;
+
+      if (!hasUsefulData) {
+        this.addNoti();
+        return;
+      }
+
+      const notification = this.normalizeAppointmentNotification(payload);
+      this.addStructuredNotification(notification);
+    } catch {
+      const text = String(body).trim();
+      if (!text) {
+        this.addNoti();
+        return;
+      }
+
+      const notification = this.normalizeAppointmentNotification({ message: text });
+      this.addStructuredNotification(notification);
+    }
+  }
+
+  private getNotificationsStorageKey(): string {
+    const userId = localStorage.getItem('user_id') || 'anonymous';
+    return `${this.STORAGE_PREFIX}${userId}`;
+  }
+
+  private restoreNotificationsFromStorage(): void {
+    try {
+      const raw = localStorage.getItem(this.getNotificationsStorageKey());
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+
+      const restored = parsed
+        .filter((n: any) => n && typeof n === 'object')
+        .slice(0, this.STORAGE_LIMIT) as Message[];
+
+      if (restored.length === 0) return;
+
+      this.notificationsSubject.next(restored);
+      this.recalculerNonLus();
+    } catch (e) {
+      console.warn('Impossible de restaurer les notifications:', e);
+    }
+  }
+
+  private persistNotificationsToStorage(): void {
+    try {
+      const toStore = this.notificationsSubject.value.slice(0, this.STORAGE_LIMIT);
+      localStorage.setItem(this.getNotificationsStorageKey(), JSON.stringify(toStore));
+    } catch (e) {
+      console.warn('Impossible de persister les notifications:', e);
+    }
+  }
+
+  private clearNotificationsStorage(): void {
+    try {
+      localStorage.removeItem(this.getNotificationsStorageKey());
+    } catch {}
+  }
 }
