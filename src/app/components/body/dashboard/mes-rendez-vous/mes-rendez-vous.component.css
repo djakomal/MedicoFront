@@ -8,19 +8,27 @@ body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 20px 10px;
+}
 
+:host {
+  display: block;
+  width: 100%;
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
   width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .header-section {
   text-align: center;
   margin-bottom: 40px;
+  background: #1B5E20;
+  border-radius: 16px;
+  padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-section h1 {
@@ -36,6 +44,7 @@ body {
   font-size: 18px;
 }
 
+/* ── Stats ── */
 .stats-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -70,11 +79,13 @@ body {
   color: #2E7D32;
 }
 
+/* ── Card ── */
 .card {
   background: white;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+  width: 100%;
 }
 
 .card-header {
@@ -107,15 +118,19 @@ body {
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+/* ── Tableau ── */
 .table-container {
   overflow-x: auto;
   padding: 0;
+  width: 100%;
 }
 
 table {
   width: 100%;
+  min-width: 1800px;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
 }
 
 thead {
@@ -136,6 +151,20 @@ th {
   border-bottom: 3px solid #2E7D32;
 }
 
+/* Largeurs des colonnes */
+th:nth-child(1)  { width: 70px; }   /* ID */
+th:nth-child(2)  { width: 200px; }  /* Nom Prénom */
+th:nth-child(3)  { width: 130px; }  /* Date */
+th:nth-child(4)  { width: 150px; }  /* Type */
+th:nth-child(5)  { width: 220px; }  /* Symptômes */
+th:nth-child(6)  { width: 140px; }  /* Premier RDV */
+th:nth-child(7)  { width: 100px; }  /* Heure */
+th:nth-child(8)  { width: 150px; }  /* Allergie */
+th:nth-child(9)  { width: 180px; }  /* Médicament */
+th:nth-child(10) { width: 200px; }  /* Info supp */
+th:nth-child(11) { width: 130px; }  /* Status */
+th:nth-child(12) { width: 330px; }  /* Actions */
+
 tbody tr {
   border-bottom: 1px solid #e9ecef;
   transition: all 0.2s ease;
@@ -152,8 +181,12 @@ td {
   font-size: 14px;
   color: #333;
   vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* ── Cellules spécifiques ── */
 .id-cell {
   font-weight: 700;
   color: #2E7D32;
@@ -166,11 +199,13 @@ td {
   gap: 10px;
   font-weight: 600;
   color: #2c3e50;
+  overflow: hidden;
 }
 
 .name-avatar {
   width: 40px;
   height: 40px;
+  min-width: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, #2E7D32, #1B5E20);
   color: white;
@@ -178,7 +213,6 @@ td {
   align-items: center;
   justify-content: center;
   font-weight: 700;
- padding-: 10%;
   font-size: 16px;
 }
 
@@ -198,16 +232,19 @@ td {
 
 .type-badge {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
   color: #1B5E20;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .description-cell {
-  max-width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -215,14 +252,16 @@ td {
   font-size: 13px;
 }
 
+/* ── Statuts ── */
 .status-badge {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 25px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .status-pending {
@@ -245,29 +284,31 @@ td {
   color: #1B5E20;
 }
 
+/* ── Boutons d'action ── */
 .action-buttons {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .btn {
-  padding: 10px 18px;
+  padding: 8px 14px;
   border: none;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -290,6 +331,7 @@ td {
   color: white;
 }
 
+/* ── État vide ── */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -315,6 +357,7 @@ td {
   font-size: 16px;
 }
 
+/* ── Animations ── */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -326,6 +369,7 @@ td {
   }
 }
 
+/* ── Responsive ── */
 @media (max-width: 1400px) {
   .action-buttons {
     flex-direction: column;

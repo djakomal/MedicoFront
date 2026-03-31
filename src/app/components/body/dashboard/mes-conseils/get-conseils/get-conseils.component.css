@@ -63,7 +63,7 @@ body {
 }
 
 .stat-card {
-  background: white;
+  background: #1B5E20;
   border-radius: 16px;
   padding: 25px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -76,7 +76,8 @@ body {
 }
 
 .stat-card h3 {
-  color: #666;
+  font-weight: 700;
+  color: #ffffff;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -86,7 +87,7 @@ body {
 .stat-card .number {
   font-size: 36px;
   font-weight: 700;
-  color: #2E7D32;
+  color: #ffffff;
 }
 
 .card {

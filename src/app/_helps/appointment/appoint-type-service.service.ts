@@ -28,8 +28,6 @@ export class AppointTypeServiceService {
    
   public addAppoitement(appoitement: AppoitementType ): Observable<AppoitementType> {
     const token = this.jwtService.getToken();
-    
-  
     if (!token) {
       console.error("Token is missing");
       throw new Error("Token is required");
@@ -39,7 +37,6 @@ export class AppointTypeServiceService {
       appoitement.type = "GENERAL"; // Remplace par une valeur valide de ton Enum
     }
     
-
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.post<AppoitementType>(this.matiereUrl, appoitement, { headers :this.getHeaders() })

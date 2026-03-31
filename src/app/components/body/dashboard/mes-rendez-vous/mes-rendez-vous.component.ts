@@ -7,6 +7,7 @@ import { NotificationService } from '../../../../_helps/notification.service';
 import { Appoitement } from '../../../../models/appoitement';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Message } from '../../../../models/Message';
+import { JwtService } from '../../../../_helps/jwt/jwt.service';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class MesRendezVousComponent  implements OnInit {
   
   constructor( private router :Router,
       private appointementService:AppointementService,
-      private notificationService: NotificationService
+      private notificationService: NotificationService,
+      private jwtService: JwtService 
     ){
   
     }
@@ -34,30 +36,37 @@ export class MesRendezVousComponent  implements OnInit {
     this.getAppointment();
    }
    getAppointment() {
+    const doctorId = this.jwtService.getDoctorId();
+    if (!doctorId) {
+    console.error(' ID docteur introuvable dans le token');
+    return;
+  }
+
     this.appointementService.getAllAppointment().subscribe({
       next: (data) => {
-        console.log("📌 Données reçues :", data);
+        console.log(" Données reçues :", data);
+        console.log("Id docteur depuis le token :", doctorId);
         
         if (Array.isArray(data)) {
           this.tableauClasse = data;
           
-          // 🔍 Afficher le premier rendez-vous pour voir les champs
+          //  Afficher le premier rendez-vous pour voir les champs
           if (data.length > 0) {
-            console.log('🔍 Tous les champs du premier rendez-vous:', Object.keys(data[0]));
-            console.log('🔍 Contenu complet:', data[0]);
+            console.log('Tous les champs du premier rendez-vous:', Object.keys(data[0]));
+            console.log('Contenu complet:', data[0]);
             
             // Vérifier spécifiquement patientId
             if (data[0].patient?.id !== undefined) {
-              console.log('✅ patientId existe:', data[0].patient?.id);
+              console.log('patientId existe:', data[0].patient?.id);
             } else {
-              console.log('❌ patientId est manquant');
-              console.log('💡 Champs disponibles:', Object.keys(data[0]).join(', '));
+              console.log('patientId est manquant');
+              console.log('Champs disponibles:', Object.keys(data[0]).join(', '));
             }
           }
         }
       },
       error: (error) => {
-        console.error("❌ Erreur API :", error);
+        console.error(" Erreur API :", error);
       }
     });
   }

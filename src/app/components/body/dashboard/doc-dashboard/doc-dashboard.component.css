@@ -334,8 +334,11 @@ body {
 /* Main content moderne */
 .main-content {
   flex: 1;
-  padding: 32px;
+  padding: 16px;        /* ← réduit de 32px à 16px */
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;         /* ← empêche le flex de dépasser */
+  width: 100%;
 }
 
 .header {

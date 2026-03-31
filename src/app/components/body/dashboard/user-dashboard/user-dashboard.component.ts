@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { JwtService } from '../../../../_helps/jwt/jwt.service';
 import { AppointComponent } from '../../appoint/appoint.component';
 import { CommonModule } from '@angular/common';
-import { ConseilComponent } from '../../conseil/conseil.component';
+import { ConseilComponent } from '../doc-dashboard/conseil/conseil.component';
 import { Appoitement } from '../../../../models/appoitement';
 import { AppointementService } from '../../../../_helps/appointment/appointement.service';
 import { map, Subscription } from 'rxjs';

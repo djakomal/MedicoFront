@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
-import { HeaderComponent } from '../../header/header.component';
-import { FooterComponent } from '../../footer/footer.component';
-import { Conseil } from '../../../models/Conseil';
-import { ConseilService } from '../../../_helps/Docteur/Conseil/Conseil.service';
+import { HeaderComponent } from '../../../../header/header.component';
+import { FooterComponent } from '../../../../footer/footer.component';
+import { Conseil } from '../../../../../models/Conseil';
+import { ConseilService } from '../../../../../_helps/Docteur/Conseil/Conseil.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

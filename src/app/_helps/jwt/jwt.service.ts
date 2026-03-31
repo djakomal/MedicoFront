@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Docteur } from '../../models/docteur';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -101,7 +101,21 @@ export class JwtService {
     this.router.navigateByUrl('/connex');
   }
 
+
+
+  getDocteurImage(id: number): Observable<string> {
+    const token = this.getToken();
+    const headers = token
+      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
+      : new HttpHeaders();
   
+    return this.http.get(`${this.baseURL}/signup/docteur/image/${id}`, {
+      headers,
+      responseType: 'blob'   // ← blob au lieu de text
+    }).pipe(
+      map((blob: Blob) => URL.createObjectURL(blob))  // ← convertit en URL affichable
+    );
+  }
   login(credentials: { username: string; password: string }): Observable<any> {
     const loginData = {
       username: credentials.username.trim().toLowerCase(),
@@ -175,6 +189,8 @@ activateAccount(payload: { code: string }): Observable<any> {
   );
 }
 
+
+
   // 🔹 RÉCUPÉRER LE TOKEN
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey) || 
@@ -243,15 +259,11 @@ activateAccount(payload: { code: string }): Observable<any> {
   isDoctor(): boolean {
     return this.getUserRole() === 'DOCTOR';
   }
-  getDoctorId():number |null {  
+  getDoctorId(): number | null {
     const decodedToken = this.getDecodedToken();
-    
-    if (!decodedToken) {
-      return null;
-    }
+    if (!decodedToken) return null;
 
-    return decodedToken.doctorId ||
-           null;
+    return decodedToken.userId || null;
   }
   isUser(): boolean {
     return this.getUserRole() === 'USER';

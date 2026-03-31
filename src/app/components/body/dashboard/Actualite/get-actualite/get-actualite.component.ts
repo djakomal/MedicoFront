@@ -81,7 +81,7 @@ export class GetActualiteComponent {
   }
 
   updateconseils(id: number): void {
-    this.router.navigate(['/dashboard/mes-conseils/modifier', id]);
+    this.router.navigate(['/DocDash/updatepub/', id]);
   }
 
   viewConseil(id: number): void {

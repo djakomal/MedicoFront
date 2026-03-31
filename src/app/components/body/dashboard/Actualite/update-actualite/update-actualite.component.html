@@ -1,1 +1,138 @@
-<p>update-actualite works!</p>
+<header class="main_header">
+    <div class="header_content">
+      <h2>✏️ Modifier une actualité</h2>
+    </div>
+  </header>
+  
+  <div class="form-container">
+  
+    <div class="form-title-row">
+      <h2>Modifier l'actualité</h2>
+      <button class="btn-back" type="button" (click)="onCancel()">← Retour</button>
+    </div>
+    <p class="form-subtitle">Modifiez le contenu de votre actualité médicale</p>
+  
+    <!-- Chargement initial -->
+    <div *ngIf="loadingData" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement de la publication…</p>
+    </div>
+  
+    <ng-container *ngIf="!loadingData">
+  
+      <!-- Alertes -->
+      <div *ngIf="success" class="alert alert-success">
+        ✅ {{ success }}
+        <button class="alert-close" (click)="success = ''">×</button>
+      </div>
+      <div *ngIf="error" class="alert alert-error">
+        ⚠️ {{ error }}
+        <button class="alert-close" (click)="error = ''">×</button>
+      </div>
+  
+      <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">
+  
+        <!-- Titre -->
+        <div class="form-group">
+          <label for="titre">
+            Titre de l'actualité <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="titre"
+            formControlName="titre"
+            placeholder="Ex : Nouvelle avancée contre le paludisme"
+            [class.is-invalid]="submitted && f['titre'].errors"
+          />
+          <div class="invalid-feedback" *ngIf="submitted && f['titre'].errors">
+            <span *ngIf="f['titre'].errors['required']">Le titre est requis.</span>
+            <span *ngIf="f['titre'].errors['minlength']">Minimum 5 caractères.</span>
+          </div>
+        </div>
+  
+        <!-- Contenu -->
+        <div class="form-group">
+          <label for="contenu">
+            Contenu de l'actualité <span class="required">*</span>
+          </label>
+          <textarea
+            id="contenu"
+            formControlName="contenu"
+            rows="10"
+            placeholder="Rédigez le contenu détaillé (minimum 50 caractères)"
+            [class.is-invalid]="submitted && f['contenu'].errors"
+          ></textarea>
+          <div class="char-count"
+            [style.color]="(publicationForm.value.contenu?.length || 0) >= 50 ? '#28a745' : '#999'">
+            {{ publicationForm.value.contenu?.length || 0 }} / 50 caractères minimum
+          </div>
+          <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
+            <span *ngIf="f['contenu'].errors['required']">Le contenu est requis.</span>
+            <span *ngIf="f['contenu'].errors['minlength']">Minimum 50 caractères.</span>
+          </div>
+        </div>
+  
+        <!-- Image -->
+        <div class="form-group">
+          <label for="image">Image <span class="optional">(optionnel)</span></label>
+          <input
+            type="file"
+            id="image"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="file-input"
+          />
+          <small class="form-text">Formats acceptés : JPG, PNG, GIF (max 5 MB)</small>
+  
+          <!-- Aperçu image -->
+          <div class="image-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Aperçu" (error)="onImageError()" />
+            <button type="button" class="btn-remove-img" (click)="onImageError()">✕ Supprimer</button>
+          </div>
+        </div>
+  
+        <!-- Résumé -->
+        <div class="summary-section">
+          <h3>📋 Aperçu des modifications</h3>
+          <div class="summary-grid">
+  
+            <div class="summary-item">
+              <div class="summary-label">Titre</div>
+              <div class="summary-value">{{ publicationForm.value.titre || '—' }}</div>
+            </div>
+  
+            <div class="summary-item full-width">
+              <div class="summary-label">Contenu</div>
+              <div class="summary-value content-preview">
+                {{ (publicationForm.value.contenu | slice:0:150) || '—' }}
+                {{ publicationForm.value.contenu?.length > 150 ? '...' : '' }}
+              </div>
+            </div>
+  
+            <div class="summary-item full-width" *ngIf="imagePreview">
+              <div class="summary-label">Image</div>
+              <div class="summary-value">
+                <img [src]="imagePreview" alt="Aperçu" class="summary-image" (error)="onImageError()" />
+              </div>
+            </div>
+  
+          </div>
+        </div>
+  
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="onReset()">
+            🔄 Réinitialiser
+          </button>
+          <button type="button" class="btn btn-outline" (click)="onCancel()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <span *ngIf="!loading">💾 Enregistrer les modifications</span>
+            <span *ngIf="loading">⏳ Mise à jour en cours…</span>
+          </button>
+        </div>
+  
+      </form>
+    </ng-container>
+  </div>

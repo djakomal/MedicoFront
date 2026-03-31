@@ -401,7 +401,7 @@ body {
 .login-button {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary)100%);
     color: white;
     border: none;
     border-radius: 8px;

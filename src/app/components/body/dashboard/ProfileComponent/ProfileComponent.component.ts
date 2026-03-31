@@ -19,12 +19,12 @@ export class ProfileComponent implements OnInit {
   userName  = '';
   email     = '';
   role      = '';
-
   isEditingUsername = false;
   isSubmitting      = false;
-  isLoading         = false;  // ✅ ajouté
+  isLoading         = false; 
   successMessage    = '';
   errorMessage      = '';
+
 
   constructor(
     private jwtService: JwtService,
@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit {
     this.loadUserName();
     this.loadEmail();
     this.loadRole();
+    this.loadImage(); 
   }
 
   initForms(): void {
@@ -45,8 +46,6 @@ export class ProfileComponent implements OnInit {
       username: [this.userName, [Validators.required, Validators.minLength(3)]]
     });
     this.usernameForm.disable();
-
-    // ✅ Noms alignés avec le backend ET le HTML
     this.passwordForm = this.fb.group({
       ancienMotDePasse:  ['', [Validators.required]],
       nouveauMotDePasse: ['', [Validators.required, Validators.minLength(8)]],
@@ -60,7 +59,7 @@ export class ProfileComponent implements OnInit {
     return nouveau === confirm ? null : { mismatch: true };
   }
 
-  // ✅ Méthode unique pour changer le mot de passe via le backend
+  // Méthode unique pour changer le mot de passe via le backend
   onPasswordSubmit(): void {
     this.successMessage = '';
     this.errorMessage   = '';
@@ -69,7 +68,6 @@ export class ProfileComponent implements OnInit {
       this.passwordForm.markAllAsTouched();
       return;
     }
-
     this.isLoading = true;
 
     this.jwtService.changePasswordDocteur(this.passwordForm.value).subscribe({
@@ -82,6 +80,26 @@ export class ProfileComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error || 'Erreur lors de la modification.';
+      }
+    });
+  }
+
+
+  imageUrl: string = '';
+  loadImage(): void {
+    const id = this.jwtService.getDoctorId(); // ← getDoctorId() pas getDocteurId()
+    
+    if (!id) {
+      console.warn('ID docteur introuvable dans le token');
+      return;
+    }
+    
+    this.jwtService.getDocteurImage(id).subscribe({
+      next: (url) => {
+        this.imageUrl = url;
+      },
+      error: (err) => {
+        console.error('Erreur chargement image', err);
       }
     });
   }
@@ -137,6 +155,11 @@ export class ProfileComponent implements OnInit {
   loadEmail(): void {
     this.email = this.jwtService.getEmail() || '';
   }
+    
+
+ // recuperer l'image de profile du docteur
+
+
 
   loadRole(): void {
     this.role = this.jwtService.getUserRole() || '';

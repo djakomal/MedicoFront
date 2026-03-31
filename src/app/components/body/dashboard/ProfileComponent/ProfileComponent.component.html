@@ -12,7 +12,7 @@
     <!-- Sidebar -->
     <div class="profile-sidebar">
       <div class="user-card">
-        <div class="avatar-placeholder">{{ getInitials() }}</div>
+        <div *ngIf="!imageUrl" class="avatar-placeholder">{{ getInitials() }}</div>
         <div class="user-info">
           <h3>{{ userName }}</h3>
           <p class="user-role">{{ role }}</p>

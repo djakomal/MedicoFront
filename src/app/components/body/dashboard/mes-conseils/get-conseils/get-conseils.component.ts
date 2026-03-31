@@ -83,6 +83,6 @@ export class GetConseilsComponent {
           this.showNotification("Erreur lors de la mise à jour du conseil", 'error');
         }
       });
-      this.router.navigate(['/dashboard/updateconseils', id]);
+      this.router.navigate(['/DocDash/updateconseils', id]);
     }
 }

@@ -30,7 +30,7 @@ import { InfosPersonnellesComponent } from './components/body/dashboard/infos-pe
 import { MesHorairesComponent } from './components/body/dashboard/mes-horaires/mes-horaires.component';
 import { PublicationsComponent } from './components/body/dashboard/publications/publications.component';
 import { AssociationsComponent } from './components/body/dashboard/associations/associations.component';
-import { ConseilComponent } from './components/body/conseil/conseil.component';
+import { ConseilComponent } from './components/body/dashboard/doc-dashboard/conseil/conseil.component';
 import { DocdashboardComponent } from './components/body/dashboard/doc-dashboard/doc-dashboard.component';
 import { ProfileComponent } from './components/body/dashboard/ProfileComponent/ProfileComponent.component';
 import { GetConseilsComponent } from './components/body/dashboard/mes-conseils/get-conseils/get-conseils.component';
@@ -212,7 +212,7 @@ export const routes: Routes = [
         component: GetConseilsComponent,
       },
       {
-        path: 'updateconseils',
+        path: 'updateconseils/:id',
         component: UpdateConseilsComponent,
       },
       {
@@ -224,7 +224,7 @@ export const routes: Routes = [
         component:GetActualiteComponent
       },
       {
-        path:'updatepub',
+        path:'updatepub/:id',
         component:UpdateActualiteComponent
       }
 
