@@ -74,6 +74,7 @@ export class AppointementService {
     return this.http.delete<any>(
       `${this.matiereUrl}/delete/${id}`,
       { 
+        headers: this.getHeaders(),
         observe: 'response' //  Pour capturer toute la réponse HTTP
       }
     ).pipe(

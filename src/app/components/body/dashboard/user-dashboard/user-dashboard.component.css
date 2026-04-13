@@ -1579,6 +1579,18 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.message-item.selected {
+  opacity: 0.5;
+  background: #d0d0d0;
+  border-left-color: #999;
+  cursor: default;
+}
+
+.message-item.selected:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .message-icon-type {
   font-size: 24px;
   min-width: 32px;

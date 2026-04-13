@@ -69,7 +69,9 @@
 
     <div class="messages-list" *ngIf="appointmentNotifications.length > 0">
       <div *ngFor="let appointmentNotification of appointmentNotifications" class="message-item"
-        [class.unread]="!appointmentNotification.read" (click)="openMessage(appointmentNotification)">
+        [class.unread]="!appointmentNotification.read"
+        [class.selected]="selectedMessage?.id === appointmentNotification.id"
+        (click)="openMessage(appointmentNotification)">
 
         <div class="message-icon-type">{{ getMessageIcon(appointmentNotification.type) }}</div>
 

@@ -321,10 +321,12 @@ body {
   color: var(--danger);
 }
 
-.btn-delete:hover {
+.btn-delete:hover:not(:disabled) {
   background: var(--danger);
   color: white;
 }
+
+.btn-delete:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Vue par jour */
 .jours-grid {

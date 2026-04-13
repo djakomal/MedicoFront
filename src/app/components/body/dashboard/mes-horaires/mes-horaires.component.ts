@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Creneau } from '../../../../models/Creneau'; 
 import { CreneauService } from '../../../../_helps/Creneau/Creneau.service';
+import { JwtService } from '../../../../_helps/jwt/jwt.service';
 
 @Component({
   selector: 'app-mes-horaires',
@@ -30,9 +31,15 @@ export class MesHorairesComponent implements OnInit {
   
   constructor(private Router: Router,
     private FormBuilder: FormBuilder,
-    private creneauService: CreneauService) {}
+    private creneauService: CreneauService,
+    private jwtService: JwtService) {}
   
   ngOnInit(): void {
+    if (!this.jwtService.isDoctor()) {
+      alert('Accès refusé. Seuls les médecins peuvent gérer les horaires.');
+      this.Router.navigate(['/dashboard']);
+      return;
+    }
     this.creneauForm = this.FormBuilder.group({
       date: ['',[Validators.required]],
       heureDebut: ['',[Validators.required]],
@@ -178,7 +185,11 @@ export class MesHorairesComponent implements OnInit {
         },
         error: (error: any) => {
           console.error('Erreur lors de la suppression:', error);
-          alert('Erreur lors de la suppression du créneau');
+          if (error.status === 403) {
+            alert('Accès refusé. Vous n\'avez pas la permission de supprimer ce créneau.');
+          } else {
+            alert('Erreur lors de la suppression du créneau: ' + (error.error?.message || error.message));
+          }
         }
       });
     }

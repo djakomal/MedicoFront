@@ -241,7 +241,7 @@ textarea {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.creneau-card:hover {
+.creneau-card:hover:not(.creneau-passed) {
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-color: #4CAF50;
@@ -251,6 +251,21 @@ textarea {
   border-color: #4CAF50;
   background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.creneau-card.creneau-passed {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.creneau-card.creneau-passed .badge-disponible {
+  background-color: #999;
+}
+
+.creneau-card.creneau-passed .time-text {
+  color: #999;
 }
 
 /* Heure du créneau */
@@ -345,5 +360,59 @@ textarea {
   margin-top: 15px;
   border: 1px solid transparent;
   border-radius: 8px;
+  text-align: center;
+}
+
+.error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  padding: 15px;
+  margin-top: 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+
+/* Confirmation step styles */
+.confirmation-step {
+  background-color: #f8f9fa;
+  border: 2px solid #1B5E20;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.confirmation-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-section h4 {
+  color: #1B5E20;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.summary-section p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.confirmation-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
   text-align: center;
 }

@@ -88,7 +88,7 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-row">
           <label for="email" class="required">Email</label>
           <input type="email" id="email" formControlName="email" />
           <div
@@ -294,7 +294,8 @@
                     *ngFor="let creneau of groupe.creneaux"
                     class="creneau-card"
                     [class.selected]="isCreneauSelected(creneau.id)"
-                    (click)="selectCreneau(creneau)"
+                    [class.creneau-passed]="isCreneauPasse(creneau)"
+                    (click)="!isCreneauPasse(creneau) && selectCreneau(creneau)"
                   >
                     <div class="creneau-time">
                       <span class="time-icon">🕐</span>
@@ -373,7 +374,7 @@
             ></textarea>
           </div>
 
-          <div class="form-group">
+          <div class="form-row">
             <label>Est-ce votre première visite ?</label>
             <div class="radio-group">
               <input
@@ -428,7 +429,7 @@
             ></textarea>
           </div>
 
-          <div class="form-group">
+          <div class="form-row">
             <div class="checkbox-group">
               <input type="checkbox" id="consent" formControlName="consent" />
               <label for="consent" class="required"
@@ -463,7 +464,7 @@
             [disabled]="appointmentForm.invalid || isSubmitting"
           >
             <span *ngIf="isSubmitting">Envoi en cours...</span>
-            <span *ngIf="!isSubmitting">Envoyer la demande</span>
+            <span *ngIf="!isSubmitting">Vérifier et confirmer</span>
           </button>
         </div>
 
@@ -471,6 +472,70 @@
           Votre demande de rendez-vous a été envoyée avec succès. Nous vous contacterons bientôt pour confirmer.
         </div>
         
+        <div *ngIf="submitError" class="error-message">
+          {{ submitError }}
+        </div>
+      </div>
+
+      <!-- Étape 3 : Confirmation -->
+      <div *ngIf="currentStep === 3 && showConfirmation" class="form-step confirmation-step">
+        <h3 class="section-title">Étape 3 : Confirmation de votre rendez-vous</h3>
+
+        <div class="confirmation-summary">
+          <div class="summary-section">
+            <h4>Informations personnelles</h4>
+            <p><strong>Nom :</strong> {{ appointmentForm.get('lastname')?.value }} {{ appointmentForm.get('firstname')?.value }}</p>
+            <p><strong>Date de naissance :</strong> {{ appointmentForm.get('birthdate')?.value | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Email :</strong> {{ appointmentForm.get('email')?.value }}</p>
+            <p><strong>Téléphone :</strong> {{ appointmentForm.get('phone')?.value }}</p>
+          </div>
+
+          <div class="summary-section">
+            <h4>Détails du rendez-vous</h4>
+            <p><strong>Médecin :</strong> {{ getSelectedDoctorName() }}</p>
+            <p><strong>Date :</strong> {{ getSelectedCreneau()?.date | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Heure :</strong> {{ getSelectedCreneau()?.heureDebut }} - {{ getSelectedCreneau()?.heureFin }}</p>
+            <p><strong>Type :</strong> {{ appointmentForm.get('appointmentType')?.value }}</p>
+            <p><strong>Motif :</strong> {{ appointmentForm.get('reason')?.value }}</p>
+          </div>
+
+          <div class="summary-section">
+            <h4>Informations médicales</h4>
+            <p><strong>Première visite :</strong> {{ appointmentForm.get('firstVisit')?.value === 'yes' ? 'Oui' : 'Non' }}</p>
+            <p *ngIf="appointmentForm.get('allergies')?.value"><strong>Allergies :</strong> {{ appointmentForm.get('allergies')?.value }}</p>
+            <p *ngIf="appointmentForm.get('medications')?.value"><strong>Médicaments :</strong> {{ appointmentForm.get('medications')?.value }}</p>
+            <p *ngIf="appointmentForm.get('symptoms')?.value"><strong>Symptômes :</strong> {{ appointmentForm.get('symptoms')?.value }}</p>
+          </div>
+        </div>
+
+        <div class="confirmation-warning">
+          <p>⚠️ Veuillez vérifier attentivement toutes les informations ci-dessus. Une fois confirmé, votre demande sera envoyée et ne pourra plus être modifiée.</p>
+        </div>
+
+        <div class="button-group">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelConfirmation()"
+            [disabled]="isSubmitting"
+          >
+            Modifier
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmSubmit()"
+            [disabled]="isSubmitting"
+          >
+            <span *ngIf="isSubmitting">Envoi en cours...</span>
+            <span *ngIf="!isSubmitting">Confirmer le rendez-vous</span>
+          </button>
+        </div>
+
+        <div *ngIf="submitSuccess" class="success-message">
+          Votre demande de rendez-vous a été envoyée avec succès. Nous vous contacterons bientôt pour confirmer.
+        </div>
+
         <div *ngIf="submitError" class="error-message">
           {{ submitError }}
         </div>

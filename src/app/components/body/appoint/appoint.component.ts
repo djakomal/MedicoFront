@@ -25,6 +25,7 @@ export class AppointComponent implements OnInit {
   appointmentForm: FormGroup;
   dateFilterControl = new FormControl('');
   currentStep = 1;
+  showConfirmation = false;
   isLoadingCreneaux = false;
   doctors: Docteur[] = [];
   selectedDocteurId: number | null = null;
@@ -146,7 +147,10 @@ export class AppointComponent implements OnInit {
   }
 
   previousStep(): void {
-    if (this.currentStep > 1) {
+    if (this.currentStep === 3) {
+      this.showConfirmation = false;
+      this.currentStep = 2;
+    } else if (this.currentStep > 1) {
       this.currentStep--;
     }
   }
@@ -183,6 +187,12 @@ export class AppointComponent implements OnInit {
       return;
     }
   
+    // Instead of submitting, show confirmation
+    this.showConfirmation = true;
+    this.currentStep = 3;
+  }
+
+  confirmSubmit(): void {
     this.isSubmitting = true;
     this.submitSuccess = false;
     this.submitError = '';
@@ -270,8 +280,9 @@ export class AppointComponent implements OnInit {
             this.filtrerCreneauxParDate(this.dateFilterControl.value);
             this.appointmentForm.reset();
             this.currentStep = 1;
+            this.showConfirmation = false;
             setTimeout(() => this.submitSuccess = false, 5000);
-            alert('Rendez-vous ajouté avec succès !');
+            // Remove alert, success message is already shown
           },
           error: (error) => {
             console.error('Erreur soumission:', error);
@@ -301,6 +312,22 @@ export class AppointComponent implements OnInit {
         }
       }
     });
+  }
+
+  cancelConfirmation(): void {
+    this.showConfirmation = false;
+    this.currentStep = 2;
+  }
+
+  getSelectedDoctorName(): string {
+    const doctorId = this.appointmentForm.get('doctorId')?.value;
+    const doctor = this.doctors.find(d => d.id === doctorId);
+    return doctor ? doctor.name : 'Médecin non trouvé';
+  }
+
+  getSelectedCreneau(): Creneau | undefined {
+    const creneauId = this.appointmentForm.get('creneauId')?.value;
+    return this.creneauxDisponibles.find(c => c.id === creneauId);
   }
   
   private soumettreSansVerification(formValue: any, creneau: Creneau): void {
@@ -347,8 +374,9 @@ export class AppointComponent implements OnInit {
         this.filtrerCreneauxParDate(this.dateFilterControl.value);
         this.appointmentForm.reset();
         this.currentStep = 1;
+        this.showConfirmation = false;
         setTimeout(() => this.submitSuccess = false, 5000);
-        alert('Rendez-vous ajouté avec succès !');
+        // Remove alert, success message is already shown
       },
       error: (error) => {
         let errorMessage = 'Erreur lors de la soumission.';
@@ -481,6 +509,24 @@ export class AppointComponent implements OnInit {
   getMinDate(): string {
     const today = new Date();
     return today.toISOString().split('T')[0];
+  }
+
+  isCreneauPasse(creneau: Creneau): boolean {
+    if (!creneau.date || !creneau.heureDebut) {
+      return false;
+    }
+
+    // Analyser la date (format YYYY-MM-DD ou DD/MM/YYYY)
+    let dateStr = creneau.date.trim();
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('/');
+      dateStr = `${year}-${month}-${day}`;
+    }
+
+    const creneauDateTime = new Date(`${dateStr}T${creneau.heureDebut}`);
+    const maintenant = new Date();
+
+    return creneauDateTime < maintenant;
   }
 
   loadAllDoctors(): void {

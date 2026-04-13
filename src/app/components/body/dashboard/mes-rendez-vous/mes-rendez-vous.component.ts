@@ -25,6 +25,12 @@ export class MesRendezVousComponent  implements OnInit {
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'info' = 'success';
   
+  // Modal de confirmation
+  showConfirmModal: boolean = false;
+  pendingAction: string = '';
+  pendingId: number | null = null;
+  pendingAppointment: Appoitement | null = null;
+  
   constructor( private router :Router,
       private appointementService:AppointementService,
       private notificationService: NotificationService,
@@ -89,99 +95,150 @@ export class MesRendezVousComponent  implements OnInit {
     this.router.navigateByUrl("Admin/form")
   }
 
-  // Dans mes-rendez-vous.component.ts
+  // Gestion de la modale de confirmation
+  openConfirmModal(action: string, id: number, appointment: Appoitement): void {
+    this.pendingAction = action;
+    this.pendingId = id;
+    this.pendingAppointment = appointment;
+    this.showConfirmModal = true;
+  }
+
+  closeConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.pendingAction = '';
+    this.pendingId = null;
+    this.pendingAppointment = null;
+  }
+
+  getModalTitle(): string {
+    const titles: any = {
+      'validate': 'Valider le rendez-vous',
+      'reject': 'Rejeter le rendez-vous',
+      'start': 'Démarrer le rendez-vous',
+      'delete': 'Supprimer le rendez-vous'
+    };
+    return titles[this.pendingAction] || 'Confirmation';
+  }
+
+  getModalMessage(): string {
+    const messages: any = {
+      'validate': `Êtes-vous sûr de vouloir valider le rendez-vous de ${this.pendingAppointment?.firstname} ${this.pendingAppointment?.lastname} ?`,
+      'reject': `Êtes-vous sûr de vouloir rejeter le rendez-vous de ${this.pendingAppointment?.firstname} ${this.pendingAppointment?.lastname} ?`,
+      'start': `Êtes-vous sûr de vouloir démarrer le rendez-vous de ${this.pendingAppointment?.firstname} ${this.pendingAppointment?.lastname} ?`,
+      'delete': `Êtes-vous sûr de vouloir supprimer le rendez-vous de ${this.pendingAppointment?.firstname} ${this.pendingAppointment?.lastname} ? Cette action ne peut pas être annulée.`
+    };
+    return messages[this.pendingAction] || 'Êtes-vous sûr ?';
+  }
+
+  getModalActionButtonText(): string {
+    const texts: any = {
+      'validate': 'Valider',
+      'reject': 'Rejeter',
+      'start': 'Démarrer',
+      'delete': 'Supprimer'
+    };
+    return texts[this.pendingAction] || 'Confirmer';
+  }
+
+  getModalActionButtonClass(): string {
+    const classes: any = {
+      'validate': 'btn-confirm btn-success',
+      'reject': 'btn-confirm btn-danger',
+      'start': 'btn-confirm btn-primary',
+      'delete': 'btn-confirm btn-delete-action'
+    };
+    return classes[this.pendingAction] || 'btn-confirm';
+  }
+
+  confirmAction(): void {
+    if (!this.pendingId || !this.pendingAppointment) return;
+
+    switch (this.pendingAction) {
+      case 'validate':
+        this.validateAppointmentAction(this.pendingId, this.pendingAppointment);
+        break;
+      case 'reject':
+        this.rejectAppointmentAction(this.pendingId, this.pendingAppointment);
+        break;
+      case 'start':
+        this.startAppointmentAction(this.pendingId, this.pendingAppointment);
+        break;
+      case 'delete':
+        this.deleteAppointmentAction(this.pendingId, this.pendingAppointment);
+        break;
+    }
+    this.closeConfirmModal();
+  }
 
   // Valider un rendez-vous avec notification
-  validerRendezVous(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir valider ce rendez-vous ?')) {
-      // Trouver le rendez-vous pour obtenir l'ID utilisateur
-      const appointment = this.tableauClasse.find(app => app.id === id);
-      
-      if (!appointment) {
-        this.showNotification('Rendez-vous non trouvé', 'error');
-        return;
-      }
-      
-      this.appointementService.validateAppointment(id).subscribe({
-        next: (response: AppointmentResponse) => {
-          if (response.success) {
-            // Envoyer une notification à l'utilisateur
-            this.sendValidationNotification(appointment);
-            
-            this.showNotification('Rendez-vous validé et notification envoyée', 'success');
-            this.getAppointment(); // Recharger la liste
-          } else {
-            this.showNotification(response.message, 'error');
-          }
-        },
-        error: (error) => {
-          this.showNotification('Erreur lors de la validation du rendez-vous', 'error');
-          console.error('Error validating appointment:', error);
+  private validateAppointmentAction(id: number, appointment: Appoitement): void {
+    this.appointementService.validateAppointment(id).subscribe({
+      next: (response: AppointmentResponse) => {
+        if (response.success) {
+          this.sendValidationNotification(appointment);
+          this.showNotification('Rendez-vous validé et notification envoyée', 'success');
+          this.getAppointment();
+        } else {
+          this.showNotification(response.message, 'error');
         }
-      });
-    }
+      },
+      error: (error) => {
+        this.showNotification('Erreur lors de la validation du rendez-vous', 'error');
+        console.error('Error validating appointment:', error);
+      }
+    });
   }
   
   // Rejeter un rendez-vous avec notification
-  rejeterRendezVous(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir rejeter ce rendez-vous ?')) {
-      // Trouver le rendez-vous pour obtenir l'ID utilisateur
-      const appointment = this.tableauClasse.find(app => app.id === id);
-      
-      if (!appointment) {
-        this.showNotification('Rendez-vous non trouvé', 'error');
-        return;
-      }
-      
-      this.appointementService.rejectAppointment(id).subscribe({
-        next: (response: AppointmentResponse) => {
-          if (response.success) {
-            // Envoyer une notification à l'utilisateur
-            this.sendRejectionNotification(appointment);
-            
-            this.showNotification(response.message, 'success');
-            this.getAppointment(); // Recharger la liste
-          } else {
-            this.showNotification(response.message, 'error');
-          }
-        },
-        error: (error) => {
-          this.showNotification('Erreur lors du rejet du rendez-vous', 'error');
-          console.error('Error rejecting appointment:', error);
+  private rejectAppointmentAction(id: number, appointment: Appoitement): void {
+    this.appointementService.rejectAppointment(id).subscribe({
+      next: (response: AppointmentResponse) => {
+        if (response.success) {
+          this.sendRejectionNotification(appointment);
+          this.showNotification(response.message, 'success');
+          this.getAppointment();
+        } else {
+          this.showNotification(response.message, 'error');
         }
-      });
-    }
+      },
+      error: (error) => {
+        this.showNotification('Erreur lors du rejet du rendez-vous', 'error');
+        console.error('Error rejecting appointment:', error);
+      }
+    });
   }
   
   // Débuter un rendez-vous avec notification
-  debuterRendezVous(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir débuter ce rendez-vous ?')) {
-      // Trouver le rendez-vous pour obtenir l'ID utilisateur
-      const appointment = this.tableauClasse.find(app => app.id === id);
-      
-      if (!appointment) {
-        this.showNotification('Rendez-vous non trouvé', 'error');
-        return;
-      }
-      
-      this.appointementService.startAppointment(id).subscribe({
-        next: (response: AppointmentResponse) => {
-          if (response.success) {
-            // Envoyer une notification à l'utilisateur
-            this.sendStartNotification(appointment);
-            
-            this.showNotification(response.message, 'success');
-            this.getAppointment(); // Recharger la liste
-          } else {
-            this.showNotification(response.message, 'error');
-          }
-        },
-        error: (error) => {
-          this.showNotification('Erreur lors du démarrage du rendez-vous', 'error');
-          console.error('Error starting appointment:', error);
+  private startAppointmentAction(id: number, appointment: Appoitement): void {
+    this.appointementService.startAppointment(id).subscribe({
+      next: (response: AppointmentResponse) => {
+        if (response.success) {
+          this.sendStartNotification(appointment);
+          this.showNotification(response.message, 'success');
+          this.getAppointment();
+        } else {
+          this.showNotification(response.message, 'error');
         }
-      });
-    }
+      },
+      error: (error) => {
+        this.showNotification('Erreur lors du démarrage du rendez-vous', 'error');
+        console.error('Error starting appointment:', error);
+      }
+    });
+  }
+
+  // Supprimer un rendez-vous
+  private deleteAppointmentAction(id: number, appointment: Appoitement): void {
+    this.appointementService.deleteAppointment(id).subscribe({
+      next: (response: any) => {
+        this.showNotification('Rendez-vous supprimé avec succès', 'success');
+        this.getAppointment();
+      },
+      error: (error) => {
+        this.showNotification('Erreur lors de la suppression du rendez-vous', 'error');
+        console.error('Error deleting appointment:', error);
+      }
+    });
   }
 
 

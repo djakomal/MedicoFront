@@ -52,34 +52,17 @@
         <tbody>
           <tr *ngFor="let app of tableauClasse">
             <td class="id-cell">{{ app.id }}</td>
-            <td class="name-cell">
-              <div class="name-avatar">
-                {{ app.firstname?.charAt(0) }}{{ app.lastname?.charAt(0) }}
-              </div>
-              <span>{{ app.firstname }} {{ app.lastname }}</span>
-            </td>
-            <td class="date-cell">
-              <div class="date-time">
-                {{ app.preferredDate  }}
-              </div>
-            </td>
-            <td>
-              <div class="type-cell"> 
-                <span class="type-badge">{{ app.appointmentType }}</span>
-              </div>
-            </td>
-            <td class="description-cell">
-              <div  class="description-text"> 
-              {{ app.symptoms }}
-              </div>
-            </td>
+            <td class="name-cell">{{ app.firstname }} {{ app.lastname }}</td>
+            <td class="date-cell">{{ app.preferredDate }}</td>
+            <td><span class="type-badge">{{ app.appointmentType }}</span></td>
+            <td class="description-cell">{{ app.symptoms }}</td>
             <td>{{ app.firstVisit }}</td>
             <td>{{ app.preferredTime }}</td>
             <td>{{ app.allergies }}</td>
-            <td>{{app.medications}}</td>
-            <td>{{app.additionalInfo}}</td>
+            <td>{{ app.medications }}</td>
+            <td>{{ app.additionalInfo }}</td>
             <td>
-              <span 
+              <span
                 class="status-badge"
                 [ngClass]="{
                   'status-pending': app.status === 'pending',
@@ -91,20 +74,25 @@
             </td>
             <td>
               <div class="action-buttons">
-                <button 
-                  class="btn btn-success" 
-                  (click)="validerRendezVous(app.id)">
+                <button
+                  class="btn btn-success"
+                  (click)="openConfirmModal('validate', app.id, app)">
                   ✓ Valider
                 </button>
-                <button 
-                  class="btn btn-danger" 
-                  (click)="rejeterRendezVous(app.id)">
+                <button
+                  class="btn btn-danger"
+                  (click)="openConfirmModal('reject', app.id, app)">
                   ✕ Rejeter
                 </button>
-                <button 
-                  class="btn btn-primary" 
-                  (click)="debuterRendezVous(app.id)">
+                <button
+                  class="btn btn-primary"
+                  (click)="openConfirmModal('start', app.id, app)">
                   ▶ Débuter
+                </button>
+                <button
+                  class="btn btn-delete"
+                  (click)="openConfirmModal('delete', app.id, app)">
+                  🗑 Supprimer
                 </button>
               </div>
             </td>
@@ -121,6 +109,24 @@
         </svg>
         <h3>Aucun rendez-vous</h3>
         <p>Les demandes de rendez-vous apparaîtront ici</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmation -->
+  <div class="modal-backdrop" *ngIf="showConfirmModal" (click)="closeConfirmModal()"></div>
+  <div class="confirmation-modal" *ngIf="showConfirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ getModalTitle() }}</h2>
+        <button class="modal-close" (click)="closeConfirmModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ getModalMessage() }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeConfirmModal()">Annuler</button>
+        <button [ngClass]="getModalActionButtonClass()" (click)="confirmAction()">{{ getModalActionButtonText() }}</button>
       </div>
     </div>
   </div>

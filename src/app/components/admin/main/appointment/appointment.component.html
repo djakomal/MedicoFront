@@ -39,10 +39,30 @@
             <td>{{app.additionalInfo}}</td>
              <td>{{app.status || 'Non défini'}}</td>
             <td>
-              <button type="submit" class="btn btn-success btn-circle btn-sm" (click)="validerRendezVous(app.id)">Vaider Rendez-Vous</button>
-              <button type="submit" class="btn btn-danger btn-circle btn-sm" (click)=" rejeterRendezVous(app.id)">Rejeter Rendez-Vous</button>
-              <button type="submit" class="btn btn-primary btn-circle btn-sm"  (click)="debuterRendezVous(app.id)">Debuter
-                Rendez-Vous</button>
+              <button
+                type="submit"
+                class="btn btn-success btn-circle btn-sm"
+                [disabled]="!canValidate(app)"
+                [title]="canValidate(app) ? 'Valider le rendez-vous' : 'Impossible de valider avant l\'heure ou si le rendez-vous est annulé.'"
+                (click)="validerRendezVous(app.id)">
+                Valider Rendez-Vous
+              </button>
+              <button
+                type="submit"
+                class="btn btn-danger btn-circle btn-sm"
+                [disabled]="!canReject(app)"
+                [title]="canReject(app) ? 'Rejeter le rendez-vous' : 'Impossible d\'annuler un rendez-vous validé ou déjà rejeté.'"
+                (click)="rejeterRendezVous(app.id)">
+                Rejeter Rendez-Vous
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary btn-circle btn-sm"
+                [disabled]="!canStart(app)"
+                [title]="canStart(app) ? 'Débuter le rendez-vous' : 'Impossible de démarrer avant l\'heure ou si le rendez-vous n\'est pas validé.'"
+                (click)="debuterRendezVous(app.id)">
+                Débuter Rendez-Vous
+              </button>
             </td>
           </tr>
         </tbody>

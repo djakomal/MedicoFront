@@ -55,7 +55,42 @@ export class AppointmentComponent  implements OnInit{
 redirection(){
   this.router.navigateByUrl("Admin/form")
 }
-  // validerRendezVous(id: number) {
+
+private parseAppointmentDateTime(app: Appoitement): Date | null {
+  if (!app?.preferredDate || !app?.preferredTime) {
+    return null;
+  }
+
+  let datePart = app.preferredDate.trim();
+  const timePart = app.preferredTime.trim();
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(datePart)) {
+    const [day, month, year] = datePart.split('/');
+    datePart = `${year}-${month}-${day}`;
+  }
+
+  const dateTime = new Date(`${datePart}T${timePart}`);
+  return isNaN(dateTime.getTime()) ? null : dateTime;
+}
+
+isAppointmentTimeReached(app: Appoitement): boolean {
+  const appointmentDateTime = this.parseAppointmentDateTime(app);
+  return appointmentDateTime ? new Date() >= appointmentDateTime : false;
+}
+
+canValidate(app: Appoitement): boolean {
+  return !!app && app.status === 'pending' && this.isAppointmentTimeReached(app);
+}
+
+canStart(app: Appoitement): boolean {
+  return !!app && app.status === 'validated' && this.isAppointmentTimeReached(app);
+}
+
+canReject(app: Appoitement): boolean {
+  return !!app && app.status === 'pending';
+}
+
+// validerRendezVous(id: number) {
   //   const appointement = this.tableauClasse.find(app => app.id === id);
   //   if (appointement) {
   //     appointement.statut = 'Validé';
@@ -73,6 +108,15 @@ redirection(){
 
 
   validerRendezVous(id: number): void {
+    const appointement = this.tableauClasse?.find(app => app.id === id);
+    if (!appointement || !this.canValidate(appointement)) {
+      this.notificationService.showNotification(
+        'Impossible de valider ce rendez-vous pour le moment.',
+        'error'
+      );
+      return;
+    }
+
     if (!confirm('Êtes-vous sûr de vouloir valider ce rendez-vous ?')) return;
 
     this.appointementService.validateAppointment(id).subscribe({
@@ -101,6 +145,15 @@ redirection(){
   }
   
   rejeterRendezVous(id: number): void {
+    const appointement = this.tableauClasse?.find(app => app.id === id);
+    if (!appointement || !this.canReject(appointement)) {
+      this.notificationService.showNotification(
+        'Impossible d\'annuler ce rendez-vous après validation.',
+        'error'
+      );
+      return;
+    }
+
     if (!confirm('Êtes-vous sûr de vouloir rejeter ce rendez-vous ?')) return;
 
     this.appointementService.rejectAppointment(id).subscribe({
@@ -129,6 +182,15 @@ redirection(){
   }
   
   debuterRendezVous(id: number): void {
+    const appointement = this.tableauClasse?.find(app => app.id === id);
+    if (!appointement || !this.canStart(appointement)) {
+      this.notificationService.showNotification(
+        'Impossible de démarrer ce rendez-vous pour le moment.',
+        'error'
+      );
+      return;
+    }
+
     if (!confirm('Êtes-vous sûr de vouloir débuter ce rendez-vous ?')) return;
 
     this.appointementService.startAppointment(id).subscribe({
