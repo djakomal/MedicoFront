@@ -1,0 +1,36 @@
+<div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Connexion à Zoom</h2>
+        <p>Connectez-vous avec votre compte Zoom pour gérer vos réunions</p>
+      </div>
+  
+      <div class="auth-body">
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+  
+        <div *ngIf="isLoading" class="loading">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p>Connexion en cours...</p>
+        </div>
+  
+        <div *ngIf="!isLoading" class="auth-actions">
+          <button class="btn btn-primary btn-lg zoom-btn" (click)="connectWithZoom()">
+            <i class="bi bi-camera-video"></i>
+            Se connecter avec Zoom
+          </button>
+          
+          <div class="auth-info">
+            <p class="text-muted">
+              <small>
+                Vous serez redirigé vers la page d'authentification Zoom
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

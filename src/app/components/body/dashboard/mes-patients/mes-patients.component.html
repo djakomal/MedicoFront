@@ -1,0 +1,250 @@
+<div class="container">
+
+  <!-- En-tête -->
+  <div class="header-section">
+    <h1>👥 Mes Patients</h1>
+    <p>Liste de tous vos patients enregistrés</p>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" placeholder="Rechercher un patient..."
+             [(ngModel)]="recherche" (input)="filtrer()" />
+    </div>
+    <div class="stat-badge">
+      {{ patientsFiltres.length }} patient{{ patientsFiltres.length > 1 ? 's' : '' }}
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des patients...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="erreur && !isLoading" class="erreur">
+    ⚠️ {{ erreur }}
+    <button (click)="chargerPatients()">Réessayer</button>
+  </div>
+
+  <!-- Vide -->
+  <div *ngIf="!isLoading && !erreur && patientsFiltres.length === 0" class="vide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+    </svg>
+    <h3>Aucun patient trouvé</h3>
+    <p>{{ recherche ? 'Aucun résultat pour "' + recherche + '"' : 'Vous n\'avez pas encore de patients.' }}</p>
+  </div>
+
+  <!-- Grille -->
+  <div *ngIf="!isLoading && !erreur && patientsFiltres.length > 0" class="grille">
+    <div *ngFor="let patient of patientsFiltres" class="patient-card"
+         (click)="ouvrirModal(patient)">
+
+      <div class="card-top">
+        <div class="avatar">{{ getInitiales(patient.prenom, patient.nom) }}</div>
+        <div class="identite">
+          <h3>{{ patient.prenom }} {{ patient.nom }}</h3>
+          <span class="genre-badge">{{ getGenreLabel(patient.genre) }}</span>
+        </div>
+        <div class="rdv-count">
+          <span>{{ patient.nombreRdv }}</span>
+          <small>RDV</small>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="info-ligne">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>{{ patient.email || '—' }}</span>
+        </div>
+        <div class="info-ligne">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>{{ patient.telephone || '—' }}</span>
+        </div>
+        <div class="info-ligne" *ngIf="patient.allergie && patient.allergie !== 'Aucune'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span class="allergie">{{ patient.allergie }}</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="dernier-rdv">Dernier RDV : {{ patient.dernierRdv || '—' }}</span>
+        <span class="statut" [ngClass]="getStatutClass(patient.statut)">
+          {{ getStatutLabel(patient.statut) }}
+        </span>
+      </div>
+
+      <div class="voir-plus">Voir les détails →</div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL
+═══════════════════════════════════════════════ -->
+<div *ngIf="modalOuvert && patientSelectionne"
+     class="modal-overlay"
+     (click)="fermerSiCliqueExterieur($event)">
+
+  <div class="modal">
+
+    <!-- Header modal -->
+    <div class="modal-header">
+      <div class="modal-avatar">
+        {{ getInitiales(patientSelectionne.prenom, patientSelectionne.nom) }}
+      </div>
+      <div class="modal-titre">
+        <h2>{{ patientSelectionne.prenom }} {{ patientSelectionne.nom }}</h2>
+        <span>{{ patientSelectionne.nombreRdv }} rendez-vous enregistré{{ patientSelectionne.nombreRdv > 1 ? 's' : '' }}</span>
+      </div>
+      <button class="btn-fermer" (click)="fermerModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Colonne gauche : infos patient -->
+      <div class="modal-colonne">
+        <h3 class="section-titre">👤 Informations personnelles</h3>
+
+        <div class="info-bloc">
+          <div class="info-item">
+            <label>Prénom</label>
+            <span>{{ patientSelectionne.prenom || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Nom</label>
+            <span>{{ patientSelectionne.nom || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Date de naissance</label>
+            <span>{{ patientSelectionne.dateNaissance || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Genre</label>
+            <span>{{ getGenreLabel(patientSelectionne.genre) }}</span>
+          </div>
+          <div class="info-item">
+            <label>Email</label>
+            <span>{{ patientSelectionne.email || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Téléphone</label>
+            <span>{{ patientSelectionne.telephone || '—' }}</span>
+          </div>
+        </div>
+
+        <h3 class="section-titre" style="margin-top:20px">🏥 Informations médicales</h3>
+
+        <div class="info-bloc">
+          <div class="info-item full">
+            <label>Allergies</label>
+            <span [class.alerte-rouge]="patientSelectionne.allergie !== 'Aucune'">
+              {{ patientSelectionne.allergie || 'Aucune' }}
+            </span>
+          </div>
+          <div class="info-item full">
+            <label>Médicaments pris</label>
+            <span>{{ patientSelectionne.medicaments || 'Aucun' }}</span>
+          </div>
+        </div>
+
+        <!-- Onglets des RDV -->
+        <h3 class="section-titre" style="margin-top:20px">📅 Historique des rendez-vous</h3>
+        <div class="rdv-tabs">
+          <button *ngFor="let rdv of patientSelectionne.rendezVous; let i = index"
+                  class="rdv-tab"
+                  [class.active]="rdvSelectionne?.id === rdv.id"
+                  (click)="selectionnerRdv(rdv)">
+            RDV {{ i + 1 }} — {{ rdv.preferredDate || '—' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Colonne droite : détail RDV sélectionné -->
+      <div class="modal-colonne" *ngIf="rdvSelectionne">
+        <h3 class="section-titre">
+          📋 Détails du rendez-vous
+          <span class="statut-inline" [ngClass]="getStatutClass(rdvSelectionne.status)">
+            {{ getStatutLabel(rdvSelectionne.status) }}
+          </span>
+        </h3>
+
+        <div class="info-bloc">
+          <div class="info-item">
+            <label>Date</label>
+            <span>{{ rdvSelectionne.preferredDate || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Heure</label>
+            <span>{{ rdvSelectionne.preferredTime || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Type de consultation</label>
+            <span>{{ rdvSelectionne.appointmentType || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Motif</label>
+            <span>{{ rdvSelectionne.reason || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Première visite</label>
+            <span>{{ rdvSelectionne.firstVisit === 'yes' ? 'Oui' : 'Non' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Type de médecin</label>
+            <span>{{ rdvSelectionne.doctorType || '—' }}</span>
+          </div>
+          <div class="info-item full">
+            <label>Symptômes</label>
+            <span class="texte-long">{{ rdvSelectionne.symptoms || '—' }}</span>
+          </div>
+          <div class="info-item full">
+            <label>Allergies</label>
+            <span [class.alerte-rouge]="rdvSelectionne.allergies && rdvSelectionne.allergies !== 'Aucune'">
+              {{ rdvSelectionne.allergies || 'Aucune' }}
+            </span>
+          </div>
+          <div class="info-item full">
+            <label>Médicaments pris</label>
+            <span>{{ rdvSelectionne.medications || 'Aucun' }}</span>
+          </div>
+          <div class="info-item full">
+            <label>Informations supplémentaires</label>
+            <span class="texte-long">{{ rdvSelectionne.additionalInfo || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Numéro de sécurité sociale</label>
+            <span>{{ rdvSelectionne.insurance || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Consentement</label>
+            <span>{{ rdvSelectionne.consent ? '✅ Accepté' : '❌ Non accepté' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer modal -->
+    <div class="modal-footer">
+      <button class="btn-annuler" (click)="fermerModal()">Fermer</button>
+    </div>
+
+  </div>
+</div>
