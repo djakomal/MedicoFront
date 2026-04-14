@@ -193,10 +193,17 @@ h2:hover, h3:hover {
 /* ===================== USER PROFILE ===================== */
 .user-profile {
   position: relative;
-  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background: white;
+  z-index: 1000;
+  transition: background-color 0.2s, transform 0.3s ease;
 }
 
 .user-profile:hover {
+  background-color: rgb(248, 244, 244);
   transform: scale(1.05);
 }
 
@@ -233,37 +240,8 @@ h2:hover, h3:hover {
   left: 100%;
 }
 
-.dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: 45px;
-  background-color: white;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 5px;
-  width: 200px;
-  z-index: 10;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
 
-.dropdown-menu.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
 
-.dropdown-menu button {
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  margin-top: 10px;
-  cursor: pointer;
-  width: 100%;
-}
 
 .img-profile {
   width: 100%;
@@ -310,15 +288,32 @@ h2:hover, h3:hover {
   font-weight: 500;
   color: #333;
 }
-
-.dropdown-icon {
-  font-size: 12px;
-  transition: transform 0.3s;
-  margin-left: 5px;
+.logout-header-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.3px;
 }
 
-.dropdown-icon.rotated {
-  transform: rotate(18deg);
+.logout-header-btn:hover {
+  background: rgba(229, 57, 53, 0.75);
+  border-color: rgba(229, 57, 53, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
+}
+
+.logout-header-btn:active {
+  transform: translateY(0px);
 }
 
 .menu-item {
@@ -349,6 +344,7 @@ h2:hover, h3:hover {
 
 .logout:hover {
   background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: #ffffff;
 }
 
 /* ===================== NAV ===================== */
@@ -1954,4 +1950,105 @@ input:focus, textarea:focus, select:focus {
 
   .meeting-link { flex-direction: column; align-items: stretch; }
   .btn-copy { align-self: flex-end; }
+}
+
+
+/* ===================== MODAL DÉCONNEXION ===================== */
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.25s ease;
+  backdrop-filter: blur(3px);
+}
+
+.logout-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 36px 32px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.logout-modal-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+.logout-modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1B5E20;
+  margin-bottom: 12px;
+  background: none;
+  -webkit-text-fill-color: #1B5E20;
+}
+
+.logout-modal-title::after { display: none; }
+
+.logout-modal-message {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.logout-btn-cancel {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  background: #f5f5f5;
+  color: #555;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-cancel:hover {
+  background: #e8e8e8;
+  border-color: #bbb;
+}
+
+.logout-btn-confirm {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 16px rgba(229, 57, 53, 0.35);
+}
+
+.logout-btn-confirm:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(229, 57, 53, 0.45);
+}
+
+.logout-btn-confirm:active {
+  transform: translateY(-1px);
 }

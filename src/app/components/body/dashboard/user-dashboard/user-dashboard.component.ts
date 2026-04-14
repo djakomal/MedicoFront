@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JwtService } from '../../../../_helps/jwt/jwt.service';
 import { AppointComponent } from '../../appoint/appoint.component';
@@ -34,6 +34,10 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showMessageDetail: boolean = false;
   selectedMessage: Message | null = null;
   appointmentNotifications: Message[] = [];
+  showLogoutModal = false;
+  menuOpen = false;
+
+
 
   // ── Subscriptions ────────────────────────────────────────────
   private notificationsSubscription?: Subscription;
@@ -41,7 +45,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   private messagesSubscription?: Subscription;   
 
   userName: string = '';
-  menuOpen: boolean = false;
   tableauClasse: Appoitement[] = [];
   showMedicalFilePopup: boolean = false;
   selectedMedicalFile: any = null;
@@ -68,8 +71,10 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   rdvTermines:   number = 0;
   rdvVideo:      number = 0;
   rdvPresential: number = 0;
-
+  private loadInterval: any;
   // ── Données du graphe ────────────────────────────────────────
+  
+
   statsGraphe: { label: string; value: number; height: number; color: string }[] = [];
 
   medicalFiles = [
@@ -194,6 +199,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.loadInterval = setInterval(() => this.loadUserAppointments(), 10000);
     this.loadUserName();
     this.loadUserAppointments();
     this.notificationService.connect();
@@ -235,6 +241,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    clearInterval(this.loadInterval);
+    clearInterval(this.refreshInterval);
     this.notificationsSubscription?.unsubscribe();
     this.unreadCountSubscription?.unsubscribe();
     this.messagesSubscription?.unsubscribe();   
@@ -245,8 +253,22 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
+  openLogoutModal() {
+    console.log("CLICK OK");
+    this.menuOpen = false;       // ferme le dropdown
+    this.showLogoutModal = true;
+  }
+  
+  closeLogoutModal() {
+    this.showLogoutModal = false;
+  }
+  @HostListener('document:click')
+  onDocumentClick() {
+    if (this.menuOpen) {
+      this.menuOpen = false;
+      this.cdr.detectChanges();
+    }
+  }
   connectZoom(): void {
     this.zoomStatus = 'connecting';
     this.showNotification('Connexion à Zoom en cours...', 'info');
@@ -697,6 +719,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    this.showLogoutModal = false;
     this.notificationService.disconnect();
     this.notificationService.clearAllNotifications();
     this.jwtService.removeToken();
