@@ -51,6 +51,8 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+
+
   clearNotifications() {
     this.notificationService.clearAllNotifications();
   }
@@ -92,4 +94,7 @@ export class HeaderComponent implements OnInit {
     this.menuOpen = false;
     this.router.navigateByUrl('/connex');
   }
+
+
+  
 }

@@ -364,3 +364,108 @@ nav ul ul li a:hover {
   .navbar-nav { gap: 6px; }
   .navbar-nav .nav-link { padding: 12px 20px; font-size: 15px; }
 }
+/* ---- FIX COLLAPSE ANGULAR (remplace Bootstrap JS) ---- */
+.navbar-collapse {
+  display: none;
+}
+
+.navbar-collapse.show {
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .navbar-collapse {
+    display: flex !important;
+  }
+
+  
+}
+/* ---- FIX MOBILE COMPLET ---- */
+@media (max-width: 991px) {
+
+  .main_menu {
+    padding: 0.6rem 1rem;
+  }
+
+  /* Navbar flex layout sur mobile */
+  .navbar {
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  /* Le collapse prend toute la largeur */
+  .navbar-collapse {
+    width: 100%;
+    order: 3; /* passe sous logo + toggler */
+  }
+
+  .navbar-collapse.show {
+    display: block !important;
+  }
+
+  /* Menu items en colonne, fond vert foncé */
+  .main-menu-item {
+    background: #0A3D10;
+    border-radius: 0 0 12px 12px;
+    padding: 10px 0;
+    width: 100%;
+    margin: 0 -1rem; /* bord à bord */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    align-items: center; /* centré comme sur votre screenshot */
+    gap: 0;
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 15px;
+    border-radius: 0;
+  }
+
+  .navbar-nav .nav-link::after {
+    display: none; /* pas de soulignement sur mobile */
+  }
+
+  /* Sous-menu Ressources sur mobile */
+  .navbar-nav .nav-item:hover > ul,
+  .navbar-nav .nav-item ul {
+    position: static !important;
+    display: flex !important;
+    flex-direction: column;
+    background: rgba(255,255,255,0.07);
+    box-shadow: none;
+    border: none;
+    border-radius: 8px;
+    margin: 4px 12px 8px;
+    padding: 4px 0;
+  }
+
+  .navbar-nav .nav-item ul li a {
+    color: rgba(255,255,255,0.75) !important;
+    font-size: 13px;
+    text-align: center;
+    padding: 9px 14px;
+  }
+
+  .navbar-nav .nav-item ul li a:hover {
+    background: rgba(255,255,255,0.1) !important;
+    color: #FF6B35 !important;
+    padding-left: 14px !important; /* annule le padding-left animé */
+  }
+
+  /* Header-container en dessous sur mobile */
+  .header-container {
+    display: none; /* caché si vide */
+  }
+}
