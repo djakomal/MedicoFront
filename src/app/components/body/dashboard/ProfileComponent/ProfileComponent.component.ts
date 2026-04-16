@@ -9,8 +9,8 @@ import { JwtService } from '../../../../_helps/jwt/jwt.service';
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './profileComponent.component.html',
-  styleUrls: ['./profileComponent.component.css']
+  templateUrl: './ProfileComponent.component.html',
+  styleUrls: ['./ProfileComponent.component.css']
 })
 export class ProfileComponent implements OnInit {
   usernameForm!: FormGroup;
