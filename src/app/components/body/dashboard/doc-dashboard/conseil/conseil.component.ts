@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { HeaderComponent } from '../../../../header/header.component';
@@ -14,7 +14,8 @@ import { FormsModule } from '@angular/forms';
   imports: [HeaderComponent, CommonModule,      // ✅ Pour *ngFor, *ngIf, etc.
     FormsModule, FooterComponent],
   templateUrl: './conseil.component.html',
-  styleUrl: './conseil.component.css'
+  styleUrl: './conseil.component.css',
+  encapsulation: ViewEncapsulation.None 
 })
 export class ConseilComponent implements OnInit, OnDestroy {
   conseils: Conseil[] = [];

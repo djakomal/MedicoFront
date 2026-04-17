@@ -1,3 +1,20 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+app-conseil .content-layout,
+app-conseil .sidebar,
+app-conseil .articles-section {
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  app-conseil .content-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  app-conseil .sidebar {
+    position: static !important;
+    width: 100% !important;
+  }
+}
