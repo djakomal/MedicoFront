@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Publication } from '../../../../models/Publication';
 import { filter, Subscription } from 'rxjs';
@@ -12,7 +12,8 @@ import { HeaderComponent } from "../../../header/header.component";
   standalone: true,
   imports: [CommonModule, HeaderComponent],
   templateUrl: './publications.component.html',
-  styleUrls: ['./publications.component.css']
+  styleUrls: ['./publications.component.css'],
+  encapsulation: ViewEncapsulation.None 
 })
 export class PublicationsComponent {
   publications: Publication[] = [];
