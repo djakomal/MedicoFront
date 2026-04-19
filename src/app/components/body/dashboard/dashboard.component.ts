@@ -64,7 +64,7 @@ ngOnInit(){
     switch(type) {
       case 'About':
         this.popupContent = {
-          title: '🏥 À propos de Medico',
+          title: ' À propos de Medico',
           content: `
             <div class="popup-intro">
               <p class="lead-text">
@@ -153,7 +153,7 @@ ngOnInit(){
             </div>
   
             <div class="section-block cta-section">
-              <h3>🚀 Rejoignez-nous</h3>
+              <h3>Rejoignez-nous</h3>
               <p>
                 Que vous soyez patient à la recherche de soins de qualité ou professionnel 
                 de santé souhaitant élargir votre pratique, Medico est fait pour vous.
@@ -165,7 +165,54 @@ ngOnInit(){
   
             <div class="contact-info-popup">
               <p><strong>📍 Adresse :</strong> Lomé, Togo</p>
-              <p><strong>📞 Contact :</strong> 00 (440) 9865 562</p>
+              <p><strong>📞 Contact :</strong> +228 93755042</p>
+              <p><strong>✉️ Email :</strong> support@medico.com</p>
+            </div>
+          `
+        };
+        break;
+    }
+    switch(type) {
+      case 'carnet':
+        this.popupContent = {
+          title: ' Medico: votre dossier medical numerique',
+          content: `
+            <div class="popup-intro">
+              <p class="lead-text">
+                Centralisez et accédez à toutes vos données medicles:consultations,prescriptions , résultats de laboratoire et historique d vaccinations, dans un espace sécurisé accessible a tout moment , ou qe vous soyez.
+              </p>
+            </div>
+  
+
+  
+            <div class="section-block">
+              <h3>💡 Pourqui un dossier medical numérique ?</h3>
+              <p>
+                Le dossiers papier se perdent. les informations sont éparpillées entre hopitaux et cliniques.Medico  les centralises toutes.Votre historique de santé est stocké en toute sécurité, vous et votre médecin dispoez d'une vue complete.
+              </p>
+            </div>
+  
+            <div class="section-block">
+              <h3>🌟 Points clé</h3>
+              <ul class="features-list">
+                <li>
+                  <strong>Fini les dossiers medicaux perdus </strong>
+                </li>
+                <li>
+                  <strong>Accès facile pour vous et votre médecin</strong> 
+                </li>
+                <li>
+                  <strong>Suivi fluide pour les traitements chronique</strong> 
+                </li>
+                <li>
+                  <strong>100% sécurisé et confidentiel</strong> 
+                </li
+              </ul>
+            </div>
+  
+            <div class="contact-info-popup">
+              <p><strong>📍 Adresse :</strong> Lomé, Togo</p>
+              <p><strong>📞 Contact :</strong> +228 93755042</p>
               <p><strong>✉️ Email :</strong> support@medico.com</p>
             </div>
           `
