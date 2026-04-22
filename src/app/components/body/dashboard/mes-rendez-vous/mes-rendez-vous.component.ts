@@ -257,29 +257,76 @@ export class MesRendezVousComponent  implements OnInit {
       }
     });
   }
-  
+  //  Ajouter ces deux méthodes
 
-  private startAppointmentAction(id: number, appointment: Appoitement): void {
-    this.appointementService.startAppointment(id).subscribe({
-        next: (response: AppointmentResponse) => {
-            if (response.success) {
-                const patientLink = response.joinUrl                      // pour notifier le patient
-                                 || response.appointment?.zoomJoinUrl;
+joinAsHost(app: Appoitement): void {
+  // start_url = lien hôte qui identifie le docteur comme host Zoom
+  const startUrl = (app as any).zoomStartUrl
+                || (app as any).startUrl;
 
-                const doctorLink  = (response as any).startUrl            // lien hôte pour le docteur
-                                 || response.appointment?.zoomStartUrl
-                                 || patientLink;                          // fallback seulement
-
-                this.sendStartNotification(appointment, patientLink);     // patient reçoit join_url
-                this.showNotification('Rendez-vous démarré.', 'success');
-                this.getAppointment();
-
-                if (doctorLink) {
-                    window.open(doctorLink, '_blank'); // ← docteur entre en tant qu'hôte
-                }
-            }
+  if (startUrl) {
+    window.open(startUrl, '_blank');
+  } else {
+    // Fallback si start_url non disponible : redemander au backend
+    this.appointementService.startAppointment(app.id).subscribe({
+      next: (response: AppointmentResponse) => {
+        const url = (response as any).startUrl
+                 || response.appointment?.zoomStartUrl;
+        if (url) {
+          window.open(url, '_blank');
+        } else {
+          this.showNotification('Lien hôte introuvable, essayez de redémarrer le rendez-vous', 'error');
         }
+      },
+      error: () => this.showNotification('Erreur lors de la récupération du lien hôte', 'error')
     });
+  }
+}
+
+copyPatientLink(app: Appoitement): void {
+  const joinUrl = (app as any).zoomJoinUrl
+               || app.meetingUrl
+               || app.zoomLink;
+
+  if (joinUrl) {
+    navigator.clipboard.writeText(joinUrl).then(() => {
+      this.showNotification('Lien patient copié dans le presse-papier', 'success');
+    });
+  } else {
+    this.showNotification('Lien patient introuvable', 'error');
+  }
+}
+
+private startAppointmentAction(id: number, appointment: Appoitement): void {
+  this.appointementService.startAppointment(id).subscribe({
+    next: (response: AppointmentResponse) => {
+      if (response.success) {
+        const patientLink = response.joinUrl
+                         || response.appointment?.zoomJoinUrl;
+
+        const doctorLink  = (response as any).startUrl
+                         || response.appointment?.zoomStartUrl
+                         || patientLink;
+
+        //  Stocker les deux URLs sur l'objet local pour usage ultérieur
+        if (response.appointment) {
+          (appointment as any).zoomStartUrl = response.appointment.zoomStartUrl
+                                           || (response as any).startUrl;
+          (appointment as any).zoomJoinUrl  = response.appointment.zoomJoinUrl
+                                           || patientLink;
+        }
+
+        this.sendStartNotification(appointment, patientLink);
+        this.showNotification('Réunion créée ! Vous pouvez maintenant la rejoindre.', 'success');
+        this.getAppointment(); // ← recharge les données avec les URLs à jour
+
+        if (doctorLink) {
+          window.open(doctorLink, '_blank');
+        }
+      }
+    },
+    error: () => this.showNotification('Erreur lors du démarrage du rendez-vous', 'error')
+  });
 }
 
   // CORRECTION: Méthode d'aide pour extraire le lien Zoom avec logique de secours
@@ -298,7 +345,7 @@ export class MesRendezVousComponent  implements OnInit {
       appointment.zoomLink;
     
     if (zoomLink) {
-      console.log('✅ Lien Zoom trouvé:', zoomLink);
+      console.log(' Lien Zoom trouvé:', zoomLink);
     } else {
       console.warn('⚠️ Aucun lien Zoom trouvé. Champs disponibles:', {
         'response.zoomLink': response.zoomLink,
@@ -373,7 +420,7 @@ private sendValidationNotification(appointment: Appoitement): void {
     
     if (userId) {
       this.notificationService.notifyUserAppointmentStarted(userId, appointment, finalZoomLink);
-      console.log(`✅ Notification de démarrage envoyée à l'utilisateur ${userId} avec lien: ${finalZoomLink}`);
+      console.log(` Notification de démarrage envoyée à l'utilisateur ${userId} avec lien: ${finalZoomLink}`);
     } else {
       this.notificationService.notifyUserAppointmentStarted(notifId, appointment, finalZoomLink);
       console.log(`⚠️ Notification de démarrage envoyée avec notifId ${notifId} avec lien: ${finalZoomLink}`);
@@ -385,20 +432,20 @@ private sendValidationNotification(appointment: Appoitement): void {
   private getUserIdFromAppointment(appointment: Appoitement): number | null {
     // CORRECTION: Vérifier d'abord patientId (champ direct)
     if ((appointment as any).patientId && (appointment as any).patientId > 0) {
-      console.log('✅ ID patient trouvé dans patientId:', (appointment as any).patientId);
+      console.log(' ID patient trouvé dans patientId:', (appointment as any).patientId);
       return (appointment as any).patientId;
     }
     
     // Fallback: Vérifier si patient existe et a un id
     if (appointment.patient && appointment.patient.id) {
-      console.log('✅ ID patient trouvé dans l\'objet patient:', appointment.patient.id);
+      console.log(' ID patient trouvé dans l\'objet patient:', appointment.patient.id);
       return appointment.patient.id;
     }
     
     // Fallback: Utiliser l'ID de l'utilisateur connecté depuis le JWT
     const connectedUserId = this.jwtService.getUserId();
     if (connectedUserId && connectedUserId > 0) {
-      console.log('✅ ID patient trouvé depuis JWT:', connectedUserId);
+      console.log(' ID patient trouvé depuis JWT:', connectedUserId);
       return connectedUserId;
     }
     
@@ -421,43 +468,332 @@ getCountByStatus(status: string): number {
     return labels[status] || status;
   }
   
+  // mes-rendez-vous.component.ts
 
-  // CORRECTION: Vérifier si l'heure du rendez-vous est passée
-isAppointmentTimePassed(appointment: Appoitement): boolean {
-  if (!appointment.preferredDate || !appointment.preferredTime) {
-    return false;
-  }
+  // Ajoutez ces méthodes à votre composant MesRendezVousComponent
 
-  try {
-    // Parser la date et l'heure
-    let appointmentDate: Date;
-    
-    if (appointment.preferredDate.includes('-')) {
-      // Format: YYYY-MM-DD
-      const [year, month, day] = appointment.preferredDate.split('-').map(Number);
-      appointmentDate = new Date(year, month - 1, day);
-    } else if (appointment.preferredDate.includes('/')) {
-      // Format: DD/MM/YYYY
-      const [day, month, year] = appointment.preferredDate.split('/').map(Number);
-      appointmentDate = new Date(year, month - 1, day);
-    } else {
-      appointmentDate = new Date(appointment.preferredDate);
+  /**
+   * Récupère l'heure de début du rendez-vous
+   */
+  private getStartDateTime(appointment: Appoitement): Date | null {
+    try {
+      let dateStr = '';
+      let timeStr = '';
+      
+      // Priorité 1: Utiliser l'objet creneau
+      if (appointment.creneau?.heureDebut && appointment.creneau?.date) {
+        dateStr = appointment.creneau.date;
+        timeStr = appointment.creneau.heureDebut;
+      }
+      // Priorité 2: Utiliser preferredDate et preferredTime
+      else if (appointment.preferredDate && appointment.preferredTime) {
+        dateStr = appointment.preferredDate;
+        timeStr = appointment.preferredTime;
+      }
+      else {
+        return null;
+      }
+      
+      // Nettoyer l'heure (enlever les secondes)
+      let cleanTime = timeStr;
+      if (cleanTime.includes(':') && cleanTime.split(':').length === 3) {
+        cleanTime = cleanTime.split(':').slice(0, 2).join(':');
+      }
+      
+      return new Date(`${dateStr}T${cleanTime}:00`);
+    } catch (error) {
+      console.error('Erreur lors du parsing de la date de début:', error);
+      return null;
     }
-
-    // Parser l'heure
-    const [hours, minutes] = appointment.preferredTime.split(':').map(Number);
-    appointmentDate.setHours(hours, minutes || 0, 0, 0);
-
-    // Comparer avec l'heure actuelle
+  }
+  
+  /**
+   * Récupère l'heure de fin du rendez-vous
+   */
+  private getEndDateTime(appointment: Appoitement): Date | null {
+    try {
+      let dateStr = '';
+      let timeStr = '';
+      
+      // Priorité 1: Utiliser l'heure de fin du créneau
+      if (appointment.creneau?.heureFin && appointment.creneau?.date) {
+        dateStr = appointment.creneau.date;
+        timeStr = appointment.creneau.heureFin;
+      }
+      // Priorité 2: Utiliser preferredTime + durée (30 min par défaut)
+      else if (appointment.preferredDate && appointment.preferredTime) {
+        dateStr = appointment.preferredDate;
+        timeStr = appointment.preferredTime;
+        
+        // Ajouter 30 minutes à l'heure de début
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const endDate = new Date(dateStr);
+        endDate.setHours(hours, minutes + 30, 0, 0);
+        return endDate;
+      }
+      else {
+        return null;
+      }
+      
+      // Nettoyer l'heure
+      let cleanTime = timeStr;
+      if (cleanTime.includes(':') && cleanTime.split(':').length === 3) {
+        cleanTime = cleanTime.split(':').slice(0, 2).join(':');
+      }
+      
+      return new Date(`${dateStr}T${cleanTime}:00`);
+    } catch (error) {
+      console.error('Erreur lors du parsing de la date de fin:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Vérifie si l'heure de début est atteinte ou dépassée
+   */
+  isStartTimeReached(appointment: Appoitement): boolean {
+    const startDateTime = this.getStartDateTime(appointment);
+    if (!startDateTime) return false;
+    
     const now = new Date();
-    const isPassed = now > appointmentDate;
-
-    return isPassed;
-  } catch (error) {
-    console.error('Erreur lors du parsing de la date:', error);
+    return now >= startDateTime;
+  }
+  
+  /**
+   * Vérifie si l'heure de fin est dépassée
+   */
+  isEndTimePassed(appointment: Appoitement): boolean {
+    const endDateTime = this.getEndDateTime(appointment);
+    if (!endDateTime) return false;
+    
+    const now = new Date();
+    return now >= endDateTime;
+  }
+  
+  /**
+   * Vérifie si le rendez-vous peut être démarré
+   * Conditions: 
+   * - Statut 'validated'
+   * - Heure de début atteinte
+   * - Heure de fin NON dépassée
+   */
+  canStartAppointment(appointment: Appoitement): boolean {
+    if (appointment.status !== 'validated') {
+      return false;
+    }
+    
+    const startReached = this.isStartTimeReached(appointment);
+    const endPassed = this.isEndTimePassed(appointment);
+    
+    // Peut démarrer si l'heure de début est atteinte ET l'heure de fin n'est pas dépassée
+    return startReached && !endPassed;
+  }
+  
+  /**
+   * Vérifie si le rendez-vous est en cours
+   * Conditions:
+   * - Statut 'started'
+   * - Heure de fin NON dépassée
+   */
+  isAppointmentInProgress(appointment: Appoitement): boolean {
+    if (appointment.status !== 'started') {
+      return false;
+    }
+    
+    return !this.isEndTimePassed(appointment);
+  }
+  
+  /**
+   * Vérifie si le rendez-vous est terminé
+   * Conditions:
+   * - Heure de fin dépassée
+   * - OU statut 'completed'
+   */
+  isAppointmentCompleted(appointment: Appoitement): boolean {
+    // Si déjà marqué comme terminé
+    if (appointment.status === 'completed') {
+      return true;
+    }
+    
+    // Si l'heure de fin est dépassée
+    if (this.isEndTimePassed(appointment)) {
+      // Si le rendez-vous était en cours, le marquer automatiquement comme terminé
+      if (appointment.status === 'started') {
+        this.completeAppointment(appointment.id);
+      }
+      return true;
+    }
+    
     return false;
   }
-}
-
-
+  
+  /**
+   * Marquer un rendez-vous comme terminé
+   */
+  private completeAppointment(id: number): void {
+    console.log(`🏁 Marquage du rendez-vous ${id} comme terminé...`);
+    
+    this.appointementService.updateAppointmentStatus(id, 'completed').subscribe({
+      next: (response) => {
+        console.log(` Rendez-vous ${id} marqué comme terminé avec succès`);
+        // Mettre à jour le statut dans le tableau local
+        const appointment = this.tableauClasse.find(a => a.id === id);
+        if (appointment) {
+          appointment.status = 'completed';
+        }
+      },
+      error: (error) => {
+        console.error(`❌ Erreur lors du marquage du rendez-vous ${id}:`, error);
+      }
+    });
+  }
+  
+  /**
+   * Vérifie si le bouton "Débuter" doit être désactivé
+   */
+  isStartButtonDisabled(appointment: Appoitement): boolean {
+    return !this.canStartAppointment(appointment);
+  }
+  
+  /**
+   * Récupère le message d'info pour le bouton "Débuter"
+   */
+  getStartButtonTooltip(appointment: Appoitement): string {
+    if (appointment.status !== 'validated') {
+      return `Rendez-vous ${this.getStatusLabel(appointment.status)} - non disponible`;
+    }
+    
+    if (!this.isStartTimeReached(appointment)) {
+      const timeLeft = this.getTimeUntilStart(appointment);
+      return `Début dans ${timeLeft} (${this.getFormattedStartTime(appointment)})`;
+    }
+    
+    if (this.isEndTimePassed(appointment)) {
+      return 'Délai dépassé - Rendez-vous terminé';
+    }
+    
+    return 'Démarrer le rendez-vous';
+  }
+  
+  /**
+   * Récupère le message de statut pour l'affichage
+   */
+  getAppointmentStatusMessage(appointment: Appoitement): string {
+    if (appointment.status === 'completed') {
+      return ' Terminé';
+    }
+    
+    if (appointment.status === 'started') {
+      if (this.isEndTimePassed(appointment)) {
+        return ' Terminé';
+      }
+      return '🔵 En cours';
+    }
+    
+    if (appointment.status === 'validated') {
+      if (this.isEndTimePassed(appointment)) {
+        return '⏰ Délai dépassé';
+      }
+      if (!this.isStartTimeReached(appointment)) {
+        return `⏳ Début à ${this.getFormattedStartTime(appointment)}`;
+      }
+      return ' Prêt à démarrer';
+    }
+    
+    if (appointment.status === 'pending') {
+      return '⏳ En attente de validation';
+    }
+    
+    if (appointment.status === 'rejected') {
+      return '❌ Rejeté';
+    }
+    
+    return this.getStatusLabel(appointment.status);
+  }
+  
+  /**
+   * Formate l'heure de début pour l'affichage
+   */
+  private getFormattedStartTime(appointment: Appoitement): string {
+    const startDateTime = this.getStartDateTime(appointment);
+    if (!startDateTime) return 'heure inconnue';
+    
+    return startDateTime.toLocaleTimeString('fr-FR', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  }
+  
+  /**
+   * Calcule le temps restant avant le début
+   */
+  public getTimeUntilStart(appointment: Appoitement): string {
+    const startDateTime = this.getStartDateTime(appointment);
+    if (!startDateTime) return 'inconnu';
+    
+    const now = new Date();
+    const diffMs = startDateTime.getTime() - now.getTime();
+    
+    if (diffMs <= 0) return 'maintenant';
+    
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 60) return `${diffMins} min`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    const remainingMins = diffMins % 60;
+    
+    if (remainingMins === 0) return `${diffHours}h`;
+    return `${diffHours}h${remainingMins}`;
+  }
+  
+  /**
+   * Calcule le temps restant avant la fin
+   */
+  public  getTimeUntilEnd(appointment: Appoitement): string {
+    const endDateTime = this.getEndDateTime(appointment);
+    if (!endDateTime) return 'inconnu';
+    
+    const now = new Date();
+    const diffMs = endDateTime.getTime() - now.getTime();
+    
+    if (diffMs <= 0) return 'terminé';
+    
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 60) return `${diffMins} min`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    return `${diffHours}h${diffMins % 60}min`;
+  }
+  
+  /**
+   * Vérification automatique toutes les minutes
+   */
+  startAutoRefresh(): void {
+    setInterval(() => {
+      this.checkAndUpdateAppointments();
+    }, 60000); // Toutes les minutes
+  }
+  
+  /**
+   * Vérifie et met à jour tous les rendez-vous
+   */
+  private checkAndUpdateAppointments(): void {
+    if (!this.tableauClasse) return;
+    
+    let needsRefresh = false;
+    
+    this.tableauClasse.forEach(appointment => {
+      // Si le rendez-vous est 'started' et l'heure de fin est dépassée
+      if (appointment.status === 'started' && this.isEndTimePassed(appointment)) {
+        console.log(`🏁 Rendez-vous ${appointment.id} terminé (heure de fin dépassée)`);
+        this.completeAppointment(appointment.id);
+        needsRefresh = true;
+      }
+    });
+    
+    // Rafraîchir l'affichage si nécessaire
+    if (needsRefresh) {
+      setTimeout(() => this.getAppointment(), 1000);
+    }
+  }
 }

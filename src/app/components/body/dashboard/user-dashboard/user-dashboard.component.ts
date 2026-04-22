@@ -192,11 +192,15 @@
 
 
     ngOnInit(): void {
+      if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+      }
       this.loadInterval = setInterval(() => this.loadUserAppointments(), 10000); 
       this.loadUserName();
       this.loadUserAppointments();
       this.notificationService.connect();
       this.subscribeToNotifications();
+      this.startAppointmentWatcher();
     }
 
     ngOnDestroy(): void {
@@ -337,7 +341,7 @@
     getMessageIcon(type: string): string {
       const icons: Record<string, string> = {
         info: 'ℹ️',
-        success: '✅',
+        success: '',
         alert: '⚠️',
         error: '❌',
       };
@@ -353,30 +357,6 @@
       }
     }
 
-    loadUserAppointments(): void {
-      const userId = this.jwtService.getUserId();
-      if (!userId) {
-        console.error('Utilisateur non connecté - impossible de charger les rendez-vous');
-        this.tableauClasse = [];
-        this.calculerStatistiques();
-        return;
-      }
-      this.userId = userId;
-
-      this.appointementService.getAppointmentsByPatient(userId).subscribe({
-        next: (data) => {
-          const oldAppointments = [...this.tableauClasse];
-          this.tableauClasse = data;
-          this.calculerStatistiques();
-          if (oldAppointments.length > 0) {
-            this.detectStatusChanges(oldAppointments, data);
-          }
-        },
-        error: (error) => {
-          console.error('Erreur chargement rendez-vous :', error);
-        },
-      });
-    }
 
     calculerStatistiques(): void {
       const now = new Date();
@@ -455,39 +435,7 @@
       return date;
     }
 
-    detectStatusChanges(oldList: Appoitement[], newList: Appoitement[]): void {
-      newList.forEach((newApp) => {
-        const oldApp = oldList.find((old) => old.id === newApp.id);
-        if (!oldApp || oldApp.status === newApp.status) return;
-    
-        console.log(`Changement détecté pour RDV #${newApp.id}: ${oldApp.status} → ${newApp.status}`);
-        const userId = this.getUserIdFromAppointment(newApp);
-        if (!userId) {
-          console.warn(`Impossible de trouver l'utilisateur pour le RDV ${newApp.id}`);
-          return;
-        }
-    
-        switch (newApp.status) {
-          case 'validated':
-            this.notificationService.notifyUserAppointmentValidated(userId, newApp);
-            this.showNotification('Votre rendez-vous a été validé !', 'success');
-            break;
-          case 'rejected':
-            this.notificationService.notifyUserAppointmentRejected(userId, newApp);
-            this.showNotification('Votre rendez-vous a été rejeté', 'error');
-            break;
-          case 'started':
-            // ✅ Passer le zoomLink depuis le rendez-vous mis à jour
-            this.notificationService.notifyUserAppointmentStarted(
-              userId,
-              newApp,
-              newApp.meetingUrl || newApp.zoomLink || (newApp as any).zoomJoinUrl
-            );
-            this.showNotification('Votre rendez-vous a débuté ! Rejoignez la consultation.', 'info');
-            break;
-        }
-      });
-    }
+
 
     private getUserIdFromAppointment(appointment: Appoitement): number | null {
       if (appointment.patient?.id) return Number(appointment.patient.id);
@@ -733,7 +681,7 @@
     getStatusLabel(status: string): string {
       if (!status) return 'Non défini';
       const labels: { [key: string]: string } = {
-        validated: 'Validé ✅',  validé: 'Validé ✅',   valide: 'Validé ✅',
+        validated: 'Validé ',  validé: 'Validé ',   valide: 'Validé ',
         pending: 'En attente ⏳', 'en attente': 'En attente ⏳',
         started: 'En cours 🔵',  démarré: 'En cours 🔵', 'en cours': 'En cours 🔵',
         rejected: 'Rejeté ❌',   cancelled: 'Annulé ❌', annulé: 'Annulé ❌', refusé: 'Refusé ❌',
@@ -754,5 +702,328 @@
       }
       window.open(url, '_blank', 'noopener,noreferrer');
       this.showNotification('Ouverture du lien...', 'info');
+    }
+
+
+    loadUserAppointments(): void {
+      const userId = this.jwtService.getUserId();
+      if (!userId) {
+        console.error('Utilisateur non connecté - impossible de charger les rendez-vous');
+        this.tableauClasse = [];
+        this.calculerStatistiques();
+        return;
+      }
+      this.userId = userId;
+    
+      this.appointementService.getAppointmentsByPatient(userId).subscribe({
+        next: (data) => {
+          const oldAppointments = [...this.tableauClasse];
+          this.tableauClasse = data;
+          this.calculerStatistiques();
+          
+          // Détecter les changements de statut
+          if (oldAppointments.length > 0) {
+            this.detectStatusChanges(oldAppointments, data);
+          }
+          
+          // Vérifier les rendez-vous qui viennent de commencer
+          this.checkForStartedAppointments();
+          this.checkAndNotifyUpcomingAppointments();
+        },
+        error: (error) => {
+          console.error('Erreur chargement rendez-vous :', error);
+        },
+      });
+    }
+
+    detectStatusChanges(oldList: Appoitement[], newList: Appoitement[]): void {
+      newList.forEach((newApp) => {
+        const oldApp = oldList.find((old) => old.id === newApp.id);
+        if (!oldApp || oldApp.status === newApp.status) return;
+    
+        console.log(`Changement détecté pour RDV #${newApp.id}: ${oldApp.status} → ${newApp.status}`);
+        const userId = this.getUserIdFromAppointment(newApp);
+        if (!userId) {
+          console.warn(`Impossible de trouver l'utilisateur pour le RDV ${newApp.id}`);
+          return;
+        }
+    
+        switch (newApp.status) {
+          case 'validated':
+            this.notificationService.notifyUserAppointmentValidated(userId, newApp);
+            this.showNotification('Votre rendez-vous a été validé !', 'success');
+            break;
+          case 'rejected':
+            this.notificationService.notifyUserAppointmentRejected(userId, newApp);
+            this.showNotification('Votre rendez-vous a été rejeté', 'error');
+            break;
+          case 'started':
+            //  ENVOI NOTIFICATION IMMÉDIATE quand le statut passe à 'started'
+            const zoomLink = newApp.meetingUrl || newApp.zoomLink || (newApp as any).zoomJoinUrl;
+            
+            // Notification visuelle
+            this.showNotification(
+              '🔔 VOTRE CONSULTATION A COMMENCÉ ! Rejoignez maintenant.',
+              'success'
+            );
+            
+            // Notification système
+            this.notificationService.notifyUserAppointmentStarted(userId, newApp, zoomLink);
+            
+            // Notification navigateur
+            this.showBrowserNotification(newApp);
+            
+            // Son de notification
+            this.playNotificationSound();
+            
+            // Marquer comme notifié
+            localStorage.setItem(`appointment_started_${newApp.id}`, 'true');
+            break;
+          case 'completed':
+            this.showNotification(' Votre rendez-vous est terminé', 'info');
+            break;
+        }
+      });
+    }
+
+    // Ajoutez ces méthodes avant la dernière accolade fermante de la classe
+
+    /**
+     * Vérifie les rendez-vous qui doivent commencer et envoie des notifications
+     */
+    checkAndNotifyUpcomingAppointments(): void {
+      const now = new Date();
+      
+      this.tableauClasse.forEach(appointment => {
+        // Vérifier uniquement les rendez-vous validés ou en cours
+        if (this.isStatusValidated(appointment.status) || appointment.status === 'started') {
+          
+          // Vérifier si l'heure de début est atteinte
+          if (this.isAppointmentTimeReached(appointment)) {
+            
+            // Vérifier si la notification n'a pas déjà été envoyée
+            const notificationKey = `appointment_started_${appointment.id}`;
+            const notificationSent = localStorage.getItem(notificationKey);
+            
+            if (!notificationSent && appointment.status === 'started') {
+              // Si le rendez-vous est en cours et pas encore notifié
+              this.sendAppointmentStartedNotification(appointment);
+              localStorage.setItem(notificationKey, 'true');
+              
+              // Nettoyer après 1 heure
+              setTimeout(() => {
+                localStorage.removeItem(notificationKey);
+              }, 3600000);
+            } 
+            else if (!notificationSent && this.isExactStartTimeReached(appointment) && appointment.status === 'validated') {
+              // Optionnel: Rappeler que le rendez-vous va commencer bientôt
+              this.sendAppointmentReminderNotification(appointment);
+              localStorage.setItem(`appointment_reminder_${appointment.id}`, 'true');
+            }
+          }
+        }
+      });
+    }
+    
+    /**
+     * Vérifie si l'heure de début exacte est atteinte (à 2 minutes près)
+     */
+    private isExactStartTimeReached(appointment: Appoitement): boolean {
+      if (!appointment.preferredDate || !appointment.preferredTime) return false;
+      
+      try {
+        const appointmentDateTime = this.parseAppointmentDateTime(
+          appointment.preferredDate, 
+          appointment.preferredTime
+        );
+        const now = new Date();
+        const diffMinutes = (appointmentDateTime.getTime() - now.getTime()) / 60000;
+        
+        // Envoie la notification 0-2 minutes après l'heure de début
+        return diffMinutes <= 2 && diffMinutes >= -2;
+      } catch {
+        return false;
+      }
+    }
+    
+    /**
+     * Envoie une notification quand le rendez-vous commence
+     */
+    private sendAppointmentStartedNotification(appointment: Appoitement): void {
+      const userId = this.jwtService.getUserId();
+      if (!userId) return;
+      
+      const zoomLink = appointment.meetingUrl || 
+                       appointment.zoomLink || 
+                       (appointment as any).zoomJoinUrl;
+      
+      console.log(`🔔 Envoi notification début rendez-vous #${appointment.id} à l'utilisateur ${userId}`);
+      
+      // Notification visuelle dans l'interface
+      this.showNotification(
+        `🔔 Le rendez-vous avec le médecin a commencé ! Rejoignez la consultation.`,
+        'success'
+      );
+      
+      // Notification système (si l'API supporte les notifications)
+      this.notificationService.notifyUserAppointmentStarted(
+        userId,
+        appointment,
+        zoomLink
+      );
+      
+      // Option: Notification browser
+      this.showBrowserNotification(appointment);
+    }
+    
+    /**
+     * Envoie un rappel avant le rendez-vous
+     */
+    private sendAppointmentReminderNotification(appointment: Appoitement): void {
+      const userId = this.jwtService.getUserId();
+      if (!userId) return;
+      
+      const timeUntilStart = this.getTimeUntilAppointment(appointment);
+      
+      console.log(`⏰ Envoi rappel rendez-vous #${appointment.id} dans ${timeUntilStart}`);
+      
+      this.showNotification(
+        `⏰ Rappel: Votre rendez-vous commence dans ${timeUntilStart}. Restez connecté(e) !`,
+        'info'
+      );
+    }
+    
+    /**
+     * Notification navigateur (popup)
+     */
+    private showBrowserNotification(appointment: Appoitement): void {
+      if (!('Notification' in window)) {
+        console.log('Ce navigateur ne supporte pas les notifications');
+        return;
+      }
+      
+      // Demander la permission si nécessaire
+      if (Notification.permission === 'granted') {
+        const zoomLink = appointment.meetingUrl || 
+                         appointment.zoomLink || 
+                         (appointment as any).zoomJoinUrl;
+        
+        const notification = new Notification('🔔 Consultation médicale', {
+          body: `Votre rendez-vous avec le médecin a commencé ! Cliquez pour rejoindre.`,
+          icon: '/assets/icons/medical-icon.png',
+          silent: false,
+        });
+        
+        notification.onclick = () => {
+          window.focus();
+          if (zoomLink) {
+            window.open(zoomLink, '_blank');
+          }
+          notification.close();
+        };
+        
+        setTimeout(() => notification.close(), 30000);
+      } 
+      else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            this.showBrowserNotification(appointment);
+          }
+        });
+      }
+    }
+    
+    /**
+     * Vérification périodique des rendez-vous (toutes les minutes)
+     */
+    startAppointmentWatcher(): void {
+      // Vérifier toutes les minutes
+      setInterval(() => {
+        this.checkAndNotifyUpcomingAppointments();
+      }, 60000); // 60 secondes
+      
+      // Vérification plus fréquente pour les rendez-vous proches (toutes les 10 secondes)
+      setInterval(() => {
+        this.checkImminentAppointments();
+      }, 10000); // 10 secondes
+    }
+    
+    /**
+     * Vérifie les rendez-vous imminents (moins de 5 minutes)
+     */
+    private checkImminentAppointments(): void {
+      const now = new Date();
+      
+      this.tableauClasse.forEach(appointment => {
+        if (this.isStatusValidated(appointment.status) && appointment.status !== 'started') {
+          if (!appointment.preferredDate || !appointment.preferredTime) return;
+          
+          try {
+            const appointmentDateTime = this.parseAppointmentDateTime(
+              appointment.preferredDate, 
+              appointment.preferredTime
+            );
+            const diffMinutes = (appointmentDateTime.getTime() - now.getTime()) / 60000;
+            
+            // Vérifier si le rendez-vous est dans moins de 5 minutes
+            if (diffMinutes <= 5 && diffMinutes > 0) {
+              const reminderKey = `imminent_reminder_${appointment.id}`;
+              const reminderSent = localStorage.getItem(reminderKey);
+              
+              if (!reminderSent) {
+                this.showNotification(
+                  `⚠️ Votre rendez-vous commence dans ${Math.ceil(diffMinutes)} minutes !`,
+                  'info'
+                );
+                localStorage.setItem(reminderKey, 'true');
+                
+                // Nettoyer après 10 minutes
+                setTimeout(() => {
+                  localStorage.removeItem(reminderKey);
+                }, 600000);
+              }
+            }
+          } catch (error) {
+            console.error('Erreur lors de la vérification du rendez-vous imminent:', error);
+          }
+        }
+      });
+    }
+    
+    /**
+     * Vérifie spécifiquement si le statut est passé à 'started'
+     */
+    checkForStartedAppointments(): void {
+      const userId = this.jwtService.getUserId();
+      if (!userId) return;
+      
+      // Vérifier les rendez-vous récemment passés au statut 'started'
+      this.tableauClasse.forEach(appointment => {
+        if (appointment.status === 'started') {
+          const notificationKey = `started_notification_sent_${appointment.id}`;
+          const notificationSent = localStorage.getItem(notificationKey);
+          
+          if (!notificationSent && (appointment.meetingUrl || appointment.zoomLink)) {
+            console.log(`🎯 Rendez-vous #${appointment.id} est maintenant en cours!`);
+            
+            // Envoyer notification
+            this.sendAppointmentStartedNotification(appointment);
+            localStorage.setItem(notificationKey, 'true');
+          }
+        }
+      });
+    }
+    
+    /**
+     * Joue un son de notification
+     */
+    playNotificationSound(): void {
+      try {
+        const audio = new Audio('/assets/sounds/notification.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log('Impossible de jouer le son:', e));
+      } catch (error) {
+        console.log('Erreur son:', error);
+      }
     }
   }

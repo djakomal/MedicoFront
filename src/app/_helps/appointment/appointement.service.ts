@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, tap } from 'rxjs';
+import { catchError, Observable, switchMap, tap } from 'rxjs';
 import { Appoitement } from '../../models/appoitement';
 import { JwtService } from '../jwt/jwt.service';
 
@@ -52,6 +52,18 @@ export class AppointementService {
       }
     );
   }
+
+public updateAppointmentStatus(id: number, status: string): Observable<any> {
+  // D'abord récupérer le rendez-vous actuel
+  return this.getAppById(id).pipe(
+    switchMap(appointment => {
+      // Modifier uniquement le status
+      appointment.status ='completed';
+      // Utiliser la méthode update existante
+      return this.updateAppointment(id, appointment);
+    })
+  );
+}
   
 
   // Récupérer un rendez-vous par ID

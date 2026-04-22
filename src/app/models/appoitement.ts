@@ -32,8 +32,10 @@ export class Appoitement {
   doctorType!: string;
   otherSpecialist!: string; 
   doctorId!:number;
+  doctor?:Docteur;
   creneauId!: number; 
-  doctor!: number;  
+  creneau?: Creneau;
+  docteur?: number;  
   appointmentType!: string;
   preferredDate!: string; 
   preferredTime!: string;
@@ -60,7 +62,7 @@ export class Appoitement {
 
   
   // Champs potentiellement ajoutés par le backend
-  status!: 'pending' | 'started' | 'rejected'| 'validated';
+  status!: 'pending' | 'started' | 'rejected'| 'validated'|'completed';
   createdAt!: string;
   updatedAt!: string;
 

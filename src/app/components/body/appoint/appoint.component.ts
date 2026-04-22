@@ -251,6 +251,7 @@ export class AppointComponent implements OnInit {
           otherSpecialist: formValue.otherSpecialist?.trim() || '',
           doctorId: formValue.doctorId,
           creneauId: formValue.creneauId,
+          creneau:formValue.creneauId ? this.creneauxDisponibles.find((c: Creneau) => c.id === formValue.creneauId) : undefined,
           appointmentType: formValue.appointmentType,
           preferredDate: formValue.preferredDate,
           preferredTime: formValue.preferredTime,
@@ -267,7 +268,7 @@ export class AppointComponent implements OnInit {
           status: 'pending',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          doctor: 0,
+          doctor:formValue.doctorId,
           meetingUrl: formValue.meetingUrl?.trim() || '',
         };
   
@@ -346,6 +347,7 @@ export class AppointComponent implements OnInit {
       otherSpecialist: formValue.otherSpecialist?.trim() || '',
       doctorId: formValue.doctorId,
       creneauId: formValue.creneauId,
+      creneau:formValue.creneauId ? this.creneauxDisponibles.find((c: Creneau) => c.id === formValue.creneauId) : undefined,
       appointmentType: formValue.appointmentType,
       preferredDate: formValue.preferredDate,
       preferredTime: formValue.preferredTime,
@@ -362,7 +364,7 @@ export class AppointComponent implements OnInit {
       status: 'pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      doctor: 0,
+      doctor:formValue.doctorId,
       meetingUrl: '',
     };
   

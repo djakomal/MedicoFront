@@ -1,4 +1,3 @@
-
 <div class="container">
   <div class="header-section">
     <h1>Gestion des Rendez-vous</h1>
@@ -61,10 +60,8 @@
             <td>{{ app.allergies }}</td>
             <td>{{ app.medications }}</td>
             <td>{{ app.additionalInfo }}</td>
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="{
+            <!-- <td>
+              <span class="status-badge" [ngClass]="{
                   'status-pending': app.status === 'pending',
                   'status-validated': app.status === 'validated',
                   'status-rejected': app.status === 'rejected',
@@ -72,84 +69,92 @@
                 }">
                 {{ getStatusLabel(app.status) }}
               </span>
+            </td> -->
+            <!-- Remplacer la partie du statut -->
+            <td>
+              <div class="status-container">
+                <span class="status-badge" [ngClass]="{
+                    'status-pending': app.status === 'pending',
+                    'status-validated': app.status === 'validated',
+                    'status-rejected': app.status === 'rejected',
+                    'status-started': app.status === 'started' && !isEndTimePassed(app),
+                    'status-completed': app.status === 'completed' || isEndTimePassed(app)
+                  }">
+                  {{ getAppointmentStatusMessage(app) }}
+                </span>
+
+                <!-- Timer pour les rendez-vous en attente -->
+                <div *ngIf="app.status === 'validated' && !isStartTimeReached(app) && !isEndTimePassed(app)"
+                  class="timer-info">
+                  ⏱ Début dans {{ getTimeUntilStart(app) }}
+                </div>
+
+                <!-- Timer pour les rendez-vous en cours -->
+                <div *ngIf="app.status === 'started' && !isEndTimePassed(app)" class="timer-info in-progress">
+                  ⏱ Fin dans {{ getTimeUntilEnd(app) }}
+                </div>
+              </div>
             </td>
+
+            <!-- Remplacer la partie ACTION -->
             <td>
               <div class="action-buttons">
-                <!-- Bouton Valider: visible si status = pending ET heure pas passée -->
-                <button
-                  *ngIf="app.status === 'pending' && !isAppointmentTimePassed(app)"
-                  class="btn btn-success"
-                  (click)="openConfirmModal('validate', app.id, app)">
+                <!-- PENDING -->
+                <button *ngIf="app.status === 'pending'" class="btn btn-success" [disabled]="isEndTimePassed(app)"
+                  [class.disabled]="isEndTimePassed(app)"
+                  [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de valider' : 'Valider le rendez-vous'"
+                  (click)="!isEndTimePassed(app) && openConfirmModal('validate', app.id, app)">
                   ✓ Valider
                 </button>
-              
-                <!-- Bouton Valider GRISÉ: si heure passée -->
-                <button
-                  *ngIf="app.status === 'pending' && isAppointmentTimePassed(app)"
-                  class="btn btn-success disabled"
-                  disabled
-                  title="Rendez-vous passé">
-                  ✓ Valider
-                </button>
-              
-                <!-- Bouton Rejeter: visible si status = pending ET heure pas passée -->
-                <button
-                  *ngIf="app.status === 'pending' && !isAppointmentTimePassed(app)"
-                  class="btn btn-danger"
-                  (click)="openRejectModal(app.id, app)">
+
+                <button *ngIf="app.status === 'pending'" class="btn btn-danger" [disabled]="isEndTimePassed(app)"
+                  [class.disabled]="isEndTimePassed(app)"
+                  [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de rejeter' : 'Rejeter le rendez-vous'"
+                  (click)="!isEndTimePassed(app) && openRejectModal(app.id, app)">
                   ✕ Rejeter
                 </button>
-              
-                <!-- Bouton Rejeter GRISÉ: si heure passée -->
-                <button
-                  *ngIf="app.status === 'pending' && isAppointmentTimePassed(app)"
-                  class="btn btn-danger disabled"
-                  disabled
-                  title="Rendez-vous passé">
-                  ✕ Rejeter
+
+                <!-- VALIDATED - Prêt à démarrer -->
+                <button *ngIf="app.status === 'validated'" class="btn btn-primary"
+                  [disabled]="isStartButtonDisabled(app)" [class.disabled]="isStartButtonDisabled(app)"
+                  [attr.title]="getStartButtonTooltip(app)"
+                  (click)="!isStartButtonDisabled(app) && openConfirmModal('start', app.id, app)">
+                  <span *ngIf="!isStartTimeReached(app)"></span>
+                  <span *ngIf="isStartTimeReached(app) && !isEndTimePassed(app)">▶</span>
+                  {{ (isStartTimeReached(app) && !isEndTimePassed(app)) ? 'Débuter' : 'En attente' }}
                 </button>
-              
-                <!-- Bouton Débuter: visible si status = validated ET heure pas passée -->
-                <button
-                  *ngIf="app.status === 'validated' && !isAppointmentTimePassed(app)"
-                  class="btn btn-primary"
-                  (click)="openConfirmModal('start', app.id, app)">
-                  ▶ Débuter
-                </button>
-              
-                <!-- Bouton Débuter GRISÉ: si heure passée -->
-                <button
-                  *ngIf="app.status === 'validated' && isAppointmentTimePassed(app)"
-                  class="btn btn-primary disabled"
-                  disabled
-                  title="Rendez-vous passé">
-                  ▶ Débuter
-                </button>
-              
-                <!-- Bouton Supprimer: TOUJOURS visible (jamais grisé) -->
-                <button
-                  class="btn btn-delete"
-                  (click)="openConfirmModal('delete', app.id, app)">
+
+                <!-- STARTED - En cours -->
+                <ng-container *ngIf="app.status === 'started' && !isEndTimePassed(app)">
+                  <button class="btn btn-zoom" (click)="joinAsHost(app)">
+                    🎥 Rejoindre (hôte)
+                  </button>
+
+                  <button *ngIf="hasZoomLink(app)" class="btn btn-copy-link" (click)="copyPatientLink(app)">
+                    📋 Lien patient
+                  </button>
+                </ng-container>
+
+                <!-- COMPLETED ou EXPIRED -->
+                <!-- <div *ngIf="app.status === 'completed' || (app.status === 'started' && isEndTimePassed(app))"
+                  class="status-message completed">
+                   Rendez-vous terminé
+                </div> -->
+
+                <div *ngIf="app.status === 'validated' && isEndTimePassed(app) && !isStartTimeReached(app)"
+                  class="status-message expired">
+                  ⏰ Rendez-vous non commencé - Délai dépassé
+                </div>
+
+                <!-- REJECTED -->
+                <div *ngIf="app.status === 'rejected'" class="status-message rejected">
+                  ❌ Rendez-vous rejeté
+                </div>
+
+                <!-- SUPPRIMER — toujours actif -->
+                <button class="btn btn-delete" (click)="openConfirmModal('delete', app.id, app)">
                   🗑 Supprimer
                 </button>
-              
-                <!-- Bouton Rejoindre: visible si status = started ET a un lien Zoom -->
-                <button 
-                *ngIf="app.status === 'started' && hasZoomLink(app)"
-                (click)="joinZoom(getZoomLink(app))"
-                class="btn btn-zoom">
-                📹 cree la reunion
-              </button>
-              
-                <!-- Message si rejeté -->
-                <div *ngIf="app.status === 'rejected'" class="status-message rejected">
-                  ❌ Rendez-vous rejeté - Aucune action possible
-                </div>
-              
-                <!-- Message si heure passée -->
-                <div *ngIf="isAppointmentTimePassed(app) && app.status !== 'rejected' && app.status !== 'started'" class="status-message expired">
-                  ⏰ Rendez-vous passé - Actions désactivées
-                </div>
               </div>
             </td>
           </tr>
@@ -182,7 +187,8 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeConfirmModal()">Annuler</button>
-        <button [ngClass]="getModalActionButtonClass()" (click)="confirmAction()">{{ getModalActionButtonText() }}</button>
+        <button [ngClass]="getModalActionButtonClass()" (click)="confirmAction()">{{ getModalActionButtonText()
+          }}</button>
       </div>
     </div>
   </div>
@@ -197,11 +203,10 @@
       <button class="modal-close" (click)="closeRejectModal()">×</button>
     </div>
     <div class="modal-body">
-      <p>Veuillez saisir le motif du rejet du rendez-vous de <strong>{{ pendingAppointment?.firstname }} {{ pendingAppointment?.lastname }}</strong></p>
-      <textarea 
-        [(ngModel)]="rejectReason"
-        placeholder="Exemple: Médecin indisponible, patient ne s'est pas présenté, etc."
-        class="reject-textarea"
+      <p>Veuillez saisir le motif du rejet du rendez-vous de <strong>{{ pendingAppointment?.firstname }} {{
+          pendingAppointment?.lastname }}</strong></p>
+      <textarea [(ngModel)]="rejectReason"
+        placeholder="Exemple: Médecin indisponible, patient ne s'est pas présenté, etc." class="reject-textarea"
         rows="4"></textarea>
     </div>
     <div class="modal-footer">
