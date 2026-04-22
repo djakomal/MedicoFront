@@ -30,6 +30,10 @@ export class MesRendezVousComponent  implements OnInit {
   pendingAction: string = '';
   pendingId: number | null = null;
   pendingAppointment: Appoitement | null = null;
+  // CORRECTION: Modal de rejet avec motif
+  showRejectModal: boolean = false;
+  rejectReason: string = '';
+  rejectAppointmentId: number | null = null;
   
   constructor( private router :Router,
       private appointementService:AppointementService,
@@ -48,7 +52,7 @@ export class MesRendezVousComponent  implements OnInit {
     return;
   }
 
-    this.appointementService.getAllAppointment().subscribe({
+    this.appointementService.getAppointmentsByDoctor(doctorId).subscribe({
       next: (data) => {
         console.log(" Données reçues :", data);
         console.log("Id docteur depuis le token :", doctorId);
@@ -75,6 +79,21 @@ export class MesRendezVousComponent  implements OnInit {
         console.error(" Erreur API :", error);
       }
     });
+  }
+
+  hasZoomLink(app: Appoitement): boolean {
+    return !!((app as any).zoomJoinUrl || app.meetingUrl || app.zoomLink);
+  }
+  
+  getZoomLink(app: Appoitement): string | undefined {
+    return (app as any).zoomJoinUrl || app.meetingUrl || app.zoomLink;
+  }
+  joinZoom(link?: string) {
+    if (link) {
+      window.open(link, '_blank');
+    } else {
+      this.showNotification('Lien Zoom introuvable', 'error');
+    }
   }
   showNotification(message: string, type: 'success' | 'error' | 'info'): void {
     this.alertMessage = message;      // Texte à afficher
@@ -108,6 +127,34 @@ export class MesRendezVousComponent  implements OnInit {
     this.pendingAction = '';
     this.pendingId = null;
     this.pendingAppointment = null;
+  }
+  // CORRECTION: Ouvrir le modal de rejet
+  openRejectModal(id: number, appointment: Appoitement): void {
+    this.rejectAppointmentId = id;
+    this.pendingAppointment = appointment;
+    this.rejectReason = '';
+    this.showRejectModal = true;
+  }
+
+  // CORRECTION: Fermer le modal de rejet
+  closeRejectModal(): void {
+    this.showRejectModal = false;
+    this.rejectReason = '';
+    this.rejectAppointmentId = null;
+    this.pendingAppointment = null;
+  }
+
+  // CORRECTION: Confirmer le rejet avec motif
+  confirmReject(): void {
+    if (!this.rejectReason.trim()) {
+      this.showNotification('Veuillez saisir un motif de rejet', 'error');
+      return;
+    }
+
+    if (this.rejectAppointmentId && this.pendingAppointment) {
+      this.rejectAppointmentAction(this.rejectAppointmentId, this.pendingAppointment, this.rejectReason);
+      this.closeRejectModal();
+    }
   }
 
   getModalTitle(): string {
@@ -190,12 +237,15 @@ export class MesRendezVousComponent  implements OnInit {
   }
   
   // Rejeter un rendez-vous avec notification
-  private rejectAppointmentAction(id: number, appointment: Appoitement): void {
+  // CORRECTION: Rejeter un rendez-vous avec motif
+  private rejectAppointmentAction(id: number, appointment: Appoitement, reason?: string): void {
+    console.log('❌ Rejet du rendez-vous ID:', id, 'Motif:', reason);
+    
     this.appointementService.rejectAppointment(id).subscribe({
       next: (response: AppointmentResponse) => {
         if (response.success) {
-          this.sendRejectionNotification(appointment);
-          this.showNotification(response.message, 'success');
+          this.sendRejectionNotification(appointment, reason);
+          this.showNotification(`Rendez-vous rejeté. Motif: ${reason}`, 'success');
           this.getAppointment();
         } else {
           this.showNotification(response.message, 'error');
@@ -208,25 +258,58 @@ export class MesRendezVousComponent  implements OnInit {
     });
   }
   
-  // Débuter un rendez-vous avec notification
+
   private startAppointmentAction(id: number, appointment: Appoitement): void {
     this.appointementService.startAppointment(id).subscribe({
-      next: (response: AppointmentResponse) => {
-        if (response.success) {
-          this.sendStartNotification(appointment);
-          this.showNotification(response.message, 'success');
-          this.getAppointment();
-        } else {
-          this.showNotification(response.message, 'error');
-        }
-      },
-      error: (error) => {
-        this.showNotification('Erreur lors du démarrage du rendez-vous', 'error');
-        console.error('Error starting appointment:', error);
-      }
-    });
-  }
+        next: (response: AppointmentResponse) => {
+            if (response.success) {
+                const patientLink = response.joinUrl                      // pour notifier le patient
+                                 || response.appointment?.zoomJoinUrl;
 
+                const doctorLink  = (response as any).startUrl            // lien hôte pour le docteur
+                                 || response.appointment?.zoomStartUrl
+                                 || patientLink;                          // fallback seulement
+
+                this.sendStartNotification(appointment, patientLink);     // patient reçoit join_url
+                this.showNotification('Rendez-vous démarré.', 'success');
+                this.getAppointment();
+
+                if (doctorLink) {
+                    window.open(doctorLink, '_blank'); // ← docteur entre en tant qu'hôte
+                }
+            }
+        }
+    });
+}
+
+  // CORRECTION: Méthode d'aide pour extraire le lien Zoom avec logique de secours
+  private extractZoomLink(response: AppointmentResponse, appointment: Appoitement): string | undefined {
+    // Essayer plusieurs noms de champs possibles pour le lien Zoom
+    const zoomLink = 
+      response.zoomLink ||                          
+      response.appointment?.zoomJoinUrl ||          
+      response.appointment?.meetingUrl || 
+      response.appointment?.zoomLink ||
+      (response as any)?.zoomJoinUrl ||             
+      (response as any)?.meetingUrl ||
+      (response as any)?.join_url ||
+      (appointment as any).zoomJoinUrl ||           
+      appointment.meetingUrl ||
+      appointment.zoomLink;
+    
+    if (zoomLink) {
+      console.log('✅ Lien Zoom trouvé:', zoomLink);
+    } else {
+      console.warn('⚠️ Aucun lien Zoom trouvé. Champs disponibles:', {
+        'response.zoomLink': response.zoomLink,
+        'response.appointment?.zoomJoinUrl': response.appointment?.zoomJoinUrl,
+        'appointment.zoomJoinUrl': (appointment as any).zoomJoinUrl,
+        'appointment.meetingUrl': appointment.meetingUrl,
+      });
+    }
+    
+    return zoomLink;
+  }
   // Supprimer un rendez-vous
   private deleteAppointmentAction(id: number, appointment: Appoitement): void {
     this.appointementService.deleteAppointment(id).subscribe({
@@ -260,42 +343,68 @@ private sendValidationNotification(appointment: Appoitement): void {
   }
 }
 
-private sendRejectionNotification(appointment: Appoitement): void {
-  const userId = this.getUserIdFromAppointment(appointment);
-  const notifId=Number(userId);
-  
-  if (userId) {
-    this.notificationService.notifyUserAppointmentRejected(userId, appointment);
-    console.log(`❌ Notification de rejet envoyée à l'utilisateur ${userId}`);
-  } else {
-    this.notificationService.notifyUserAppointmentRejected(notifId,appointment);
-    console.log('⚠️ Notification de rejet envoyée (sans userId spécifique)');
+// CORRECTION: Notification de rejet avec motif
+  private sendRejectionNotification(appointment: Appoitement, reason?: string): void {
+    const userId = this.getUserIdFromAppointment(appointment);
+    const notifId=Number(userId);
+    
+    console.log(`❌ Notification de rejet envoyée - userId: ${userId}, motif: ${reason}`);
+    
+    if (userId) {
+      this.notificationService.notifyUserAppointmentRejected(userId, appointment, reason);
+    } else {
+      this.notificationService.notifyUserAppointmentRejected(notifId, appointment, reason);
+    }
   }
-}
 
-private sendStartNotification(appointment: Appoitement): void {
-  const userId = this.getUserIdFromAppointment(appointment);
-  const notifId=Number(userId);
-  if (userId) {
-    this.notificationService.notifyUserAppointmentStarted(userId, appointment);
-    console.log(`🏥 Notification de démarrage envoyée à l'utilisateur ${userId}`);
-  } else {
-    this.notificationService.notifyUserAppointmentStarted(notifId,appointment);
-    console.log('⚠️ Notification de démarrage envoyée (sans userId spécifique)');
+  // CORRECTION: Notification de démarrage avec lien Zoom
+  private sendStartNotification(appointment: Appoitement, zoomLink?: string): void {
+    const userId = this.getUserIdFromAppointment(appointment);
+    const notifId = Number(userId);
+    
+    console.log('📧 Envoi notification de démarrage');
+    console.log('  - userId:', userId);
+    console.log('  - zoomLink param:', zoomLink);
+    console.log('  - appointment.zoomJoinUrl:', (appointment as any).zoomJoinUrl);
+    console.log('  - appointment.meetingUrl:', appointment.meetingUrl);
+    
+    // CORRECTION: Utiliser le lien Zoom du rendez-vous si pas fourni
+    const finalZoomLink = zoomLink || (appointment as any).zoomJoinUrl || appointment.meetingUrl;
+    
+    if (userId) {
+      this.notificationService.notifyUserAppointmentStarted(userId, appointment, finalZoomLink);
+      console.log(`✅ Notification de démarrage envoyée à l'utilisateur ${userId} avec lien: ${finalZoomLink}`);
+    } else {
+      this.notificationService.notifyUserAppointmentStarted(notifId, appointment, finalZoomLink);
+      console.log(`⚠️ Notification de démarrage envoyée avec notifId ${notifId} avec lien: ${finalZoomLink}`);
+    }
   }
-}
 
 // Méthode pour extraire l'ID utilisateur d'un rendez-vous
-private getUserIdFromAppointment(appointment: Appoitement): number | null {
-  // Vérifier si patient existe et a un id
-  if (appointment.patient && appointment.patient.id) {
-    console.log('✅ ID patient trouvé dans l\'objet patient:', appointment.patient.id);
-    return appointment.patient.id;
+// CORRECTION: Méthode pour extraire l'ID utilisateur d'un rendez-vous
+  private getUserIdFromAppointment(appointment: Appoitement): number | null {
+    // CORRECTION: Vérifier d'abord patientId (champ direct)
+    if ((appointment as any).patientId && (appointment as any).patientId > 0) {
+      console.log('✅ ID patient trouvé dans patientId:', (appointment as any).patientId);
+      return (appointment as any).patientId;
+    }
+    
+    // Fallback: Vérifier si patient existe et a un id
+    if (appointment.patient && appointment.patient.id) {
+      console.log('✅ ID patient trouvé dans l\'objet patient:', appointment.patient.id);
+      return appointment.patient.id;
+    }
+    
+    // Fallback: Utiliser l'ID de l'utilisateur connecté depuis le JWT
+    const connectedUserId = this.jwtService.getUserId();
+    if (connectedUserId && connectedUserId > 0) {
+      console.log('✅ ID patient trouvé depuis JWT:', connectedUserId);
+      return connectedUserId;
+    }
+    
+    console.warn('❌ Impossible de trouver l\'ID patient pour le rendez-vous:', appointment);
+    return null;
   }
-  
-  console.warn('❌ Pas de patient lié à ce rendez-vous. patient =', appointment.patient);
-  return null;
-}
   
 getCountByStatus(status: string): number {
     if (!this.tableauClasse) return 0;
@@ -312,4 +421,43 @@ getCountByStatus(status: string): number {
     return labels[status] || status;
   }
   
+
+  // CORRECTION: Vérifier si l'heure du rendez-vous est passée
+isAppointmentTimePassed(appointment: Appoitement): boolean {
+  if (!appointment.preferredDate || !appointment.preferredTime) {
+    return false;
+  }
+
+  try {
+    // Parser la date et l'heure
+    let appointmentDate: Date;
+    
+    if (appointment.preferredDate.includes('-')) {
+      // Format: YYYY-MM-DD
+      const [year, month, day] = appointment.preferredDate.split('-').map(Number);
+      appointmentDate = new Date(year, month - 1, day);
+    } else if (appointment.preferredDate.includes('/')) {
+      // Format: DD/MM/YYYY
+      const [day, month, year] = appointment.preferredDate.split('/').map(Number);
+      appointmentDate = new Date(year, month - 1, day);
+    } else {
+      appointmentDate = new Date(appointment.preferredDate);
+    }
+
+    // Parser l'heure
+    const [hours, minutes] = appointment.preferredTime.split(':').map(Number);
+    appointmentDate.setHours(hours, minutes || 0, 0, 0);
+
+    // Comparer avec l'heure actuelle
+    const now = new Date();
+    const isPassed = now > appointmentDate;
+
+    return isPassed;
+  } catch (error) {
+    console.error('Erreur lors du parsing de la date:', error);
+    return false;
+  }
+}
+
+
 }

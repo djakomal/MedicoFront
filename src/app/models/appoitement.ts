@@ -11,7 +11,6 @@ import { Creneau } from "./Creneau";
   })
 
 export class Appoitement {
-
   id!: number; 
   patientId!: number;
    patient?: {  
@@ -25,7 +24,10 @@ export class Appoitement {
   phone!: string;
   insurance!: string; // Optionnel
   speciality!: Speciality.GENERAL; // Spécialité médicale du rendez-vous
-  
+  zoomLink?: string;        // alias legacy
+  zoomStartUrl?: string;   
+  zoomJoinUrl?: string; // lien hôte (start_url)
+  zoomPassword?: string;    
   // Détails du rendez-vous (Étape 2)
   doctorType!: string;
   otherSpecialist!: string; 

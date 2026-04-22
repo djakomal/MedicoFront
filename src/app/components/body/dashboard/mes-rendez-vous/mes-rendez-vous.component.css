@@ -99,7 +99,24 @@ body {
   flex-wrap: wrap;
   gap: 15px;
 }
+.btn-zoom-join {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #2D8CFF;
+  color: #ffffff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
 
+.btn-zoom-join:hover {
+  background-color: #1a6fd4;
+}
 .card-header h2 {
   color: white;
   font-size: 26px;
@@ -584,5 +601,127 @@ td {
   td {
     padding: 15px 10px;
     font-size: 12px;
+  }
+}
+
+/* Modal de rejet */
+.rejection-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  max-width: 500px;
+  width: 90%;
+  animation: slideIn 0.3s ease-out;
+}
+
+.rejection-modal .modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+}
+
+.rejection-modal .modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+}
+
+.rejection-modal .modal-body {
+  padding: 20px;
+}
+
+.rejection-modal .modal-body p {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.reject-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.reject-textarea:focus {
+  outline: none;
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+}
+
+.rejection-modal .modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-reject {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-reject:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.status-message {
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 10px;
+}
+/* Boutons désactivés */
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #ccc !important;
+  color: #666 !important;
+  border-color: #999 !important;
+}
+
+.btn.disabled:hover {
+  background-color: #ccc !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Message pour rendez-vous expiré */
+.status-message.expired {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+.status-message.rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
   }
 }

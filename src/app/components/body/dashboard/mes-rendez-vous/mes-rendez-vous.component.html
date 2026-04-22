@@ -67,33 +67,89 @@
                 [ngClass]="{
                   'status-pending': app.status === 'pending',
                   'status-validated': app.status === 'validated',
-                  'status-rejected': app.status === 'rejected'
+                  'status-rejected': app.status === 'rejected',
+                  'status-started':   app.status === 'started'
                 }">
                 {{ getStatusLabel(app.status) }}
               </span>
             </td>
             <td>
               <div class="action-buttons">
+                <!-- Bouton Valider: visible si status = pending ET heure pas passée -->
                 <button
+                  *ngIf="app.status === 'pending' && !isAppointmentTimePassed(app)"
                   class="btn btn-success"
                   (click)="openConfirmModal('validate', app.id, app)">
                   ✓ Valider
                 </button>
+              
+                <!-- Bouton Valider GRISÉ: si heure passée -->
                 <button
+                  *ngIf="app.status === 'pending' && isAppointmentTimePassed(app)"
+                  class="btn btn-success disabled"
+                  disabled
+                  title="Rendez-vous passé">
+                  ✓ Valider
+                </button>
+              
+                <!-- Bouton Rejeter: visible si status = pending ET heure pas passée -->
+                <button
+                  *ngIf="app.status === 'pending' && !isAppointmentTimePassed(app)"
                   class="btn btn-danger"
-                  (click)="openConfirmModal('reject', app.id, app)">
+                  (click)="openRejectModal(app.id, app)">
                   ✕ Rejeter
                 </button>
+              
+                <!-- Bouton Rejeter GRISÉ: si heure passée -->
                 <button
+                  *ngIf="app.status === 'pending' && isAppointmentTimePassed(app)"
+                  class="btn btn-danger disabled"
+                  disabled
+                  title="Rendez-vous passé">
+                  ✕ Rejeter
+                </button>
+              
+                <!-- Bouton Débuter: visible si status = validated ET heure pas passée -->
+                <button
+                  *ngIf="app.status === 'validated' && !isAppointmentTimePassed(app)"
                   class="btn btn-primary"
                   (click)="openConfirmModal('start', app.id, app)">
                   ▶ Débuter
                 </button>
+              
+                <!-- Bouton Débuter GRISÉ: si heure passée -->
+                <button
+                  *ngIf="app.status === 'validated' && isAppointmentTimePassed(app)"
+                  class="btn btn-primary disabled"
+                  disabled
+                  title="Rendez-vous passé">
+                  ▶ Débuter
+                </button>
+              
+                <!-- Bouton Supprimer: TOUJOURS visible (jamais grisé) -->
                 <button
                   class="btn btn-delete"
                   (click)="openConfirmModal('delete', app.id, app)">
                   🗑 Supprimer
                 </button>
+              
+                <!-- Bouton Rejoindre: visible si status = started ET a un lien Zoom -->
+                <button 
+                *ngIf="app.status === 'started' && hasZoomLink(app)"
+                (click)="joinZoom(getZoomLink(app))"
+                class="btn btn-zoom">
+                📹 cree la reunion
+              </button>
+              
+                <!-- Message si rejeté -->
+                <div *ngIf="app.status === 'rejected'" class="status-message rejected">
+                  ❌ Rendez-vous rejeté - Aucune action possible
+                </div>
+              
+                <!-- Message si heure passée -->
+                <div *ngIf="isAppointmentTimePassed(app) && app.status !== 'rejected' && app.status !== 'started'" class="status-message expired">
+                  ⏰ Rendez-vous passé - Actions désactivées
+                </div>
               </div>
             </td>
           </tr>
@@ -128,6 +184,29 @@
         <button class="btn-cancel" (click)="closeConfirmModal()">Annuler</button>
         <button [ngClass]="getModalActionButtonClass()" (click)="confirmAction()">{{ getModalActionButtonText() }}</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de rejet avec motif -->
+<div class="modal-backdrop" *ngIf="showRejectModal" (click)="closeRejectModal()"></div>
+<div class="rejection-modal" *ngIf="showRejectModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Motif du rejet</h2>
+      <button class="modal-close" (click)="closeRejectModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Veuillez saisir le motif du rejet du rendez-vous de <strong>{{ pendingAppointment?.firstname }} {{ pendingAppointment?.lastname }}</strong></p>
+      <textarea 
+        [(ngModel)]="rejectReason"
+        placeholder="Exemple: Médecin indisponible, patient ne s'est pas présenté, etc."
+        class="reject-textarea"
+        rows="4"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeRejectModal()">Annuler</button>
+      <button class="btn-reject" (click)="confirmReject()">Confirmer le rejet</button>
     </div>
   </div>
 </div>

@@ -16,8 +16,8 @@ export interface ZoomMeeting {
 
 export interface CreateMeetingRequest {
   topic: string;
-  type?: number; // 1=instant, 2=schedule, 3=recurring, 8=fixed webinar
-  start_time?: string; // ISO 8601
+  type?: number;
+  start_time?: string;
   duration?: number;
   timezone?: string;
   agenda?: string;
@@ -34,7 +34,7 @@ export interface CreateMeetingRequest {
   providedIn: 'root'
 })
 export class ZoomServiceService {
-  private baseUrl ='http://localhost:8080/medico/api/meetings'; 
+  private baseUrl = 'http://localhost:8080/medico/api/meetings';
   private zoomAuthState = 'zoom_auth_state';
   private zoomTokenKey = 'zoom_access_token';
   private zoomUserKey = 'zoom_user_info';
@@ -43,33 +43,13 @@ export class ZoomServiceService {
 
   // ==================== AUTHENTIFICATION ====================
 
-  /**
-   * Vérifier si l'utilisateur est authentifié avec Zoom
-   */
   isZoomAuthenticated(): Observable<boolean> {
-    // Vérifier d'abord dans le localStorage
-    const token = localStorage.getItem(this.zoomTokenKey);
-    if (!token) {
-      return of(false);
-    }
-
-    // Vérifier avec le backend
-    return this.http.get(`${this.baseUrl}/me`, {
-      headers: this.getAuthHeaders(token)
-    }).pipe(
-      map(() => true),
-      catchError(() => {
-        // Token invalide ou expiré
-        localStorage.removeItem(this.zoomTokenKey);
-        localStorage.removeItem(this.zoomUserKey);
-        return of(false);
-      })
+    return this.http.get<{ authenticated: boolean }>(`${this.baseUrl}/me`).pipe(
+      map(response => response.authenticated === true),
+      catchError(() => of(false))
     );
   }
 
-  /**
-   * Obtenir l'URL d'authentification Zoom
-   */
   getZoomAuthUrl(): Observable<{ authUrl: string }> {
     return this.http.get<{ authUrl: string }>(`${this.baseUrl}/authorize`).pipe(
       catchError(error => {
@@ -78,95 +58,9 @@ export class ZoomServiceService {
       })
     );
   }
-  /**
-   * Lancer le flux d'authentification OAuth
-   */
-  initiateZoomAuth(): Observable<boolean> {
-    return new Observable(observer => {
-      this.getZoomAuthUrl().subscribe({
-        next: (response) => {
-          if (response.authUrl) {
-            // Ouvrir dans une nouvelle fenêtre/popup
-            this.openZoomAuthPopup(response.authUrl);
-            observer.next(true);
-            observer.complete();
-          } else {
-            observer.error('No auth URL received');
-          }
-        },
-        error: (error) => {
-          observer.error(error);
-        }
-      });
-    });
-  }
 
-
-  private openZoomAuthPopup(authUrl: string): void {
-    // Calculer la taille et position de la popup
-    const width = 600;
-    const height = 700;
-    const left = (window.screen.width - width) / 2;
-    const top = (window.screen.height - height) / 2;
-    
-    const popup = window.open(
-      authUrl,
-      'zoom_auth',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-    );
-    
-    if (!popup) {
-      alert('Veuillez autoriser les popups pour cette page');
-      return;
-    }
-    
-    // Vérifier périodiquement si la popup est fermée
-    const checkPopup = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkPopup);
-        console.log('Popup Zoom fermée');
-      }
-    }, 1000);
-    
-    // Écouter les messages depuis la popup
-    window.addEventListener('message', (event) => {
-      if (event.origin !== window.location.origin) return;
-      
-      if (event.data.type === 'zoom_auth_success') {
-        console.log('Authentification Zoom réussie via message');
-        // Rafraîchir l'état d'authentification
-        this.checkZoomAuthStatus();
-      }
-    }, false);
-  }
-
-
-  /**
- * Vérifier l'état d'authentification
- */
-checkZoomAuthStatus(): void {
-  this.isZoomAuthenticated().subscribe({
-    next: (authenticated) => {
-      if (authenticated) {
-        // Émettre un événement pour informer les composants
-        window.dispatchEvent(new CustomEvent('zoom_auth_changed', {
-          detail: { authenticated: true }
-        }));
-      }
-    }
-  });
-}
-
-  /**
-   * Rafraîchir le token Zoom
-   */
   refreshZoomToken(): Observable<any> {
     return this.http.post(`${this.baseUrl}/refresh-token`, {}).pipe(
-      tap((response: any) => {
-        if (response.access_token) {
-          localStorage.setItem(this.zoomTokenKey, response.access_token);
-        }
-      }),
       catchError(error => {
         console.error('Erreur rafraîchissement token:', error);
         this.clearZoomAuth();
@@ -175,216 +69,97 @@ checkZoomAuthStatus(): void {
     );
   }
 
-  /**
-   * Gérer le callback OAuth (à appeler après redirection)
-   */
   handleZoomCallback(code: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/callback`, {
-      params: { code }
-    }).pipe(
-      tap((response: any) => {
-        // Stocker le token si présent dans la réponse
-        if (response.token) {
-          localStorage.setItem(this.zoomTokenKey, response.token);
-        }
-      })
-    );
+    return this.http.get(`${this.baseUrl}/callback`, { params: { code } });
   }
 
-  /**
-   * Déconnecter Zoom
-   */
   logoutZoom(): void {
     this.clearZoomAuth();
   }
 
   // ==================== GESTION DES RÉUNIONS ====================
 
-  /**
-   * Créer une réunion instantanée
-   */
-  createInstantMeeting(topic: string): Observable<ZoomMeeting> {
-    const request: CreateMeetingRequest = {
-      topic: topic,
-      type: 1, // Réunion instantanée
-      duration: 60,
-      settings: {
-        host_video: true,
-        participant_video: true,
-        waiting_room: true,
-        join_before_host: false,
-        meeting_authentication: true
-      }
-    };
-
-    return this.http.post<ZoomMeeting>(this.baseUrl, request);
-  }
-
-  /**
-   * Créer une réunion planifiée
-   */
   createScheduledMeeting(topic: string, startTime: string, duration: number = 60): Observable<ZoomMeeting> {
     const request: CreateMeetingRequest = {
-      topic: topic,
-      type: 2, // Réunion planifiée
+      topic,
+      type: 2,
       start_time: startTime,
-      duration: duration,
-      timezone: 'Europe/Paris',
+      duration,
+      timezone: 'Africa/Lome',
       settings: {
         host_video: true,
         participant_video: true,
-        waiting_room: true,
-        join_before_host: false,
-        meeting_authentication: true
+        waiting_room: true,          // ← patient attend
+        join_before_host: false,     // ← docteur doit ouvrir en premier
+        meeting_authentication: false,
+        auto_recording: 'none'
       }
     };
-
     return this.http.post<ZoomMeeting>(this.baseUrl, request);
   }
 
-  /**
-   * Obtenir toutes les réunions
-   */
   getAllMeetings(): Observable<ZoomMeeting[]> {
     return this.http.get<ZoomMeeting[]>(this.baseUrl);
   }
 
-  /**
-   * Obtenir une réunion spécifique
-   */
   getMeetingById(meetingId: string): Observable<ZoomMeeting> {
     return this.http.get<ZoomMeeting>(`${this.baseUrl}/${meetingId}`);
   }
 
-  /**
-   * Mettre à jour une réunion
-   */
   updateMeeting(meetingId: string, updates: Partial<CreateMeetingRequest>): Observable<any> {
     return this.http.patch(`${this.baseUrl}/${meetingId}`, updates);
   }
 
-  /**
-   * Supprimer une réunion
-   */
   deleteMeeting(meetingId: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${meetingId}`);
   }
 
-  /**
-   * Inscrire un participant à une réunion
-   */
   registerToMeeting(meetingId: string, registrant: {
     email: string;
     firstName: string;
     lastName: string;
   }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, {
-      ...registrant,
-      meetingId: meetingId
-    });
+    return this.http.post(`${this.baseUrl}/register`, { ...registrant, meetingId });
   }
 
   // ==================== UTILITAIRES ====================
 
-  /**
-   * Ouvrir une réunion Zoom
-   */
   openZoomMeeting(joinUrl: string): void {
     if (joinUrl) {
       window.open(joinUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
-  /**
-   * Générer une invitation Zoom formatée
-   */
-  generateZoomInvitation(meeting: ZoomMeeting): string {
-    return `
-      📅 Rendez-vous médical via Zoom
-      
-      Sujet: ${meeting.topic}
-      Lien de participation: ${meeting.join_url}
-      ${meeting.password ? `Mot de passe: ${meeting.password}` : ''}
-      ${meeting.start_time ? `Heure: ${new Date(meeting.start_time).toLocaleString('fr-FR')}` : ''}
-      ${meeting.duration ? `Durée: ${meeting.duration} minutes` : ''}
-      
-      Instructions:
-      1. Cliquez sur le lien ci-dessus
-      2. Installez l'application Zoom si nécessaire
-      3. Rejoignez la réunion quelques minutes avant l'heure prévue
-      
-      Pour toute assistance, contactez votre médecin.
-    `;
-  }
-
-  /**
-   * Copier le lien Zoom dans le presse-papier
-   */
   copyToClipboard(text: string): Promise<void> {
     return navigator.clipboard.writeText(text);
   }
 
-  /**
-   * Obtenir les informations de l'utilisateur Zoom
-   */
   getZoomUserInfo(): Observable<any> {
     return this.http.get(`${this.baseUrl}/me`);
   }
 
-  // ==================== MÉTHODES PRIVÉES ====================
+  generateZoomInvitation(meeting: ZoomMeeting): string {
+    return `
+📅 Rendez-vous médical via Zoom
 
-  private getAuthHeaders(token?: string): HttpHeaders {
-    const accessToken = token || localStorage.getItem(this.zoomTokenKey);
-    return new HttpHeaders({
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    });
+Sujet: ${meeting.topic}
+Lien: ${meeting.join_url}
+${meeting.password ? `Mot de passe: ${meeting.password}` : ''}
+${meeting.start_time ? `Heure: ${new Date(meeting.start_time).toLocaleString('fr-FR')}` : ''}
+${meeting.duration ? `Durée: ${meeting.duration} minutes` : ''}
+
+Instructions:
+1. Cliquez sur le lien ci-dessus
+2. Installez Zoom si nécessaire
+3. Rejoignez quelques minutes avant l'heure prévue
+    `.trim();
   }
+
+  // ==================== MÉTHODES PRIVÉES ====================
 
   private clearZoomAuth(): void {
     localStorage.removeItem(this.zoomTokenKey);
     localStorage.removeItem(this.zoomUserKey);
     localStorage.removeItem(this.zoomAuthState);
-  }
-
-  private saveZoomToken(token: string, expiresIn: number): void {
-    localStorage.setItem(this.zoomTokenKey, token);
-    
-    // Stocker la date d'expiration
-    const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
-    localStorage.setItem('zoom_token_expires', expiresAt.toISOString());
-  }
-
-  private isTokenExpired(): boolean {
-    const expiresAt = localStorage.getItem('zoom_token_expires');
-    if (!expiresAt) return true;
-    
-    return new Date() >= new Date(expiresAt);
-  }
-
-  /**
-   * Vérifier et rafraîchir automatiquement le token si nécessaire
-   */
-  ensureValidToken(): Observable<string> {
-    return new Observable(observer => {
-      const token = localStorage.getItem(this.zoomTokenKey);
-      
-      if (!token || this.isTokenExpired()) {
-        this.refreshZoomToken().subscribe({
-          next: (response) => {
-            const newToken = response.access_token;
-            observer.next(newToken);
-            observer.complete();
-          },
-          error: (error) => {
-            observer.error(error);
-          }
-        });
-      } else {
-        observer.next(token);
-        observer.complete();
-      }
-    });
   }
 }

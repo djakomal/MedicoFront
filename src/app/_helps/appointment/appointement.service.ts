@@ -6,9 +6,11 @@ import { JwtService } from '../jwt/jwt.service';
 
 // Ajouter l'interface ICI, avant le @Injectable
 export interface AppointmentResponse {
+  joinUrl: string | undefined;
   success: boolean;
   message: string;
   appointment: Appoitement;
+  zoomLink?: string;
 }
 
 @Injectable({

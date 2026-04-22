@@ -4,6 +4,7 @@ export class Message {
   sender!: string;
   subject!: string;
   content!: string;
+  zoomLink?: string;  
   date!: string;
   read!: boolean;
   appointmentId!: number;

@@ -30,7 +30,6 @@
       <div class="logo-text">Medico</div>
     </div>
 
-    <!-- Section Actions Utilisateur avec Messagerie -->
     <div class="user-actions">
       <!-- Icône de messagerie -->
       <div class="message-icon-container" (click)="toggleMessagesPanel()">
@@ -41,21 +40,23 @@
           </span>
         </div>
       </div>
-    
+
       <!-- Profil utilisateur -->
       <div class="user-profile">
         <span class="profile-avatar">👤</span>
         <span class="user-name">{{ userName }}</span>
       </div>
-    
+
       <!-- Bouton déconnexion direct -->
       <button class="logout-header-btn" (click)="openLogoutModal()">
-       Déconnexion
+        Déconnexion
       </button>
     </div>
   </div>
 
-  <!-- Panneau des messages -->
+  <!-- ============================================================
+       PANNEAU DES MESSAGES
+       ============================================================ -->
   <div class="messages-panel" [class.show]="showMessagesPanel && !showMessageDetail">
     <div class="messages-header">
       <h3>Messages</h3>
@@ -68,14 +69,17 @@
       </div>
     </div>
 
+    <!-- Liste des notifications -->
+
     <div class="messages-list" *ngIf="appointmentNotifications.length > 0">
-      <div *ngFor="let appointmentNotification of appointmentNotifications" class="message-item"
+      <div *ngFor="let appointmentNotification of appointmentNotifications"
+        class="message-item"
         [class.unread]="!appointmentNotification.read"
         [class.selected]="selectedMessage?.id === appointmentNotification.id"
         (click)="openMessage(appointmentNotification)">
-
+    
         <div class="message-icon-type">{{ getMessageIcon(appointmentNotification.type) }}</div>
-
+    
         <div class="message-content">
           <div class="message-header-row">
             <span class="message-sender">{{ appointmentNotification.sender }}</span>
@@ -83,9 +87,21 @@
           </div>
           <div class="message-subject">{{ appointmentNotification.subject }}</div>
           <div class="message-preview">{{ appointmentNotification.content | slice:0:60 }}...</div>
+    
+          <div class="message-zoom-link" *ngIf="appointmentNotification.zoomLink">
+            <a
+              [href]="appointmentNotification.zoomLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-zoom-join"
+              (click)="$event.stopPropagation()">
+              📹 Rejoindre la consultation Zoom
+            </a>
+          </div>
         </div>
-
-        <button class="delete-message-btn" (click)="deleteMessage(appointmentNotification.id, $event)"
+    
+        <button class="delete-message-btn"
+          (click)="deleteMessage(appointmentNotification.id, $event)"
           title="Supprimer">
           🗑️
         </button>
@@ -98,25 +114,28 @@
     </div>
   </div>
 
-  <!-- Détail du message -->
   <div class="message-detail-panel" [class.show]="showMessageDetail" *ngIf="selectedMessage">
     <div class="message-detail-header">
       <button class="back-btn" (click)="closeMessageDetail()">← Retour</button>
-      <button class="delete-btn" (click)="deleteMessage(selectedMessage.id)">🗑️ Supprimer</button>
+      <h3>{{ selectedMessage.subject }}</h3>
     </div>
-
     <div class="message-detail-content">
-      <div class="detail-icon">{{ getMessageIcon(selectedMessage.type) }}</div>
-      <h2>{{ selectedMessage.subject }}</h2>
-
       <div class="message-meta">
-        <span class="sender-name">De: {{ selectedMessage.sender }}</span>
-        <span class="message-date-detail">{{ selectedMessage.date }}</span>
+        <span class="message-sender">{{ selectedMessage.sender }}</span>
+        <span class="message-date">{{ selectedMessage.date }}</span>
       </div>
-
       <div class="message-body">
         <p>{{ selectedMessage.content }}</p>
       </div>
+  
+      <!-- CORRECTION: Bouton Zoom dans le détail du message -->
+      <a *ngIf="selectedMessage.zoomLink"
+         [href]="selectedMessage.zoomLink"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn-zoom-join btn-zoom-detail">
+        📹 Rejoindre la consultation Zoom
+      </a>
     </div>
   </div>
 
@@ -125,22 +144,26 @@
     (click)="showMessagesPanel = false; showMessageDetail = false">
   </div>
 
-  <!-- Navigation -->
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
   <div class="nav">
     <ul class="nav-items">
       <li>
-        <a href="#" [class.active]="isSectionActive('dashboard')" (click)="showSection('dashboard', $event)">Tableau de
-          bord</a>
+        <a href="#" [class.active]="isSectionActive('dashboard')"
+          (click)="showSection('dashboard', $event)">Tableau de bord</a>
       </li>
       <li>
-        <a href="#" [class.active]="isSectionActive('services')" (click)="showSection('services', $event)">Services</a>
+        <a href="#" [class.active]="isSectionActive('services')"
+          (click)="showSection('services', $event)">Services</a>
       </li>
       <li>
-        <a href="#" [class.active]="isSectionActive('appointments')" (click)="showSection('appointments', $event)">Mes
-          rendez-vous</a>
+        <a href="#" [class.active]="isSectionActive('appointments')"
+          (click)="showSection('appointments', $event)">Mes rendez-vous</a>
       </li>
       <li>
-        <a href="#" [class.active]="isSectionActive('advice')" (click)="showSection('advice', $event)">Conseils</a>
+        <a href="#" [class.active]="isSectionActive('advice')"
+          (click)="showSection('advice', $event)">Conseils</a>
       </li>
       <li>
         <a href="#" [class.active]="isSectionActive('medical-file')"
@@ -150,7 +173,7 @@
   </div>
 
   <div class="main-content">
-    <!-- Dashboard content -->
+
     <div id="dashboard-content" [style.display]="isSectionActive('dashboard') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
@@ -180,13 +203,17 @@
           </div>
         </div>
       </div>
+
       <div class="dashboard-cards">
+        <!-- Card 1 : Prochain RDV -->
         <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
-          <div class="card-icon"> <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20"></div>
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          </div>
           <h3>Rendez-vous</h3>
           <ng-container *ngIf="prochainRdv; else aucunRdv">
             <p><strong>Prochain RDV :</strong> {{ formatAppointmentDate(prochainRdv.preferredDate) }}</p>
-            <p> {{ prochainRdv.preferredTime }}</p>
+            <p>{{ prochainRdv.preferredTime }}</p>
             <p *ngIf="prochainRdv.reason">{{ prochainRdv.reason }}</p>
             <span [ngClass]="getStatusClass(prochainRdv.status)">
               {{ getStatusLabel(prochainRdv.status) }}
@@ -196,51 +223,49 @@
             <p>Aucun rendez-vous à venir</p>
           </ng-template>
         </div>
-      
+
         <!-- Card 2 : Résumé rendez-vous -->
         <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
-          <div class="card-icon"> <img src="../../../../../assets/assets/stats.svg" alt="Copier" height="20"></div>
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/stats.svg" alt="Copier" height="20">
+          </div>
           <h3>Mes rendez-vous</h3>
           <p><strong style="font-size:26px; color:var(--blue-600)">{{ tableauClasse.length }}</strong> au total</p>
-          <p> {{ rdvValides }} validé(s)</p>
+          <p>{{ rdvValides }} validé(s)</p>
           <p>{{ rdvEnAttente }} en attente</p>
         </div>
+
+        <!-- Card 3 : Consultations -->
         <div class="card">
-          <div class="card-icon"><img src="../../../../../assets/assets/computer.svg" alt="Copier" height="20"></div>
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/computer.svg" alt="Copier" height="20">
+          </div>
           <h3>Consultations</h3>
-          <p> <strong>{{ rdvVideo }}</strong> téléconsultation(s)</p>
+          <p><strong>{{ rdvVideo }}</strong> téléconsultation(s)</p>
           <p><strong>{{ rdvPresential }}</strong> en présentiel</p>
           <p *ngIf="rdvTermines > 0">✔️ {{ rdvTermines }} terminé(s)</p>
         </div>
-      
-        <!-- Card 4 : Statut Zoom -->
-        <div class="card">
-          <div class="card-icon"> <img src="../../../../../assets/assets/play.svg" alt="Copier" height="20"></div>
-          <h3>Zoom</h3>
-          <div class="zoom-status-indicator" [ngClass]="zoomStatus" style="margin-top:8px">
-            <span class="status-dot"></span>
-            <span class="status-text" style="font-size:12px">
-              {{ zoomStatus === 'connected'  ? 'Connecté' :
-                 zoomStatus === 'connecting' ? 'Connexion...' :
-                                              'Non connecté' }}
-            </span>
+
+        <!-- Card 4 : Téléconsultation -->
+        <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/play.svg" alt="Copier" height="20">
           </div>
-          <button *ngIf="zoomStatus === 'disconnected'"
-                  class="service-btn"
-                  style="margin-top:12px; font-size:12px; padding:7px 14px"
-                  (click)="connectZoom()">
-             Connecter Zoom
-          </button>
-          <p *ngIf="zoomStatus === 'connected'"
-             style="margin-top:8px; font-size:12px; color:var(--green-500)">
-             Prêt pour les téléconsultations
+          <h3>Téléconsultation</h3>
+          <p style="margin-top:8px; font-size:12px; opacity:.95">
+            Le médecin génère le lien Zoom au moment du rendez-vous. Vous pourrez le rejoindre depuis
+            “Mes rendez-vous” ou vos notifications.
           </p>
+          <button class="service-btn" style="margin-top:12px; font-size:12px; padding:7px 14px">
+            Voir mes rendez-vous
+          </button>
         </div>
-      
       </div>
     </div>
 
-    <!-- Services content -->
+    <!-- ============================================================
+         SERVICES
+         ============================================================ -->
     <div id="services-content" [style.display]="isSectionActive('services') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
@@ -303,7 +328,9 @@
       </div>
     </div>
 
-    <!-- Appointments content -->
+    <!-- ============================================================
+         MES RENDEZ-VOUS
+         ============================================================ -->
     <div id="appointments-content" [style.display]="isSectionActive('appointments') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
@@ -317,21 +344,23 @@
 
       <div class="service-list" *ngFor="let app of tableauClasse">
         <div class="service-item" [ngClass]="'appointment-' + app.status">
-          <div class="service-icon"><img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20"></div>
+          <div class="service-icon">
+            <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          </div>
           <div class="service-details">
             <h4>INFORMATIONS DU RENDEZ-VOUS</h4>
 
             <!-- Informations personnelles -->
             <div class="info-section">
-              <p><strong> Patient:</strong> {{ app.firstname }} {{ app.lastname }}</p>
-              <p><strong> Email:</strong> {{ app.email }}</p>
-              <p><strong> Téléphone:</strong> {{ app.phone }}</p>
+              <p><strong>Patient:</strong> {{ app.firstname }} {{ app.lastname }}</p>
+              <p><strong>Email:</strong> {{ app.email }}</p>
+              <p><strong>Téléphone:</strong> {{ app.phone }}</p>
             </div>
 
             <!-- Détails du rendez-vous -->
             <div class="info-section">
-              <p><strong> Date:</strong> {{ app.preferredDate}}</p>
-              <p><strong> Heure:</strong> {{ app.preferredTime }}</p>
+              <p><strong>Date:</strong> {{ app.preferredDate }}</p>
+              <p><strong>Heure:</strong> {{ app.preferredTime }}</p>
               <p><strong>Type:</strong>
                 <span *ngIf="app.appointmentType === 'in-person'">En personne</span>
                 <span *ngIf="app.appointmentType === 'video'">Vidéo</span>
@@ -343,90 +372,36 @@
               </p>
             </div>
 
-            <!-- Section Statut Zoom (à ajouter dans le dashboard) -->
-            <!-- Section Statut Zoom (dashboard) -->
-            <div *ngIf="activeSection === 'dashboard'" class="zoom-status-card card">
-              <div class="card-icon">🎥</div>
-              <h3>Intégration Zoom</h3>
-              
-              <div class="zoom-status-indicator" [ngClass]="zoomStatus">
-                <span class="status-dot"></span>
-                <span class="status-text">
-                  {{
-                    zoomStatus === 'connected' ? 'Connecté à Zoom' :
-                    zoomStatus === 'connecting' ? 'Connexion en cours...' :
-                    'Non connecté à Zoom'
-                  }}
-                </span>
-              </div>
-              
-              <div *ngIf="zoomStatus === 'connected'" class="zoom-connected-info">
-                <p class="text-success">
-                  Prêt pour les téléconsultations
-                </p>
-                <button class="service-btn btn-info" (click)="disconnectZoom()">
-                   Déconnecter Zoom
-                </button>
-              </div>
-              
-              <div *ngIf="zoomStatus === 'disconnected'" class="zoom-actions">
-                <button class="service-btn btn-primary" (click)="connectZoom()">
-                   Connecter Zoom
-                </button>
-                <p class="zoom-help-text">
-                  L'intégration Zoom permet de démarrer des téléconsultations vidéo.
-                </p>
-              </div>
+            <!-- Téléconsultation : le médecin démarre, le patient rejoint -->
+            <div *ngIf="app.appointmentType === 'video' && !(app.meetingUrl || app.zoomLink)" class="info-section">
+              <p *ngIf="app.status === 'pending'">⏳ En attente de validation du médecin.</p>
+              <p *ngIf="isStatusValidated(app.status) && app.status !== 'started'">
+                ⏳ Le médecin n'a pas encore démarré la téléconsultation. Le lien apparaîtra ici.
+              </p>
+              <p *ngIf="isStatusValidated(app.status) && app.status !== 'started' && !isAppointmentTimeReached(app)">
+                {{ getTimeUntilAppointment(app) }}
+              </p>
+              <p *ngIf="app.status === 'started'">⚠️ Téléconsultation démarrée, lien indisponible pour le moment.</p>
+              <p *ngIf="app.status === 'rejected'">❌ Rendez-vous rejeté.</p>
             </div>
-            
-            <!-- Bouton Commencer dans les rendez-vous -->
-            <button *ngIf="isStatusValidated(app.status) && app.status !== 'started'"
-                    class="service-btn service-btn-start"
-                    [ngClass]="{
-                      'btn-success': canStartAppointment(app) && isZoomAuthenticated,
-                      'btn-warning': canStartAppointment(app) && !isZoomAuthenticated,
-                      'btn-disabled': !canStartAppointment(app)
-                    }"
-                    [title]="getZoomButtonTooltip(app)"
-                    (click)="startTeleconsultationWithCheck(app)">
-              
-              <span *ngIf="!isZoomAuthenticated">
-                Connecter Zoom
-              </span>
-              <span *ngIf="isZoomAuthenticated && !canStartAppointment(app)">
-                ⏳ Bientôt disponible
-              </span>
-              <span *ngIf="isZoomAuthenticated && canStartAppointment(app)">
-                🎥 Démarrer la téléconsultation
-              </span>
-            </button>
-            
+
             <!-- Section liens Zoom -->
-            <div *ngIf="app.meetingUrl" class="zoom-links-section">
+            <div *ngIf="app.meetingUrl || app.zoomLink" class="zoom-links-section">
               <h4>Liens Zoom</h4>
-              
               <div class="zoom-link-container">
                 <div class="zoom-link-item">
                   <strong>Lien de participation:</strong>
                   <div class="link-row">
-                    <a [href]="app.meetingUrl" target="_blank" class="zoom-link">
-                      {{ app.meetingUrl }}
+                    <a [href]="app.meetingUrl || app.zoomLink" target="_blank" rel="noopener noreferrer" class="zoom-link">
+                      {{ app.meetingUrl || app.zoomLink }}
                     </a>
-                    <button class="btn-copy-small" (click)="copyToClipboard(app.meetingUrl)">
-                      📋
-                    </button>
+                    <button class="btn-copy-small" (click)="copyToClipboard(app.meetingUrl || app.zoomLink)">📋</button>
                   </div>
                 </div>
-                
+
                 <div class="zoom-actions-buttons">
                   <button class="service-btn btn-primary" (click)="joinZoomMeeting(app)">
                     🎥 Rejoindre maintenant
-                  </button>
-                  
-                  <button *ngIf="!app.meetingUrl && isZoomAuthenticated" 
-                          class="service-btn btn-secondary"
-                          (click)="createZoomLinkForFutureAppointment(app)">
-                     Générer un lien Zoom
                   </button>
                 </div>
               </div>
@@ -437,19 +412,26 @@
 
       <!-- Message si aucun rendez-vous -->
       <div *ngIf="tableauClasse.length === 0" class="no-appointments">
-        <p><img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20"> Vous n'avez aucun rendez-vous pour le moment</p>
+        <p>
+          <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          Vous n'avez aucun rendez-vous pour le moment
+        </p>
         <button class="service-btn" [routerLink]="['/appointment/new']">
           ➕ Prendre un rendez-vous
         </button>
       </div>
     </div>
 
-    <!-- Advice content -->
+    <!-- ============================================================
+         CONSEILS
+         ============================================================ -->
     <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
       <app-conseil></app-conseil>
     </div>
 
-    <!-- Medical File content -->
+    <!-- ============================================================
+         DOSSIER MÉDICAL
+         ============================================================ -->
     <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
       <div class="welcome-section">
         <div class="welcome-text">
@@ -488,15 +470,13 @@
             <h4>{{ file.title }}</h4>
             <p><strong>Date:</strong> {{ file.date }}</p>
             <p><strong>{{ file.type }}:</strong> {{ file.location }}</p>
-            <button class="service-btn" (click)="openMedicalFile(file.id)">
-               Consulter
-            </button>
+            <button class="service-btn" (click)="openMedicalFile(file.id)">Consulter</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Popup pour fichiers médicaux -->
+    <!-- Popup fichiers médicaux -->
     <div class="popup-overlay" *ngIf="showMedicalFilePopup" (click)="closeMedicalFilePopup()">
       <div class="popup-modal" (click)="$event.stopPropagation()">
         <div class="popup-header">
@@ -508,48 +488,47 @@
           <button class="service-btn"
             (click)="downloadMedicalFile(selectedMedicalFile?.fileUrl, selectedMedicalFile?.title)"
             style="margin-right: 10px">
-             Télécharger
+            Télécharger
           </button>
           <button class="service-btn" (click)="printMedicalFile()" style="margin-right: 10px">
-             Imprimer
+            Imprimer
           </button>
-          <button class="popup-btn-close" (click)="closeMedicalFilePopup()">Fermer</button>j
+          <button class="popup-btn-close" (click)="closeMedicalFilePopup()">Fermer</button>
         </div>
       </div>
     </div>
 
-    <!-- Formulaire de rendez-vous -->
+    <!-- ============================================================
+         FORMULAIRE DE RENDEZ-VOUS
+         ============================================================ -->
     <div id="forms-file-content" [style.display]="isSectionActive('forms-file') ? 'block' : 'none'">
       <div class="welcome-text">
         <app-appoint></app-appoint>
       </div>
     </div>
+
+    <!-- ============================================================
+         LISTE DE NOTIFICATIONS (messageList)
+         ============================================================ -->
+
   </div>
 
-
-
-  <!-- Modal de confirmation de déconnexion -->
+  <!-- ============================================================
+       MODAL DÉCONNEXION
+       ============================================================ -->
   <div class="logout-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
     <div class="logout-modal" (click)="$event.stopPropagation()">
-      
       <div class="logout-modal-icon"></div>
-      
       <h2 class="logout-modal-title">Déconnexion</h2>
       <p class="logout-modal-message">
         Êtes-vous sûr de vouloir vous déconnecter de votre espace patient ?
       </p>
-  
       <div class="logout-modal-actions">
-        <button class="logout-btn-cancel" (click)="closeLogoutModal()">
-          Annuler
-        </button>
-        <button class="logout-btn-confirm" (click)="logout()">
-           Se déconnecter
-        </button>
+        <button class="logout-btn-cancel" (click)="closeLogoutModal()">Annuler</button>
+        <button class="logout-btn-confirm" (click)="logout()">Se déconnecter</button>
       </div>
     </div>
   </div>
 
 </body>
-
 </html>

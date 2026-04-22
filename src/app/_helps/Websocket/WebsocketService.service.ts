@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import SockJS from 'sockjs-client';
-import { Stomp, Client, Frame, Message } from '@stomp/stompjs';
+import { Client, Frame, Message } from '@stomp/stompjs';
 import { BehaviorSubject } from 'rxjs';
 
 export interface NotificationMessage {
@@ -18,71 +18,66 @@ export interface NotificationMessage {
   providedIn: 'root'
 })
 export class WebsocketService {
-  private stompClient: Client | null = null;
-  private notificationSubject = new BehaviorSubject<NotificationMessage | null>(null);
-  public notifications$ = this.notificationSubject.asObservable();
+
+  private stompClient!: Client;
+
+  private notificationsSubject = new BehaviorSubject<NotificationMessage[]>([]);
+  public notifications$ = this.notificationsSubject.asObservable();
+
   private connected = false;
+  private reconnectDelay = 5000;
 
   constructor() {}
 
-  /**
-   * Connexion au WebSocket
-   */
-  connect(userId: string): void {
-    if (this.connected) {
-      console.log('✅ Déjà connecté au WebSocket');
-      return;
-    }
+  connect(userId: string, token: string): void {
 
-    const socket = new SockJS('http://localhost:8080/ws');
-    
-    this.stompClient = Stomp.over(() => socket);
-    
-    // Désactiver les logs STOMP pour la production
-    this.stompClient.debug = (str) => {
-      // console.log(str);
-    };
+    if (this.connected) return;
 
-    this.stompClient.onConnect = (frame: Frame) => {
-      console.log('✅ Connecté au WebSocket:', frame);
-      this.connected = true;
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
 
-      // S'abonner aux notifications de l'utilisateur
-      this.stompClient?.subscribe(`/topic/notifications/${userId}`, (message: Message) => {
-        console.log('📨 Notification reçue:', message.body);
-        const notification: NotificationMessage = JSON.parse(message.body);
-        this.notificationSubject.next(notification);
-      });
-    };
+      connectHeaders: {
+        Authorization: `Bearer ${token}`
+      },
 
-    this.stompClient.onStompError = (frame: Frame) => {
-      console.error('❌ Erreur WebSocket:', frame.headers['message']);
-      console.error('Détails:', frame.body);
-      this.connected = false;
-    };
+      reconnectDelay: this.reconnectDelay, // 🔥 auto reconnect
 
-    this.stompClient.onWebSocketClose = () => {
-      console.log('🔌 WebSocket déconnecté');
-      this.connected = false;
-    };
+      debug: () => {},
+
+      onConnect: (frame: Frame) => {
+        console.log('✅ Connecté WebSocket');
+        this.connected = true;
+
+        this.subscribeToNotifications(userId);
+      },
+
+      onStompError: (frame: Frame) => {
+        console.error('❌ STOMP error:', frame.headers['message']);
+      },
+
+      onWebSocketClose: () => {
+        console.warn('🔌 Déconnecté');
+        this.connected = false;
+      }
+    });
 
     this.stompClient.activate();
   }
 
-  /**
-   * Déconnexion du WebSocket
-   */
-  disconnect(): void {
-    if (this.stompClient) {
-      this.stompClient.deactivate();
-      this.connected = false;
-      console.log('🔌 Déconnecté du WebSocket');
-    }
+  private subscribeToNotifications(userId: string) {
+    this.stompClient.subscribe(`/topic/notifications/${userId}`, (message: Message) => {
+      const notification: NotificationMessage = JSON.parse(message.body);
+
+      const current = this.notificationsSubject.value;
+      this.notificationsSubject.next([notification, ...current]); // 🔥 liste
+    });
   }
 
-  /**
-   * Vérifie si connecté
-   */
+  disconnect(): void {
+    this.stompClient?.deactivate();
+    this.connected = false;
+  }
+
   isConnected(): boolean {
     return this.connected;
   }

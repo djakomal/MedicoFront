@@ -263,14 +263,17 @@ export class NotificationService {
   }
 
   //  Notifier rejet d'un rendez-vous
-  notifyUserAppointmentRejected(userId: number, appointment: Appoitement): void {
+  //  Notifier rejet d'un rendez-vous
+  notifyUserAppointmentRejected(userId: number, appointment: Appoitement, reason?: string): void {
     const notification: Message = {
       id: Date.now(),
       userId,
       type: 'error',
       sender: 'Médecin',
       subject: 'Rendez-vous rejeté',
-      content: `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été rejeté.`,
+      content: reason 
+        ? `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été rejeté. Motif: ${reason}`
+        : `Votre rendez-vous du ${appointment.preferredDate} à ${appointment.preferredTime} a été rejeté.`,
       date: new Date().toLocaleDateString('fr-FR'),
       read: false,
       appointmentId: appointment.id,
@@ -279,17 +282,20 @@ export class NotificationService {
   }
 
   //  Notifier démarrage d'un rendez-vous
-  notifyUserAppointmentStarted(userId: number, appointment: Appoitement): void {
+  notifyUserAppointmentStarted(userId: number, appointment: Appoitement, zoomLink: string | undefined): void {
     const notification: Message = {
       id: Date.now(),
       userId,
       type: 'info',
       sender: 'Médecin',
       subject: 'Rendez-vous démarré',
-      content: `Votre rendez-vous a débuté. Rejoignez la consultation maintenant.`,
+      content: zoomLink
+        ? `Votre rendez-vous a débuté. Lien Zoom: ${zoomLink}`
+        : `Votre rendez-vous a débuté. Veuillez patienter.`,
       date: new Date().toLocaleDateString('fr-FR'),
       read: false,
       appointmentId: appointment.id,
+      zoomLink: zoomLink, // ← stocker le lien
     };
     this.addStructuredNotification(notification);
   }
@@ -355,6 +361,16 @@ export class NotificationService {
     const userId =
       typeof rawUserId === 'number' ? rawUserId : Number(rawUserId) || 0;
 
+    const zoomLink =
+      payload?.zoomLink ||
+      payload?.meetingUrl ||
+      payload?.zoomJoinUrl ||
+      payload?.join_url ||
+      payload?.joinUrl ||
+      payload?.appointment?.meetingUrl ||
+      payload?.appointment?.zoomLink ||
+      payload?.appointment?.zoomJoinUrl;
+
     return {
       id: typeof payload?.id === 'number' ? payload.id : nowId,
       userId,
@@ -377,6 +393,7 @@ export class NotificationService {
         typeof payload?.appointmentId === 'number'
           ? payload.appointmentId
           : Number(payload?.appointmentId) || 0,
+      zoomLink: typeof zoomLink === 'string' ? zoomLink : undefined,
     } as Message;
   }
 
