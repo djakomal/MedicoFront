@@ -20,17 +20,13 @@ import { JwtService } from '../../../../_helps/jwt/jwt.service';
 export class MesRendezVousComponent  implements OnInit {
   tableauClasse:Appoitement[]=[];
   messageList!:Message[];
-  // Messages de notification
   showAlert: boolean = false;
   alertMessage: string = '';
   alertType: 'success' | 'error' | 'info' = 'success';
-  
-  // Modal de confirmation
   showConfirmModal: boolean = false;
   pendingAction: string = '';
   pendingId: number | null = null;
   pendingAppointment: Appoitement | null = null;
-  // CORRECTION: Modal de rejet avec motif
   showRejectModal: boolean = false;
   rejectReason: string = '';
   rejectAppointmentId: number | null = null;
@@ -64,8 +60,6 @@ export class MesRendezVousComponent  implements OnInit {
           if (data.length > 0) {
             console.log('Tous les champs du premier rendez-vous:', Object.keys(data[0]));
             console.log('Contenu complet:', data[0]);
-            
-            // Vérifier spécifiquement patientId
             if (data[0].patient?.id !== undefined) {
               console.log('patientId existe:', data[0].patient?.id);
             } else {
@@ -96,9 +90,9 @@ export class MesRendezVousComponent  implements OnInit {
     }
   }
   showNotification(message: string, type: 'success' | 'error' | 'info'): void {
-    this.alertMessage = message;      // Texte à afficher
-    this.alertType = type;            // Type de notification (couleur)
-    this.showAlert = true;            // Afficher la notification
+    this.alertMessage = message;     
+    this.alertType = type;          
+    this.showAlert = true;            
   
     // Masquer automatiquement après 5 secondes
     setTimeout(() => {
@@ -128,7 +122,7 @@ export class MesRendezVousComponent  implements OnInit {
     this.pendingId = null;
     this.pendingAppointment = null;
   }
-  // CORRECTION: Ouvrir le modal de rejet
+
   openRejectModal(id: number, appointment: Appoitement): void {
     this.rejectAppointmentId = id;
     this.pendingAppointment = appointment;
@@ -136,7 +130,7 @@ export class MesRendezVousComponent  implements OnInit {
     this.showRejectModal = true;
   }
 
-  // CORRECTION: Fermer le modal de rejet
+
   closeRejectModal(): void {
     this.showRejectModal = false;
     this.rejectReason = '';
@@ -144,7 +138,6 @@ export class MesRendezVousComponent  implements OnInit {
     this.pendingAppointment = null;
   }
 
-  // CORRECTION: Confirmer le rejet avec motif
   confirmReject(): void {
     if (!this.rejectReason.trim()) {
       this.showNotification('Veuillez saisir un motif de rejet', 'error');
@@ -217,7 +210,7 @@ export class MesRendezVousComponent  implements OnInit {
     this.closeConfirmModal();
   }
 
-  // Valider un rendez-vous avec notification
+ 
   private validateAppointmentAction(id: number, appointment: Appoitement): void {
     this.appointementService.validateAppointment(id).subscribe({
       next: (response: AppointmentResponse) => {
@@ -236,8 +229,7 @@ export class MesRendezVousComponent  implements OnInit {
     });
   }
   
-  // Rejeter un rendez-vous avec notification
-  // CORRECTION: Rejeter un rendez-vous avec motif
+
   private rejectAppointmentAction(id: number, appointment: Appoitement, reason?: string): void {
     console.log('❌ Rejet du rendez-vous ID:', id, 'Motif:', reason);
     
@@ -257,7 +249,6 @@ export class MesRendezVousComponent  implements OnInit {
       }
     });
   }
-  //  Ajouter ces deux méthodes
 
 joinAsHost(app: Appoitement): void {
   // start_url = lien hôte qui identifie le docteur comme host Zoom
@@ -409,7 +400,7 @@ private sendValidationNotification(appointment: Appoitement): void {
     const userId = this.getUserIdFromAppointment(appointment);
     const notifId = Number(userId);
     
-    console.log('📧 Envoi notification de démarrage');
+    console.log(' Envoi notification de démarrage');
     console.log('  - userId:', userId);
     console.log('  - zoomLink param:', zoomLink);
     console.log('  - appointment.zoomJoinUrl:', (appointment as any).zoomJoinUrl);
@@ -427,8 +418,6 @@ private sendValidationNotification(appointment: Appoitement): void {
     }
   }
 
-// Méthode pour extraire l'ID utilisateur d'un rendez-vous
-// CORRECTION: Méthode pour extraire l'ID utilisateur d'un rendez-vous
   private getUserIdFromAppointment(appointment: Appoitement): number | null {
     // CORRECTION: Vérifier d'abord patientId (champ direct)
     if ((appointment as any).patientId && (appointment as any).patientId > 0) {
@@ -468,13 +457,6 @@ getCountByStatus(status: string): number {
     return labels[status] || status;
   }
   
-  // mes-rendez-vous.component.ts
-
-  // Ajoutez ces méthodes à votre composant MesRendezVousComponent
-
-  /**
-   * Récupère l'heure de début du rendez-vous
-   */
   private getStartDateTime(appointment: Appoitement): Date | null {
     try {
       let dateStr = '';

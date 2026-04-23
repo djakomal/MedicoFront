@@ -189,25 +189,13 @@
             </select>
           </div>
           
-
           <div class="form-group">
-            <label for="appointmentType" class="required"
-              >Mode de consultation</label
-            >
+            <label for="appointmentType" class="required">Mode de consultation</label>
             <select id="appointmentType" formControlName="appointmentType">
               <option value="">Sélectionner</option>
-              <option value="in-person">En présentiel</option>
+              <option value="presential">En présentiel</option>
               <option value="video">Téléconsultation (vidéo)</option>
             </select>
-            <div
-              *ngIf="
-                appointmentForm.get('appointmentType')?.invalid &&
-                appointmentForm.get('appointmentType')?.touched
-              "
-              class="error-message"
-            >
-              Ce champ est obligatoire.
-            </div>
           </div>
 
            <!-- <div class="form-group">
@@ -509,7 +497,7 @@
         </div>
 
         <div class="confirmation-warning">
-          <p>⚠️ Veuillez vérifier attentivement toutes les informations ci-dessus. Une fois confirmé, votre demande sera envoyée et ne pourra plus être modifiée.</p>
+          <p> Veuillez vérifier attentivement toutes les informations ci-dessus. Une fois confirmé, votre demande sera envoyée et ne pourra plus être modifiée.</p>
         </div>
 
         <div class="button-group">

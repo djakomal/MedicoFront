@@ -234,8 +234,9 @@ export class AppointComponent implements OnInit {
             this.isSubmitting = false;
             return;
           }
-
-        //  Créneau disponible → soumettre le rendez-vous
+        const appointmentType: 'video' | 'presential' = 
+          formValue.appointmentType === 'video' ? 'video' : 'presential';
+        
         const appointmentData: Appoitement = {
           id: 0,
           firstname: formValue.firstname?.trim(),
@@ -251,8 +252,8 @@ export class AppointComponent implements OnInit {
           otherSpecialist: formValue.otherSpecialist?.trim() || '',
           doctorId: formValue.doctorId,
           creneauId: formValue.creneauId,
+          appointmentType: appointmentType,
           creneau:formValue.creneauId ? this.creneauxDisponibles.find((c: Creneau) => c.id === formValue.creneauId) : undefined,
-          appointmentType: formValue.appointmentType,
           preferredDate: formValue.preferredDate,
           preferredTime: formValue.preferredTime,
           altAvailability: formValue.altAvailability,
@@ -332,6 +333,8 @@ export class AppointComponent implements OnInit {
   }
   
   private soumettreSansVerification(formValue: any, creneau: Creneau): void {
+      const appointmentType: 'video' | 'presential' = 
+    formValue.appointmentType === 'video' ? 'video' : 'presential';
     const appointmentData: Appoitement = {
       id: 0,
       firstname: formValue.firstname?.trim(),
@@ -348,9 +351,9 @@ export class AppointComponent implements OnInit {
       doctorId: formValue.doctorId,
       creneauId: formValue.creneauId,
       creneau:formValue.creneauId ? this.creneauxDisponibles.find((c: Creneau) => c.id === formValue.creneauId) : undefined,
-      appointmentType: formValue.appointmentType,
-      preferredDate: formValue.preferredDate,
-      preferredTime: formValue.preferredTime,
+      appointmentType: appointmentType,
+      preferredDate: creneau.date,
+      preferredTime: creneau.heureDebut,
       altAvailability: formValue.altAvailability,
       reason: formValue.reason?.trim(),
       symptoms: formValue.symptoms?.trim() || '',
@@ -378,7 +381,7 @@ export class AppointComponent implements OnInit {
         this.currentStep = 1;
         this.showConfirmation = false;
         setTimeout(() => this.submitSuccess = false, 5000);
-        // Remove alert, success message is already shown
+        
       },
       error: (error) => {
         let errorMessage = 'Erreur lors de la soumission.';
@@ -403,8 +406,7 @@ export class AppointComponent implements OnInit {
     return this.appointmentForm.get('doctorType')?.value === 'other';
   }
 
-  //  Charger les créneaux disponibles d'un médecin spécifique
-  chargerCreneauxDuMedecin(doctorId: number): void {
+    chargerCreneauxDuMedecin(doctorId: number): void {
     console.log('🔄 Chargement des créneaux pour le médecin ID:', doctorId);
     
     this.isLoadingCreneaux = true;
@@ -416,7 +418,7 @@ export class AppointComponent implements OnInit {
       next: (creneaux: Creneau[]) => {
         console.log(' Créneaux reçus du serveur:', creneaux);
         
-        // Le filtre de date strict a été supprimé car les dates n'étaient pas compatibles
+        
         this.creneauxDisponibles = creneaux.filter(c => {
           const isAvailable = Boolean(c.disponible);
           console.log(`Créneau ID ${c.id}: disponible=${c.disponible}, date=${c.date}, heure=${c.heureDebut}`);
@@ -425,7 +427,7 @@ export class AppointComponent implements OnInit {
         
         console.log('Créneaux disponibles après filtrage:', this.creneauxDisponibles.length);
         
-        // Vérifier s'il y a des créneaux disponibles
+        
         if (this.creneauxDisponibles.length === 0) {
           this.creneauLoadError = '⚠️ Aucun créneau disponible pour ce médecin. Veuillez en sélectionner un autre ou contacter le cabinet.';
           console.warn('⚠️ Aucun créneau disponible pour ce médecin');

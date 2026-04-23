@@ -239,7 +239,7 @@
       <!-- Calendrier de la semaine -->
       <div class="calendar-section" *ngIf="!loading">
         <div class="calendar-header">
-          <h2>📅 Rendez-vous de la semaine</h2>
+          <h2>Rendez-vous de la semaine</h2>
           <div class="calendar-nav">
             <button>←</button>
             <button>→</button>
@@ -271,7 +271,7 @@
     </div>
 
     <!-- Router Outlet pour les autres pages (caché quand isDashboard = true) -->
-    <div *ngIf="!isDashboard">
+    <div   classe="main" *ngIf="!isDashboard">
       <router-outlet></router-outlet>
     </div>
   </main>

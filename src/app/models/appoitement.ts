@@ -36,7 +36,7 @@ export class Appoitement {
   creneauId!: number; 
   creneau?: Creneau;
   docteur?: number;  
-  appointmentType!: string;
+  appointmentType!: 'video' | 'presential';
   preferredDate!: string; 
   preferredTime!: string;
   meetingUrl!:string;

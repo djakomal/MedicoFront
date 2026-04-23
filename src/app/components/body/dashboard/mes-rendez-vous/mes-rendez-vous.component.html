@@ -25,7 +25,7 @@
 
   <div class="card">
     <div class="card-header">
-      <h2>📋 Liste des rendez-vous</h2>
+      <h2>Liste des rendez-vous</h2>
       <span class="badge-count">{{ tableauClasse?.length || 0 }} rendez-vous</span>
     </div>
 
@@ -39,7 +39,7 @@
             <th scope="col">TYPE</th>
             <th scope="col">SYMPTÔMES</th>
             <th scope="col">PREMIER RENDEZ VOUS </th>
-            <th scope="col">Heure</th>
+            <th scope="col">Heure Debut</th>
             <th scope="col">ALERGIE</th>
             <th scope="col">MEDICAMENT PRIS</th>
             <th scope="col">INFORMATION SUPPLEMENTAIRE</th>
@@ -53,7 +53,20 @@
             <td class="id-cell">{{ app.id }}</td>
             <td class="name-cell">{{ app.firstname }} {{ app.lastname }}</td>
             <td class="date-cell">{{ app.preferredDate }}</td>
-            <td><span class="type-badge">{{ app.appointmentType }}</span></td>
+            <td >
+              <span 
+                
+                [ngClass]="{
+                  'type-video': app.appointmentType === 'video',
+                  'type-presential': app.appointmentType === 'presential'
+                }">
+                <span *ngIf="app.appointmentType === 'video'"> Téléconsultation</span>
+                <span *ngIf="app.appointmentType === 'presential'">En présentiel</span>
+                <span *ngIf="app.appointmentType !== 'video' && app.appointmentType !== 'presential'">
+                  {{ app.appointmentType }}
+                </span>
+              </span>
+            </td>
             <td class="description-cell">{{ app.symptoms }}</td>
             <td>{{ app.firstVisit }}</td>
             <td>{{ app.preferredTime }}</td>
@@ -131,7 +144,7 @@
                   </button>
 
                   <button *ngIf="hasZoomLink(app)" class="btn btn-copy-link" (click)="copyPatientLink(app)">
-                    📋 Lien patient
+                    Lien patient
                   </button>
                 </ng-container>
 

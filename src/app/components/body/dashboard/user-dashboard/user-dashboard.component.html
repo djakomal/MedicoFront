@@ -8,6 +8,7 @@
 </head>
 
 <body>
+  <!-- Notification toast -->
   <!-- Section de notification d'alerte -->
   <div *ngIf="showAlert" class="notification-alert" [ngClass]="'alert-' + alertType">
     <div class="alert-content">
@@ -143,7 +144,6 @@
   <div class="messages-overlay" *ngIf="showMessagesPanel || showMessageDetail"
     (click)="showMessagesPanel = false; showMessageDetail = false">
   </div>
-
   <!-- ============================================================
        NAVIGATION
        ============================================================ -->
@@ -362,7 +362,7 @@
               <p><strong>Date:</strong> {{ app.preferredDate }}</p>
               <p><strong>Heure:</strong> {{ app.preferredTime }}</p>
               <p><strong>Type:</strong>
-                <span *ngIf="app.appointmentType === 'in-person'">En personne</span>
+                <span *ngIf="app.appointmentType === 'presential'">En personne</span>
                 <span *ngIf="app.appointmentType === 'video'">Vidéo</span>
               </p>
               <p><strong>Motif:</strong> {{ app.reason }}</p>

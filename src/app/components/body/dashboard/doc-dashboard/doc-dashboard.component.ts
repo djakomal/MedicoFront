@@ -1,5 +1,5 @@
   import { JwtService } from './../../../../_helps/jwt/jwt.service';
-  import { Component, OnInit } from '@angular/core';
+  import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   import { filter, forkJoin } from 'rxjs';
   import { Conseil } from '../../../../models/Conseil';
   import { Appoitement } from '../../../../models/appoitement';
@@ -20,7 +20,7 @@
     imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterOutlet],
     standalone:true,
     templateUrl: './doc-dashboard.component.html',
-    styleUrls: ['./doc-dashboard.component.css']
+    styleUrls: ['./doc-dashboard.component.css'],
   })
   export class DocdashboardComponent implements OnInit {
     stats: DashboardStats = {
