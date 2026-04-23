@@ -654,3 +654,10 @@ body {
     padding: 16px 8px;
   }
 }
+.navbar-brand { transition: transform 0.3s ease; flex-shrink: 0; }
+.navbar-brand:hover { transform: scale(1.05); }
+
+.navbar-brand img {
+  max-height: 48px;
+  filter: brightness(0) invert(1);
+}

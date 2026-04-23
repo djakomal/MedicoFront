@@ -8,8 +8,7 @@
 </head>
 
 <body>
-  <!-- Notification toast -->
-  <!-- Section de notification d'alerte -->
+
   <div *ngIf="showAlert" class="notification-alert" [ngClass]="'alert-' + alertType">
     <div class="alert-content">
       <span class="alert-icon">
@@ -27,8 +26,10 @@
   <!-- Header avec Messagerie -->
   <div class="header">
     <div class="logo">
-      <div class="logo-icon">+</div>
-      <div class="logo-text">Medico</div>
+
+    <a class="navbar-brand" routerLink="/Dash">
+        <img src="assets/img/logo.png" alt="logo">
+    </a>
     </div>
 
     <div class="user-actions">
@@ -254,7 +255,7 @@
           <h3>Téléconsultation</h3>
           <p style="margin-top:8px; font-size:12px; opacity:.95">
             Le médecin génère le lien Zoom au moment du rendez-vous. Vous pourrez le rejoindre depuis
-            “Mes rendez-vous” ou vos notifications.
+             vos notifications.
           </p>
           <button class="service-btn" style="margin-top:12px; font-size:12px; padding:7px 14px">
             Voir mes rendez-vous

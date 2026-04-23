@@ -1584,6 +1584,14 @@ input:focus, textarea:focus, select:focus {
   backdrop-filter: none;
   letter-spacing: 0;
 }
+.navbar-brand { transition: transform 0.3s ease; flex-shrink: 0; }
+.navbar-brand:hover { transform: scale(1.05); }
+
+.navbar-brand img {
+  max-height: 48px;
+  filter: brightness(0) invert(1);
+}
+
 
 .logout-header-btn:hover {
   background: rgba(239, 68, 68, 0.35);
