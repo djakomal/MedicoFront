@@ -38,11 +38,12 @@
             <th scope="col"> DATE</th>
             <th scope="col">TYPE</th>
             <th scope="col">SYMPTÔMES</th>
-            <th scope="col">PREMIER RENDEZ VOUS </th>
+            <th scope="col">Premier</th>
             <th scope="col">Heure Debut</th>
             <th scope="col">ALERGIE</th>
             <th scope="col">MEDICAMENT PRIS</th>
-            <th scope="col">INFORMATION SUPPLEMENTAIRE</th>
+            <th scope="col">Info</th>
+            <th scope="col">DOCUMENTS</th>
             <th scope="col">STATUS</th>
             <th scope="col">ACTION</th>
 
@@ -55,7 +56,6 @@
             <td class="date-cell">{{ app.preferredDate }}</td>
             <td >
               <span 
-                
                 [ngClass]="{
                   'type-video': app.appointmentType === 'video',
                   'type-presential': app.appointmentType === 'presential'
@@ -73,16 +73,16 @@
             <td>{{ app.allergies }}</td>
             <td>{{ app.medications }}</td>
             <td>{{ app.additionalInfo }}</td>
-            <!-- <td>
-              <span class="status-badge" [ngClass]="{
-                  'status-pending': app.status === 'pending',
-                  'status-validated': app.status === 'validated',
-                  'status-rejected': app.status === 'rejected',
-                  'status-started':   app.status === 'started'
-                }">
-                {{ getStatusLabel(app.status) }}
-              </span>
-            </td> -->
+            <td>
+              <div *ngIf="hasMedicalDocuments(app)" class="document-cell">
+                <button class="btn-view-documents" 
+                        (click)="voirDocumentsPatient(app)"
+                        title="Voir les documents médicaux du patient">
+                  📄 Voir document
+                </button>
+              </div>
+              <span *ngIf="!hasMedicalDocuments(app)" class="no-documents">—</span>
+            </td>
             <!-- Remplacer la partie du statut -->
             <td>
               <div class="status-container">
@@ -108,7 +108,6 @@
                 </div>
               </div>
             </td>
-
             <!-- Remplacer la partie ACTION -->
             <td>
               <div class="action-buttons">

@@ -34,6 +34,7 @@ export class Appoitement {
   doctorId!:number;
   doctor?:Docteur;
   creneauId!: number; 
+  medicalDocuments!: string; 
   creneau?: Creneau;
   docteur?: number;  
   appointmentType!: 'video' | 'presential';

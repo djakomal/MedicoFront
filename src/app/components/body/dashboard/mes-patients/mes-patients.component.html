@@ -149,7 +149,7 @@
           </div>
         </div>
 
-        <h3 class="section-titre" style="margin-top:20px">🏥 Informations médicales</h3>
+        <h3 class="section-titre" style="margin-top:20px"> Informations médicales</h3>
 
         <div class="info-bloc">
           <div class="info-item full">
@@ -162,10 +162,19 @@
             <label>Médicaments pris</label>
             <span>{{ patientSelectionne.medicaments || 'Aucun' }}</span>
           </div>
+          <div class="info-item full">
+            <label>Dossier médical</label>
+            <button class="btn-documents" (click)="ouvrirDocumentsModal(patientSelectionne)">
+               Voir les documents
+            </button>
+            <span *ngIf="hasDocuments(patientSelectionne)" class="doc-indicator">
+              ({{ getDocumentsList(patientSelectionne).length }} document(s))
+            </span>
+          </div>
         </div>
 
         <!-- Onglets des RDV -->
-        <h3 class="section-titre" style="margin-top:20px">📅 Historique des rendez-vous</h3>
+        <h3 class="section-titre" style="margin-top:20px"> Historique des rendez-vous</h3>
         <div class="rdv-tabs">
           <button *ngFor="let rdv of patientSelectionne.rendezVous; let i = index"
                   class="rdv-tab"
@@ -179,7 +188,7 @@
       <!-- Colonne droite : détail RDV sélectionné -->
       <div class="modal-colonne" *ngIf="rdvSelectionne">
         <h3 class="section-titre">
-          📋 Détails du rendez-vous
+           Détails du rendez-vous
           <span class="statut-inline" [ngClass]="getStatutClass(rdvSelectionne.status)">
             {{ getStatutLabel(rdvSelectionne.status) }}
           </span>
@@ -245,6 +254,54 @@
     <div class="modal-footer">
       <button class="btn-annuler" (click)="fermerModal()">Fermer</button>
     </div>
-
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+MODAL DES DOCUMENTS (indépendant)
+═══════════════════════════════════════════════ -->
+<div *ngIf="showDocumentsModal" class="modal-overlay" (click)="fermerDocumentsModal()">
+<div class="modal modal-documents" (click)="$event.stopPropagation()">
+<div class="modal-header">
+ <h2>📁 Dossier médical</h2>
+ <button class="btn-fermer" (click)="fermerDocumentsModal()">✕</button>
+</div>
+
+<div class="modal-body">
+ <div class="patient-name">{{ selectedPatientName }}</div>
+ 
+ <!-- Cas 1: Liste de documents -->
+ <!-- Dans le modal des documents, modifiez le bouton -->
+ <div *ngFor="let doc of documentsList; let i = index" class="document-card">
+   <div class="doc-icon">{{ getFileIcon(doc.type) }}</div>
+   <div class="doc-info">
+     <div class="doc-name">{{ doc.name || 'Document ' + (i+1) }}</div>
+     <div class="doc-meta">
+       <span *ngIf="doc.size">{{ formatFileSize(doc.size) }}</span>
+       <span *ngIf="doc.uploadDate"> • {{ doc.uploadDate | date:'dd/MM/yyyy' }}</span>
+     </div>
+   </div>
+   <button class="btn-view" (click)="ouvrirDocumentComplet(doc)">
+      Voir
+   </button>
+ </div>
+
+ <!-- Cas 2: Document unique -->
+ <div *ngIf="documentsList.length === 0 && hasSingleDocument" class="document-single">
+   <div class="doc-icon-large">📄</div>
+   <p>Document médical</p>
+   <button class="btn-view" (click)="ouvrirDocument(singleDocumentUrl)"> Ouvrir</button>
+ </div>
+
+ <!-- Cas 3: Pas de documents -->
+ <div *ngIf="documentsList.length === 0 && !hasSingleDocument" class="no-documents">
+   <div class="empty-icon"></div>
+   <p>Aucun document médical</p>
+ </div>
+</div>
+
+<div class="modal-footer">
+ <button class="btn-annuler" (click)="fermerDocumentsModal()">Fermer</button>
+</div>
+</div>
 </div>

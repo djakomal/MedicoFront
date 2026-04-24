@@ -14,6 +14,15 @@ import { Speciality } from '../../../models/speciality';
 import { forkJoin } from 'rxjs';
 import { JwtService } from '../../../_helps/jwt/jwt.service';
 
+
+interface UploadedDocument {
+  id?: string;
+  name: string;
+  type: string;
+  size: number;
+  content?: string;
+  uploadDate?: string;
+}
 @Component({
   selector: 'app-appoint',
   standalone: true,
@@ -36,7 +45,10 @@ export class AppointComponent implements OnInit {
   submitError = '';
   submitSuccess = false;
   creneauLoadError = '';
-  
+  uploadedDocuments: UploadedDocument[] = [];
+  pendingFiles: File[] = [];
+  isUploading = false;
+  uploadProgress = 0;
   constructor(  
     private fb: FormBuilder,
     private appointmentService: AppointementService,
@@ -271,6 +283,7 @@ export class AppointComponent implements OnInit {
           updatedAt: new Date().toISOString(),
           doctor:formValue.doctorId,
           meetingUrl: formValue.meetingUrl?.trim() || '',
+          medicalDocuments: JSON.stringify(this.uploadedDocuments)
         };
   
         this.appointmentService.addAppoitement(appointmentData).subscribe({
@@ -369,6 +382,7 @@ export class AppointComponent implements OnInit {
       updatedAt: new Date().toISOString(),
       doctor:formValue.doctorId,
       meetingUrl: '',
+      medicalDocuments: JSON.stringify(this.uploadedDocuments)
     };
   
     this.appointmentService.addAppoitement(appointmentData).subscribe({
@@ -565,4 +579,121 @@ export class AppointComponent implements OnInit {
     });
   }
   
+
+  
+  // ✅ Gestion des fichiers sélectionnés
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        // Vérifier la taille (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          this.showNotification(`Le fichier ${file.name} dépasse 10MB`, 'error');
+          continue;
+        }
+        this.pendingFiles.push(file);
+      }
+    }
+    // Réinitialiser l'input
+    input.value = '';
+  }
+
+  // ✅ Supprimer un fichier en attente
+  removePendingFile(index: number): void {
+    this.pendingFiles.splice(index, 1);
+  }
+
+  // ✅ Supprimer un document déjà uploadé
+  removeDocument(index: number): void {
+    this.uploadedDocuments.splice(index, 1);
+  }
+
+  // ✅ Upload des fichiers
+  async uploadPendingFiles(): Promise<void> {
+    if (this.pendingFiles.length === 0) return;
+    
+    this.isUploading = true;
+    this.uploadProgress = 0;
+    
+    const totalFiles = this.pendingFiles.length;
+    let uploadedCount = 0;
+    
+    for (const file of this.pendingFiles) {
+      try {
+        const base64Content = await this.fileToBase64(file);
+        const document: UploadedDocument = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          content: base64Content,
+          uploadDate: new Date().toISOString()
+        };
+        this.uploadedDocuments.push(document);
+        uploadedCount++;
+        this.uploadProgress = (uploadedCount / totalFiles) * 100;
+      } catch (error) {
+        console.error('Erreur upload:', error);
+        this.showNotification(`Erreur lors de l'upload de ${file.name}`, 'error');
+      }
+    }
+    
+    this.pendingFiles = [];
+    this.isUploading = false;
+    this.uploadProgress = 0;
+    this.showNotification(`${uploadedCount} fichier(s) téléchargé(s) avec succès`, 'success');
+  }
+  // Dans AppointComponent
+showNotification(message: string, type: 'success' | 'error' | 'info'): void {
+
+  if (type === 'error') {
+    alert('❌ ' + message);
+  } else if (type === 'success') {
+    alert('✅ ' + message);
+  } else {
+    alert('ℹ️ ' + message);
+  }
+  
+  console.log(`[${type.toUpperCase()}] ${message}`);
+  
+ 
+}
+
+  // ✅ Convertir un fichier en Base64
+  fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // ✅ Obtenir l'icône du fichier
+  getFileIcon(fileType: string): string {
+    if (fileType.includes('pdf')) return '📄';
+    if (fileType.includes('image')) return '🖼️';
+    if (fileType.includes('word')) return '📝';
+    if (fileType.includes('excel') || fileType.includes('sheet')) return '📊';
+    return '📎';
+  }
+
+  // ✅ Obtenir le libellé du type de fichier
+  getFileTypeLabel(fileType: string): string {
+    if (fileType.includes('pdf')) return 'PDF';
+    if (fileType.includes('image')) return 'Image';
+    if (fileType.includes('word')) return 'Document Word';
+    if (fileType.includes('excel')) return 'Tableur Excel';
+    return 'Fichier';
+  }
+
+  // ✅ Formater la taille du fichier
+  formatFileSize(bytes: number): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
 }

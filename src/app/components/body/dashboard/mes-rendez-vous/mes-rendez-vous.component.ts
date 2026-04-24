@@ -552,13 +552,6 @@ getCountByStatus(status: string): number {
     return now >= endDateTime;
   }
   
-  /**
-   * Vérifie si le rendez-vous peut être démarré
-   * Conditions: 
-   * - Statut 'validated'
-   * - Heure de début atteinte
-   * - Heure de fin NON dépassée
-   */
   canStartAppointment(appointment: Appoitement): boolean {
     if (appointment.status !== 'validated') {
       return false;
@@ -571,12 +564,7 @@ getCountByStatus(status: string): number {
     return startReached && !endPassed;
   }
   
-  /**
-   * Vérifie si le rendez-vous est en cours
-   * Conditions:
-   * - Statut 'started'
-   * - Heure de fin NON dépassée
-   */
+
   isAppointmentInProgress(appointment: Appoitement): boolean {
     if (appointment.status !== 'started') {
       return false;
@@ -585,12 +573,7 @@ getCountByStatus(status: string): number {
     return !this.isEndTimePassed(appointment);
   }
   
-  /**
-   * Vérifie si le rendez-vous est terminé
-   * Conditions:
-   * - Heure de fin dépassée
-   * - OU statut 'completed'
-   */
+
   isAppointmentCompleted(appointment: Appoitement): boolean {
     // Si déjà marqué comme terminé
     if (appointment.status === 'completed') {
@@ -637,7 +620,7 @@ getCountByStatus(status: string): number {
     return !this.canStartAppointment(appointment);
   }
   
-  /**
+  /**hasMedicalDocuments
    * Récupère le message d'info pour le bouton "Débuter"
    */
   getStartButtonTooltip(appointment: Appoitement): string {
@@ -656,10 +639,7 @@ getCountByStatus(status: string): number {
     
     return 'Démarrer le rendez-vous';
   }
-  
-  /**
-   * Récupère le message de statut pour l'affichage
-   */
+
   getAppointmentStatusMessage(appointment: Appoitement): string {
     if (appointment.status === 'completed') {
       return ' Terminé';
@@ -692,10 +672,7 @@ getCountByStatus(status: string): number {
     
     return this.getStatusLabel(appointment.status);
   }
-  
-  /**
-   * Formate l'heure de début pour l'affichage
-   */
+
   private getFormattedStartTime(appointment: Appoitement): string {
     const startDateTime = this.getStartDateTime(appointment);
     if (!startDateTime) return 'heure inconnue';
@@ -706,9 +683,6 @@ getCountByStatus(status: string): number {
     });
   }
   
-  /**
-   * Calcule le temps restant avant le début
-   */
   public getTimeUntilStart(appointment: Appoitement): string {
     const startDateTime = this.getStartDateTime(appointment);
     if (!startDateTime) return 'inconnu';
@@ -727,10 +701,6 @@ getCountByStatus(status: string): number {
     if (remainingMins === 0) return `${diffHours}h`;
     return `${diffHours}h${remainingMins}`;
   }
-  
-  /**
-   * Calcule le temps restant avant la fin
-   */
   public  getTimeUntilEnd(appointment: Appoitement): string {
     const endDateTime = this.getEndDateTime(appointment);
     if (!endDateTime) return 'inconnu';
@@ -747,18 +717,12 @@ getCountByStatus(status: string): number {
     return `${diffHours}h${diffMins % 60}min`;
   }
   
-  /**
-   * Vérification automatique toutes les minutes
-   */
   startAutoRefresh(): void {
     setInterval(() => {
       this.checkAndUpdateAppointments();
     }, 60000); // Toutes les minutes
   }
   
-  /**
-   * Vérifie et met à jour tous les rendez-vous
-   */
   private checkAndUpdateAppointments(): void {
     if (!this.tableauClasse) return;
     
@@ -778,4 +742,60 @@ getCountByStatus(status: string): number {
       setTimeout(() => this.getAppointment(), 1000);
     }
   }
+
+
+hasMedicalDocuments(appointment: Appoitement): boolean {
+  return !!(appointment.medicalDocuments && 
+            appointment.medicalDocuments !== 'Aucun' && 
+            appointment.medicalDocuments !== 'Aucun document' &&
+            appointment.medicalDocuments !== 'null' &&
+            appointment.medicalDocuments !== '[]');
+}
+
+
+getDocumentsCount(appointment: Appoitement): number {
+  if (!this.hasMedicalDocuments(appointment)) return 0;
+  
+  try {
+    const docs = JSON.parse(appointment.medicalDocuments);
+    if (Array.isArray(docs)) return docs.length;
+    return 1;
+  } catch (e) {
+    return 1;
+  }
+}
+
+
+voirDocumentsPatient(appointment: Appoitement): void {
+  // Récupérer l'ID du patient
+  const patientId = this.getUserIdFromAppointment(appointment);
+  
+  if (!patientId) {
+    this.showNotification('Impossible d\'identifier le patient', 'error');
+    return;
+  }
+
+  const patientData = {
+    id: patientId,
+    nom: appointment.lastname,
+    prenom: appointment.firstname,
+    email: appointment.email,
+    telephone: appointment.phone,
+    dateNaissance: appointment.birthdate,
+    genre: appointment.gender,
+    allergie: appointment.allergies || 'Aucune',
+    medicaments: appointment.medications || 'Aucun',
+    documents: appointment.medicalDocuments,
+    rendezVous: []
+  };
+  
+  // Stocker temporairement les données du patient
+  sessionStorage.setItem('selectedPatientForDocuments', JSON.stringify(patientData));
+  sessionStorage.setItem('openDocumentsModal', 'true');
+  
+  // Rediriger vers la page des patients
+  this.router.navigate(['/doctor/DocDash/MesPatients']);
+}
+
+
 }
