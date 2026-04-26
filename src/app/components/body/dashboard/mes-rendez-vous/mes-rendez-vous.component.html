@@ -73,17 +73,27 @@
             <td>{{ app.allergies }}</td>
             <td>{{ app.medications }}</td>
             <td>{{ app.additionalInfo }}</td>
-            <td>
-              <div *ngIf="hasMedicalDocuments(app)" class="document-cell">
-                <button class="btn-view-documents" 
-                        (click)="voirDocumentsPatient(app)"
-                        title="Voir les documents médicaux du patient">
-                  📄 Voir document
+            <!-- Remplacer la partie DOCUMENTS dans le tableau -->
+            <td class="documents-cell">
+              <div *ngIf="hasMedicalDocuments(app)" class="document-preview">
+                <div class="doc-icon" (click)="voirDocumentsPatient(app)">
+                </div>
+                <button class="btn-document-view" (click)="voirDocumentsPatient(app)" title="Voir les documents">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  {{ getDocumentsCount(app) }} doc(s)
                 </button>
               </div>
-              <span *ngIf="!hasMedicalDocuments(app)" class="no-documents">—</span>
+              <span *ngIf="!hasMedicalDocuments(app)" class="no-documents">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Aucun
+              </span>
             </td>
-            <!-- Remplacer la partie du statut -->
             <td>
               <div class="status-container">
                 <span class="status-badge" [ngClass]="{
@@ -108,61 +118,77 @@
                 </div>
               </div>
             </td>
-            <!-- Remplacer la partie ACTION -->
+
             <td>
               <div class="action-buttons">
-                <!-- PENDING -->
-                <button *ngIf="app.status === 'pending'" class="btn btn-success" [disabled]="isEndTimePassed(app)"
-                  [class.disabled]="isEndTimePassed(app)"
-                  [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de valider' : 'Valider le rendez-vous'"
-                  (click)="!isEndTimePassed(app) && openConfirmModal('validate', app.id, app)">
-                  ✓ Valider
-                </button>
-
-                <button *ngIf="app.status === 'pending'" class="btn btn-danger" [disabled]="isEndTimePassed(app)"
-                  [class.disabled]="isEndTimePassed(app)"
-                  [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de rejeter' : 'Rejeter le rendez-vous'"
-                  (click)="!isEndTimePassed(app) && openRejectModal(app.id, app)">
-                  ✕ Rejeter
-                </button>
-
-                <!-- VALIDATED - Prêt à démarrer -->
-                <button *ngIf="app.status === 'validated'" class="btn btn-primary"
-                  [disabled]="isStartButtonDisabled(app)" [class.disabled]="isStartButtonDisabled(app)"
-                  [attr.title]="getStartButtonTooltip(app)"
-                  (click)="!isStartButtonDisabled(app) && openConfirmModal('start', app.id, app)">
-                  <span *ngIf="!isStartTimeReached(app)"></span>
-                  <span *ngIf="isStartTimeReached(app) && !isEndTimePassed(app)">▶</span>
-                  {{ (isStartTimeReached(app) && !isEndTimePassed(app)) ? 'Débuter' : 'En attente' }}
-                </button>
-
-                <!-- STARTED - En cours -->
-                <ng-container *ngIf="app.status === 'started' && !isEndTimePassed(app)">
+                <!-- PENDING - Valider/Rejeter (tous types) -->
+                <ng-container *ngIf="app.status === 'pending'">
+                  <button class="btn btn-success" [disabled]="isEndTimePassed(app)"
+                    [class.disabled]="isEndTimePassed(app)"
+                    [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de valider' : 'Valider le rendez-vous'"
+                    (click)="!isEndTimePassed(app) && openConfirmModal('validate', app.id, app)">
+                    ✓ Valider
+                  </button>
+            
+                  <button class="btn btn-danger" [disabled]="isEndTimePassed(app)"
+                    [class.disabled]="isEndTimePassed(app)"
+                    [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de rejeter' : 'Rejeter le rendez-vous'"
+                    (click)="!isEndTimePassed(app) && openRejectModal(app.id, app)">
+                    ✕ Rejeter
+                  </button>
+                </ng-container>
+            
+                <!-- VALIDATED - Actions selon le type -->
+                <ng-container *ngIf="app.status === 'validated'">
+                  <!-- Cas présentiel : pas de bouton Débuter -->
+                  <div  class="btn btn-success" *ngIf="app.appointmentType === 'presential'">
+                    ✓  Valider
+                  </div>
+            
+                  <ng-container *ngIf="app.appointmentType === 'video'">
+                    <button class="btn btn-primary"
+                      [disabled]="isStartButtonDisabled(app)" [class.disabled]="isStartButtonDisabled(app)"
+                      [attr.title]="getStartButtonTooltip(app)"
+                      (click)="!isStartButtonDisabled(app) && openConfirmModal('start', app.id, app)">
+                      {{ (isStartTimeReached(app) && !isEndTimePassed(app)) ? '▶ Débuter' : ' En attente' }}
+                    </button>
+                  </ng-container>
+                </ng-container>
+            
+                <!-- STARTED - Actions pour vidéo uniquement -->
+                <ng-container *ngIf="app.status === 'started' && !isEndTimePassed(app) && app.appointmentType === 'video'">
                   <button class="btn btn-zoom" (click)="joinAsHost(app)">
                     🎥 Rejoindre (hôte)
                   </button>
-
+            
                   <button *ngIf="hasZoomLink(app)" class="btn btn-copy-link" (click)="copyPatientLink(app)">
-                    Lien patient
+                     Lien patient
                   </button>
                 </ng-container>
-
-                <!-- COMPLETED ou EXPIRED -->
-                <!-- <div *ngIf="app.status === 'completed' || (app.status === 'started' && isEndTimePassed(app))"
-                  class="status-message completed">
-                   Rendez-vous terminé
-                </div> -->
-
-                <div *ngIf="app.status === 'validated' && isEndTimePassed(app) && !isStartTimeReached(app)"
+            
+                <!-- Message pour présentiel en cours -->
+                <div *ngIf="app.status === 'validated' && app.appointmentType === 'presential' && isEndTimePassed(app)"
+                  class="status-message expired">
+                  ⏰ Rendez-vous présentiel terminé
+                </div>
+            
+                <!-- Message pour vidéo expiré -->
+                <div *ngIf="app.status === 'validated' && app.appointmentType === 'video' && isEndTimePassed(app) && !isStartTimeReached(app)"
                   class="status-message expired">
                   ⏰ Rendez-vous non commencé - Délai dépassé
                 </div>
-
+            
                 <!-- REJECTED -->
                 <div *ngIf="app.status === 'rejected'" class="status-message rejected">
-                  ❌ Rendez-vous rejeté
+                     Rendez-vous rejeté
                 </div>
-
+            
+                <!-- COMPLETED -->
+                <div *ngIf="app.status === 'completed' || (app.status === 'started' && isEndTimePassed(app))"
+                  class="status-message completed">
+                   Rendez-vous terminé
+                </div>
+            
                 <!-- SUPPRIMER — toujours actif -->
                 <button class="btn btn-delete" (click)="openConfirmModal('delete', app.id, app)">
                   🗑 Supprimer
@@ -224,6 +250,63 @@
     <div class="modal-footer">
       <button class="btn-cancel" (click)="closeRejectModal()">Annuler</button>
       <button class="btn-reject" (click)="confirmReject()">Confirmer le rejet</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal d'affichage des documents -->
+<div class="modal-backdrop" *ngIf="showDocumentsModal" (click)="closeDocumentsModal()"></div>
+<div class="documents-modal" *ngIf="showDocumentsModal">
+  <div class="documents-modal-content">
+    <div class="documents-modal-header">
+      <h3>
+        <span class="patient-icon">👤</span>
+        Documents médicaux - {{ selectedPatientName }}
+      </h3>
+      <button class="modal-close" (click)="closeDocumentsModal()">×</button>
+    </div>
+    
+    <div class="documents-modal-body">
+      <!-- Chargement -->
+      <div *ngIf="isLoadingDocuments" class="loading-docs">
+        <div class="spinner"></div>
+        <p>Chargement des documents...</p>
+      </div>
+      
+      <!-- Liste des documents -->
+      <div *ngIf="!isLoadingDocuments" class="documents-list">
+        <div *ngFor="let doc of selectedPatientDocuments; let i = index" 
+             class="document-card" 
+             (click)="openDocument(doc)">
+          <div class="document-card-icon">
+            {{ getDocumentIcon(doc) }}
+          </div>
+          <div class="document-card-info">
+            <div class="document-card-name">{{ getDocumentName(doc, i) }}</div>
+            <div class="document-card-type">{{ getDocumentType(doc) }}</div>
+          </div>
+          <div class="document-card-action">
+            <button class="btn-open-doc" title="Ouvrir le document">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Message si aucun document -->
+        <div *ngIf="selectedPatientDocuments.length === 0" class="no-documents-message">
+          <div class="empty-icon">📭</div>
+          <p>Aucun document médical pour ce patient</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="documents-modal-footer">
+      <button class="btn-close" (click)="closeDocumentsModal()"></button>
     </div>
   </div>
 </div>

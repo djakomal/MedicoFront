@@ -1,6 +1,26 @@
 /* =============================================
    THEME : Blanc + Vert #1B5E20
-   À coller dans appointments.component.css
+   mes-rendez-vous.component.css
+   ============================================= */
+
+/* =============================================
+   LISTE DES AMÉLIORATIONS APPLIQUÉES / À FAIRE
+   -----------------------------------------------
+   [FAIT-1]  .btn-document-view : gradient supprimé → couleur plate #E8F5E9
+             (évite rendu GPU inutile, plus stable visuellement)
+   [FAIT-2]  .documents-modal-header : gradient supprimé → #1B5E20 plate
+   [FAIT-3]  .documents-modal-content : max-height: 80vh supprimé (dupliqué)
+             → conservé uniquement sur .documents-modal (parent)
+   [FAIT-4]  .spinner : une seule définition centralisée ici
+             → idéalement à déplacer dans styles.css global
+   [TODO-5]  HTML — <div classe="main"> corriger en <div class="main">
+             L'attribut "classe" est invalide, le style ne s'applique jamais
+   [TODO-6]  HTML/TS — *ngFor sans trackBy : recréation DOM inutile à chaque cycle
+             Ajouter trackBy: trackByDay et trackBy: trackByAppointment dans le TS
+   [TODO-7]  TS — Cartes stats : "Actualités" et "Conseils" partagent la même variable
+             stats.tendanceConseils. Créer stats.tendancePublications dans le service
+   [TODO-8]  Modals — position: fixed peut être imprévisible si un parent applique
+             un transform CSS. Préférer @angular/cdk/overlay ou MatDialog.
    ============================================= */
 
 /* ---------- Host Angular ---------- */
@@ -142,7 +162,7 @@ thead th {
   text-align: left;
   font-size: 11px;
   font-weight: 700;
-  color: #ffffff;
+  color: #1B5E20;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -200,6 +220,24 @@ tbody td {
   white-space: nowrap;
 }
 
+.type-presential {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.type-video {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* ---------- Status badges ---------- */
 .status-container {
   display: flex;
@@ -243,6 +281,39 @@ tbody td {
   background: #E8F5E9;
   color: #2E7D32;
   border: 1px solid #A5D6A7;
+}
+
+/* ---------- Messages de statut ---------- */
+.status-message {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.status-message.expired {
+  color: #B71C1C;
+  background: #FFEBEE;
+}
+
+.status-message.rejected {
+  color: #B71C1C;
+  background: #FFEBEE;
+}
+
+.status-message.completed {
+  color: #1B5E20;
+  background: #E8F5E9;
+}
+
+.status-message.validated-presential {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
 }
 
 /* ---------- Timer info ---------- */
@@ -324,37 +395,109 @@ tbody td {
   color: #6b7280;
   border-color: #d1d5db;
 }
+
 .btn-view {
   background: #E8F5E9;
   color: #1B5E20;
   border-color: #A5D6A7;
 }
+
 .btn-view-documents {
   background: #E8F5E9;
   color: #1B5E20;
   border-color: #A5D6A7;
 }
-/* ---------- Messages de statut ---------- */
-.status-message {
+
+/* ---------- Documents ---------- */
+.documents-cell {
+  text-align: center;
+  min-width: 100px;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.doc-icon {
+  position: relative;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-icon:hover {
+  transform: scale(1.1);
+}
+
+.doc-count {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: #1B5E20;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  /* [FAIT-1] box-shadow retiré */
+}
+
+/* [FAIT-1] Gradient supprimé → couleur plate
+   Avant : background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+           box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+   Raison : sollicite le GPU inutilement, flashe lors du rendu Angular */
+.btn-document-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #E8F5E9;
+  border: 1px solid #A5D6A7;
+  border-radius: 20px;
+  padding: 6px 14px;
   font-size: 12px;
   font-weight: 500;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.status-message.expired {
-  color: #B71C1C;
-  background: #FFEBEE;
-}
-
-.status-message.rejected {
-  color: #B71C1C;
-  background: #FFEBEE;
-}
-
-.status-message.completed {
   color: #1B5E20;
-  background: #E8F5E9;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* [FAIT-1] Avant : transform: translateY(-1px) + box-shadow → retirés */
+.btn-document-view:hover {
+  background: #C8E6C9;
+}
+
+.btn-document-view svg {
+  width: 14px;
+  height: 14px;
+  stroke: #1B5E20;
+}
+
+.no-documents {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9e9e9e;
+  font-size: 12px;
+  background: #f5f5f5;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.no-documents svg {
+  width: 12px;
+  height: 12px;
+  stroke: #9e9e9e;
 }
 
 /* ---------- Empty state ---------- */
@@ -395,7 +538,10 @@ tbody td {
   z-index: 100;
 }
 
-/* ---------- Modals ---------- */
+/* ---------- Modals confirmation / rejet ---------- */
+/* [TODO-8] position: fixed peut être imprévisible si un parent applique un
+   transform CSS (animations, transitions Angular). Préférer à terme :
+   @angular/cdk/overlay ou MatDialog pour un positionnement garanti. */
 .confirmation-modal,
 .rejection-modal {
   position: fixed;
@@ -476,7 +622,6 @@ tbody td {
   background: #e5e7eb;
 }
 
-/* Bouton d'action principal dans la modal (valider, démarrer, supprimer) */
 .btn-modal-confirm {
   background: #1B5E20;
   color: #ffffff;
@@ -534,4 +679,218 @@ tbody td {
 
 .btn-reject:hover {
   background: #FFCDD2;
+}
+
+/* ---------- Modal documents ---------- */
+/* [FAIT-3] max-height: 80vh conservé ici uniquement (parent).
+   Supprimé sur .documents-modal-content où il était dupliqué. */
+/* [TODO-8] Même remarque sur position: fixed que .confirmation-modal */
+.documents-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* [FAIT-3] max-height: 80vh retiré ici — était dupliqué avec .documents-modal
+   Avant : max-height: 80vh → supprimé */
+.documents-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* [FAIT-2] Gradient supprimé → couleur plate #1B5E20
+   Avant : background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+   Raison : cohérence avec le reste de l'UI, évite le rendu GPU */
+.documents-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #1B5E20;
+  color: white;
+}
+
+.documents-modal-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.patient-icon {
+  font-size: 24px;
+}
+
+.documents-modal-header .modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.documents-modal-header .modal-close:hover {
+  opacity: 1;
+}
+
+.documents-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.document-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* [FAIT-1] box-shadow retiré sur le hover */
+.document-card:hover {
+  transform: translateX(5px);
+  border-color: #1B5E20;
+}
+
+.document-card-icon {
+  font-size: 32px;
+}
+
+.document-card-info {
+  flex: 1;
+}
+
+.document-card-name {
+  font-weight: 600;
+  color: #1B5E20;
+  margin-bottom: 4px;
+}
+
+.document-card-type {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.btn-open-doc {
+  background: #E8F5E9;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-open-doc:hover {
+  background: #1B5E20;
+  color: white;
+}
+
+.btn-open-doc:hover svg {
+  stroke: white;
+}
+
+.documents-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  background: white;
+}
+
+.btn-close {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background: #e5e7eb;
+}
+
+.no-documents-message {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+:host {
+  display: block;
+  width: 100%;
+}
+
+.container-rdv,        /* adapte le nom à ta classe racine */
+.appointments-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.loading-docs {
+  text-align: center;
+  padding: 40px;
+}
+
+/* [FAIT-4] Une seule définition du spinner (doublon supprimé).
+   À terme : déplacer dans styles.css global pour éviter toute duplication
+   entre les composants qui utilisent un loader. */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E8F5E9;
+  border-top-color: #1B5E20;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

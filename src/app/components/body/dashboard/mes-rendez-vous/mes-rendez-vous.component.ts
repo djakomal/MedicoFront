@@ -31,6 +31,11 @@ export class MesRendezVousComponent  implements OnInit {
   rejectReason: string = '';
   rejectAppointmentId: number | null = null;
   
+    // Dans MesRendezVousComponent
+  showDocumentsModal: boolean = false;
+  selectedPatientDocuments: any[] = [];
+  selectedPatientName: string = '';
+  isLoadingDocuments: boolean = false;
   constructor( private router :Router,
       private appointementService:AppointementService,
       private notificationService: NotificationService,
@@ -210,20 +215,33 @@ export class MesRendezVousComponent  implements OnInit {
     this.closeConfirmModal();
   }
 
- 
+  private sendValidationNotificationPresential(appointment: Appoitement): void {
+    const userId = this.getUserIdFromAppointment(appointment);
+    
+    if (userId) {
+      this.notificationService.notifyUserAppointmentValidatedPresential(userId, appointment);
+      console.log(`Notification présentiel envoyée à l'utilisateur ${userId}`);
+    }
+  }
   private validateAppointmentAction(id: number, appointment: Appoitement): void {
     this.appointementService.validateAppointment(id).subscribe({
       next: (response: AppointmentResponse) => {
         if (response.success) {
-          this.sendValidationNotification(appointment);
-          this.showNotification('Rendez-vous validé et notification envoyée', 'success');
+          // Envoyer notification (sans lien Zoom pour présentiel)
+          if (appointment.appointmentType === 'presential') {
+            this.sendValidationNotificationPresential(appointment);
+          } else {
+            this.sendValidationNotification(appointment);
+          }
+          
+          this.showNotification('Rendez-vous validé', 'success');
           this.getAppointment();
         } else {
           this.showNotification(response.message, 'error');
         }
       },
       error: (error) => {
-        this.showNotification('Erreur lors de la validation du rendez-vous', 'error');
+        this.showNotification('Erreur lors de la validation', 'error');
         console.error('Error validating appointment:', error);
       }
     });
@@ -541,9 +559,6 @@ getCountByStatus(status: string): number {
     return now >= startDateTime;
   }
   
-  /**
-   * Vérifie si l'heure de fin est dépassée
-   */
   isEndTimePassed(appointment: Appoitement): boolean {
     const endDateTime = this.getEndDateTime(appointment);
     if (!endDateTime) return false;
@@ -551,8 +566,12 @@ getCountByStatus(status: string): number {
     const now = new Date();
     return now >= endDateTime;
   }
-  
   canStartAppointment(appointment: Appoitement): boolean {
+    // Seuls les rendez-vous vidéo peuvent être démarrés
+    if (appointment.appointmentType !== 'video') {
+      return false;
+    }
+    
     if (appointment.status !== 'validated') {
       return false;
     }
@@ -560,11 +579,9 @@ getCountByStatus(status: string): number {
     const startReached = this.isStartTimeReached(appointment);
     const endPassed = this.isEndTimePassed(appointment);
     
-    // Peut démarrer si l'heure de début est atteinte ET l'heure de fin n'est pas dépassée
     return startReached && !endPassed;
   }
   
-
   isAppointmentInProgress(appointment: Appoitement): boolean {
     if (appointment.status !== 'started') {
       return false;
@@ -573,7 +590,6 @@ getCountByStatus(status: string): number {
     return !this.isEndTimePassed(appointment);
   }
   
-
   isAppointmentCompleted(appointment: Appoitement): boolean {
     // Si déjà marqué comme terminé
     if (appointment.status === 'completed') {
@@ -592,9 +608,6 @@ getCountByStatus(status: string): number {
     return false;
   }
   
-  /**
-   * Marquer un rendez-vous comme terminé
-   */
   private completeAppointment(id: number): void {
     console.log(`🏁 Marquage du rendez-vous ${id} comme terminé...`);
     
@@ -613,17 +626,15 @@ getCountByStatus(status: string): number {
     });
   }
   
-  /**
-   * Vérifie si le bouton "Débuter" doit être désactivé
-   */
   isStartButtonDisabled(appointment: Appoitement): boolean {
     return !this.canStartAppointment(appointment);
   }
-  
-  /**hasMedicalDocuments
-   * Récupère le message d'info pour le bouton "Débuter"
-   */
+
   getStartButtonTooltip(appointment: Appoitement): string {
+    if (appointment.appointmentType !== 'video') {
+      return 'Rendez-vous présentiel - pas de téléconsultation';
+    }
+    
     if (appointment.status !== 'validated') {
       return `Rendez-vous ${this.getStatusLabel(appointment.status)} - non disponible`;
     }
@@ -637,29 +648,34 @@ getCountByStatus(status: string): number {
       return 'Délai dépassé - Rendez-vous terminé';
     }
     
-    return 'Démarrer le rendez-vous';
+    return 'Démarrer la téléconsultation';
   }
+  
 
   getAppointmentStatusMessage(appointment: Appoitement): string {
     if (appointment.status === 'completed') {
-      return ' Terminé';
+      return '✅ Terminé';
     }
     
     if (appointment.status === 'started') {
       if (this.isEndTimePassed(appointment)) {
-        return ' Terminé';
+        return '✅ Terminé';
       }
-      return '🔵 En cours';
+      return '🔵 En cours (visio)';
     }
     
     if (appointment.status === 'validated') {
+      if (appointment.appointmentType === 'presential') {
+        return '✅ Validé (présentiel)';
+      }
+      
       if (this.isEndTimePassed(appointment)) {
         return '⏰ Délai dépassé';
       }
       if (!this.isStartTimeReached(appointment)) {
         return `⏳ Début à ${this.getFormattedStartTime(appointment)}`;
       }
-      return ' Prêt à démarrer';
+      return '🔘 Prêt à démarrer la visio';
     }
     
     if (appointment.status === 'pending') {
@@ -775,27 +791,134 @@ voirDocumentsPatient(appointment: Appoitement): void {
     return;
   }
 
-  const patientData = {
-    id: patientId,
-    nom: appointment.lastname,
-    prenom: appointment.firstname,
-    email: appointment.email,
-    telephone: appointment.phone,
-    dateNaissance: appointment.birthdate,
-    genre: appointment.gender,
-    allergie: appointment.allergies || 'Aucune',
-    medicaments: appointment.medications || 'Aucun',
-    documents: appointment.medicalDocuments,
-    rendezVous: []
-  };
+  // Extraire les documents du rendez-vous
+  const documents = this.extractDocuments(appointment);
   
-  // Stocker temporairement les données du patient
-  sessionStorage.setItem('selectedPatientForDocuments', JSON.stringify(patientData));
-  sessionStorage.setItem('openDocumentsModal', 'true');
-  
-  // Rediriger vers la page des patients
-  this.router.navigate(['/doctor/DocDash/MesPatients']);
+  if (documents.length === 0) {
+    this.showNotification('Aucun document médical pour ce patient', 'info');
+    return;
+  }
+
+  // Afficher la modale avec les documents
+  this.selectedPatientName = `${appointment.firstname} ${appointment.lastname}`;
+  this.selectedPatientDocuments = documents;
+  this.showDocumentsModal = true;
 }
 
+private extractDocuments(appointment: Appoitement): any[] {
+  if (!appointment.medicalDocuments || 
+      appointment.medicalDocuments === 'Aucun' || 
+      appointment.medicalDocuments === 'Aucun document') {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(appointment.medicalDocuments);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    } else if (parsed && typeof parsed === 'object') {
+      return [parsed];
+    } else {
+      return [{ name: 'Document', url: String(parsed), content: String(parsed) }];
+    }
+  } catch (e) {
+    return [{
+      name: 'Document médical',
+      url: appointment.medicalDocuments,
+      content: appointment.medicalDocuments
+    }];
+  }
+}
+closeDocumentsModal(): void {
+  this.showDocumentsModal = false;
+  this.selectedPatientDocuments = [];
+  this.selectedPatientName = '';
+}
+
+openDocument(doc: any): void {
+  let url = '';
+  
+  if (typeof doc === 'string') {
+    url = doc;
+  } else if (typeof doc === 'object') {
+    url = doc.url || doc.content || doc.fileUrl || doc.data || '';
+    
+    // Si pas d'URL, chercher dans toutes les propriétés
+    if (!url) {
+      for (const key in doc) {
+        if (typeof doc[key] === 'string' && 
+            (doc[key].startsWith('http') || doc[key].startsWith('data:') || doc[key].startsWith('/'))) {
+          url = doc[key];
+          break;
+        }
+      }
+    }
+  }
+  
+  if (!url) {
+    this.showNotification('Impossible d\'ouvrir le document', 'error');
+    return;
+  }
+  
+  window.open(url, '_blank');
+}
+isPresentialAppointment(appointment: Appoitement): boolean {
+  return appointment.appointmentType === 'presential';
+}
+isVideoAppointment(appointment: Appoitement): boolean {
+  return appointment.appointmentType === 'video';
+}
+
+// Obtenir l'icône du document
+getDocumentIcon(doc: any): string {
+  const url = this.getDocumentUrl(doc);
+  if (!url) return '📄';
+  
+  if (url.includes('.pdf') || url.includes('application/pdf')) return '📑';
+  if (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png')) return '🖼️';
+  if (url.includes('.doc') || url.includes('msword')) return '📝';
+  if (url.startsWith('data:image')) return '🖼️';
+  if (url.startsWith('data:application/pdf')) return '📑';
+  
+  return '📄';
+}
+
+// Obtenir le nom du document
+getDocumentName(doc: any, index: number): string {
+  if (typeof doc === 'string') {
+    return `Document ${index + 1}`;
+  }
+  
+  if (typeof doc === 'object') {
+    return doc.name || doc.fileName || doc.title || doc.nom || `Document ${index + 1}`;
+  }
+  
+  return `Document ${index + 1}`;
+}
+
+// Obtenir le type du document
+getDocumentType(doc: any): string {
+  const url = this.getDocumentUrl(doc);
+  if (!url) return 'Type inconnu';
+  
+  if (url.includes('.pdf')) return 'PDF';
+  if (url.includes('.jpg') || url.includes('.jpeg')) return 'Image JPEG';
+  if (url.includes('.png')) return 'Image PNG';
+  if (url.includes('.doc')) return 'Document Word';
+  if (url.startsWith('data:image')) return 'Image';
+  if (url.startsWith('data:application/pdf')) return 'PDF';
+  
+  return 'Document';
+}
+
+// Extraire l'URL du document
+private getDocumentUrl(doc: any): string {
+  if (!doc) return '';
+  if (typeof doc === 'string') return doc;
+  if (typeof doc === 'object') {
+    return doc.url || doc.content || doc.fileUrl || doc.data || '';
+  }
+  return '';
+}
 
 }

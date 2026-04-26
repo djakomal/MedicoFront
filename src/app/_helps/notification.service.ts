@@ -240,13 +240,12 @@ export class NotificationService {
     this.persistNotificationsToStorage();
   }
 
-  //  Reset du compteur (comme AppComponent)
+
   resetNotis(): void {
     this.notiSubject.next(0);
     this.unreadCountSubject.next(0);
   }
 
-  //  Notifier validation d'un rendez-vous
   notifyUserAppointmentValidated(userId: number, appointment: Appoitement): void {
     const notification: Message = {
       id: Date.now(),
@@ -262,8 +261,6 @@ export class NotificationService {
     this.addStructuredNotification(notification);
   }
 
-  //  Notifier rejet d'un rendez-vous
-  //  Notifier rejet d'un rendez-vous
   notifyUserAppointmentRejected(userId: number, appointment: Appoitement, reason?: string): void {
     const notification: Message = {
       id: Date.now(),
@@ -281,7 +278,7 @@ export class NotificationService {
     this.addStructuredNotification(notification);
   }
 
-  //  Notifier démarrage d'un rendez-vous
+ 
   notifyUserAppointmentStarted(userId: number, appointment: Appoitement, zoomLink: string | undefined): void {
     const notification: Message = {
       id: Date.now(),
@@ -473,4 +470,20 @@ export class NotificationService {
       localStorage.removeItem(this.getNotificationsStorageKey());
     } catch {}
   }
+  notifyUserAppointmentValidatedPresential(userId: number, appointment: Appoitement): void {
+    const notification: Message = {
+      id: Date.now(),
+      userId,
+      type: 'success',
+      sender: 'Médecin',
+      subject: 'Rendez-vous présentiel validé',
+      content: `Votre rendez-vous présentiel du ${appointment.preferredDate} à ${appointment.preferredTime} a été validé. Merci de vous présenter au cabinet médical.`,
+      date: new Date().toLocaleDateString('fr-FR'),
+      read: false,
+      appointmentId: appointment.id,
+      zoomLink: undefined, // Pas de lien Zoom pour le présentiel
+    };
+    this.addStructuredNotification(notification);
+  }
+  
 }
