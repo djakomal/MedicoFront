@@ -17,6 +17,7 @@ import { NotificationService } from '../../../../_helps/notification.service';
 import { Message } from '../../../../models/Message';
 import { Creneau } from '../../../../models/Creneau';
 import { CreneauService } from '../../../../_helps/Creneau/Creneau.service';
+import { DocumentService } from '../../../../_helps/Documents/DocumentService .service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -74,6 +75,14 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   rdvVideo: number=0 ;
   rdvPresential: number = 0;
   private loadInterval: any;
+  // Ajoutez dans la classe
+
+  medicalDocuments: any[] = [];          
+  isLoadingDocuments: boolean = false;    
+  patientDocuments: any[] = [];           
+  totalDocumentsCount: number = 0;        
+  realMedicalDocuments: any[] = []; 
+
   // ── Données du graphe ────────────────────────────────────────
 
   statsGraphe: {
@@ -83,113 +92,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     color: string;
   }[] = [];
 
-  medicalFiles = [
-    {
-      id: 1,
-      icon: '📄',
-      title: 'Analyse de sang',
-      date: '25 avril 2025',
-      location: 'BioMed Paris',
-      type: 'Laboratoire',
-      details: `
-          <h3>Résultats d'analyse de sang</h3>
-          <p><strong>Date du prélèvement :</strong> 25 avril 2025</p>
-          <p><strong>Laboratoire :</strong> BioMed Paris</p>
-          <h4>Hématologie</h4>
-          <ul>
-            <li><strong>Globules rouges :</strong> 4.5 M/µL (Norme : 4.5-5.5)</li>
-            <li><strong>Hémoglobine :</strong> 14.2 g/dL (Norme : 13-17)</li>
-            <li><strong>Globules blancs :</strong> 7200 /µL (Norme : 4000-10000)</li>
-            <li><strong>Plaquettes :</strong> 250000 /µL (Norme : 150000-400000)</li>
-          </ul>
-          <h4>Biochimie</h4>
-          <ul>
-            <li><strong>Glycémie à jeun :</strong> 0.95 g/L (Norme : 0.70-1.10)</li>
-            <li><strong>Cholestérol total :</strong> 1.85 g/L (Norme : < 2.00)</li>
-            <li><strong>Créatinine :</strong> 9.5 mg/L (Norme : 7-13)</li>
-          </ul>
-          <p><strong>Conclusion :</strong> Résultats dans les normes. Aucune anomalie détectée.</p>
-        `,
-      fileUrl: '/assets/documents/analyse-sang-2025-04-25.pdf',
-    },
-    {
-      id: 2,
-      icon: '📄',
-      title: 'Ordonnance médicale',
-      date: '15 avril 2025',
-      location: 'Dr. Martin',
-      type: 'Médecin',
-      details: `
-          <h3>Ordonnance médicale</h3>
-          <p><strong>Date :</strong> 15 avril 2025</p>
-          <p><strong>Prescripteur :</strong> Dr. Martin, Médecin généraliste</p>
-          <h4>Médicaments prescrits</h4>
-          <ul>
-            <li><strong>Doliprane 1000mg :</strong> 1 comprimé 3 fois par jour pendant 5 jours</li>
-            <li><strong>Amoxicilline 500mg :</strong> 1 gélule 3 fois par jour pendant 7 jours</li>
-            <li><strong>Vitamine C 500mg :</strong> 1 comprimé par jour pendant 1 mois</li>
-          </ul>
-          <h4>Recommandations</h4>
-          <p>Repos conseillé pendant 48h. Boire beaucoup d'eau. Consulter si les symptômes persistent au-delà de 5 jours.</p>
-          <p><strong>Renouvellement :</strong> Non renouvelable</p>
-        `,
-      fileUrl: '/assets/documents/ordonnance-2025-04-15.pdf',
-    },
-    {
-      id: 3,
-      icon: '📄',
-      title: 'Radiographie pulmonaire',
-      date: '10 mars 2025',
-      location: 'Radiopole',
-      type: "Centre d'imagerie",
-      details: `
-          <h3>Compte-rendu de radiographie pulmonaire</h3>
-          <p><strong>Date de l'examen :</strong> 10 mars 2025</p>
-          <p><strong>Centre d'imagerie :</strong> Radiopole</p>
-          <p><strong>Radiologue :</strong> Dr. Dupont</p>
-          <h4>Technique</h4>
-          <p>Radiographie thoracique de face et de profil</p>
-          <h4>Résultats</h4>
-          <ul>
-            <li><strong>Champs pulmonaires :</strong> Clairs et bien aérés</li>
-            <li><strong>Structures médiastinales :</strong> Normales</li>
-            <li><strong>Cœur :</strong> Taille et forme normales</li>
-            <li><strong>Coupoles diaphragmatiques :</strong> Régulières</li>
-            <li><strong>Paroi thoracique :</strong> Sans anomalie</li>
-          </ul>
-          <h4>Conclusion</h4>
-          <p>Radiographie thoracique sans anomalie décelable. Pas d'image pathologique pulmonaire.</p>
-        `,
-      fileUrl: '/assets/documents/radio-pulmonaire-2025-03-10.pdf',
-    },
-    {
-      id: 4,
-      icon: '📄',
-      title: 'Compte-rendu ophtalmologique',
-      date: '3 mars 2025',
-      location: 'Dr. Petit',
-      type: 'Médecin',
-      details: `
-          <h3>Compte-rendu ophtalmologique</h3>
-          <p><strong>Date :</strong> 3 mars 2025</p>
-          <p><strong>Ophtalmologiste :</strong> Dr. Petit</p>
-          <h4>Motif de consultation</h4>
-          <p>Contrôle annuel de la vue</p>
-          <h4>Examen de la vue</h4>
-          <ul>
-            <li><strong>Œil droit :</strong> Acuité visuelle 10/10</li>
-            <li><strong>Œil gauche :</strong> Acuité visuelle 10/10</li>
-            <li><strong>Vision binoculaire :</strong> Normale</li>
-            <li><strong>Pression intraoculaire :</strong> OD: 15 mmHg, OG: 14 mmHg (Normal)</li>
-          </ul>
-          <h4>Fond d'œil</h4>
-          <p>Rétine saine, pas de signe de pathologie rétinienne. Nerf optique normal.</p>
-          <h4>Conclusion</h4>
-          <p>Examen ophtalmologique normal. Vision excellente. Contrôle recommandé dans 1 an.</p>
-        `,
-      fileUrl: '/assets/documents/ophtalmo-2025-03-03.pdf',
-    },
-  ];
 
   constructor(
     private notificationService: NotificationService,
@@ -198,6 +100,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private creneauService: CreneauService,
     private appointementService: AppointementService,
+    private documentService:DocumentService,
   ) {}
 
   ngOnInit(): void {
@@ -209,6 +112,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.loadUserAppointments();
     this.notificationService.connect();
     this.subscribeToNotifications();
+    this.loadMedicalDocuments(); 
     this.startAppointmentWatcher();
   }
 
@@ -377,49 +281,40 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Remplacez la méthode calculerStatistiques() par celle-ci :
+
 
   calculerStatistiques(): void {
     const now = new Date();
-  
-    // CORRECTION: Compter les rendez-vous validés correctement
+
     this.rdvValides = this.tableauClasse.filter(
       (a) => a.status === 'validated'
     ).length;
-  
-    // CORRECTION: Compter les rendez-vous en attente
+
     this.rdvEnAttente = this.tableauClasse.filter(
       (a) => a.status === 'pending'
     ).length;
-  
-    // CORRECTION: Compter les rendez-vous terminés
     this.rdvTermines = this.tableauClasse.filter(
       (a) => a.status === 'completed'
     ).length;
-  
-    // CORRECTION: Compter les rendez-vous rejetés
     const rdvRejetes = this.tableauClasse.filter(
       (a) => a.status === 'rejected'
     ).length;
   
-    // ✅ CORRECTION: 'video' (sans majuscule) car appointmentType est 'video' | 'presential'
+   
     this.rdvVideo = this.tableauClasse.filter(
       (a) => a.appointmentType === 'video'
     ).length;
-  
-    // ✅ CORRECTION: 'presential' (pas 'presentiel' avec un 'i')
     this.rdvPresential = this.tableauClasse.filter(
       (a) => a.appointmentType === 'presential'
     ).length;
-  
-    // Prochain rendez-vous (corrigé)
+
     const rdvFuturs = [...this.tableauClasse]
       .filter((a) => {
         if (!a.preferredDate || !a.preferredTime) return false;
         try {
           const dateRdv = this.buildDate(a.preferredDate, a.preferredTime);
           const now = new Date();
-          // Inclure les rendez-vous validés ET en attente (futurs)
+  
           const statutActif = a.status === 'validated' || a.status === 'pending';
           return dateRdv >= now && statutActif;
         } catch {
@@ -454,16 +349,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
         : Math.max(MIN_HEIGHT, Math.round((s.value / maxVal) * MAX_HEIGHT)),
     }));
   
-    // Debug: Afficher les statistiques dans la console
-    console.log('📊 STATISTIQUES:', {
-      Total: this.tableauClasse.length,
-      Validés: this.rdvValides,
-      'En attente': this.rdvEnAttente,
-      Rejetés: rdvRejetes,
-      Vidéo: this.rdvVideo,
-      Présentiel: this.rdvPresential,
-      Terminés: this.rdvTermines
-    });
+
   }
 
   buildDate(dateStr: string, timeStr: string): Date {
@@ -524,15 +410,52 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/');
   }
 
-  openMedicalFile(fileId: number): void {
-    const file = this.medicalFiles.find((f) => f.id === fileId);
-    if (file) {
-      this.selectedMedicalFile = file;
-      this.showMedicalFilePopup = true;
-      this.cdr.detectChanges();
+  downloadDocument(doc: any): void {
+    console.log('📄 Téléchargement du document:', doc);
+    
+    // Extraire l'URL du document
+    let url = this.getDocumentUrl(doc);
+    
+    if (!url) {
+      this.showNotification('URL du document introuvable', 'error');
+      return;
     }
+    
+    // Si c'est une URL de fichier, l'ouvrir dans un nouvel onglet
+    window.open(url, '_blank');
+    this.showNotification('Ouverture du document...', 'info');
   }
 
+  getDocumentUrl(doc: any): string {
+    if (!doc) return '';
+    
+    if (typeof doc === 'string') {
+      return doc;
+    }
+    
+    if (typeof doc === 'object') {
+      // Vérifier les différentes propriétés possibles
+      if (doc.url) return doc.url;
+      if (doc.content) return doc.content;
+      if (doc.fileUrl) return doc.fileUrl;
+      if (doc.data) return doc.data;
+      if (doc.link) return doc.link;
+      if (doc.path) return doc.path;
+      
+      // Chercher dans toutes les propriétés une chaîne qui ressemble à une URL
+      for (const key in doc) {
+        if (typeof doc[key] === 'string' && 
+            (doc[key].startsWith('data:') || 
+             doc[key].startsWith('http') || 
+             doc[key].startsWith('/') ||
+             doc[key].length > 50)) {
+          return doc[key];
+        }
+      }
+    }
+    
+    return '';
+  }
   closeMedicalFilePopup(): void {
     this.showMedicalFilePopup = false;
     this.selectedMedicalFile = null;
@@ -899,12 +822,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  // Ajoutez ces méthodes avant la dernière accolade fermante de la classe
-
-  /**
-   * Vérifie les rendez-vous qui doivent commencer et envoie des notifications
-   */
   checkAndNotifyUpcomingAppointments(): void {
     const now = new Date();
 
@@ -945,10 +862,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  /**
-   * Vérifie si l'heure de début exacte est atteinte (à 2 minutes près)
-   */
   private isExactStartTimeReached(appointment: Appoitement): boolean {
     if (!appointment.preferredDate || !appointment.preferredTime) return false;
 
@@ -967,10 +880,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       return false;
     }
   }
-
-  /**
-   * Envoie une notification quand le rendez-vous commence
-   */
   private sendAppointmentStartedNotification(appointment: Appoitement): void {
     const userId = this.jwtService.getUserId();
     if (!userId) return;
@@ -1000,10 +909,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     // Option: Notification browser
     this.showBrowserNotification(appointment);
   }
-
-  /**
-   * Envoie un rappel avant le rendez-vous
-   */
   private sendAppointmentReminderNotification(appointment: Appoitement): void {
     const userId = this.jwtService.getUserId();
     if (!userId) return;
@@ -1019,10 +924,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       'info',
     );
   }
-
-  /**
-   * Notification navigateur (popup)
-   */
   private showBrowserNotification(appointment: Appoitement): void {
     if (!('Notification' in window)) {
       console.log('Ce navigateur ne supporte pas les notifications');
@@ -1060,9 +961,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Vérification périodique des rendez-vous (toutes les minutes)
-   */
   startAppointmentWatcher(): void {
     // Vérifier toutes les minutes
     setInterval(() => {
@@ -1074,10 +972,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       this.checkImminentAppointments();
     }, 10000); // 10 secondes
   }
-
-  /**
-   * Vérifie les rendez-vous imminents (moins de 5 minutes)
-   */
   private checkImminentAppointments(): void {
     const now = new Date();
 
@@ -1123,10 +1017,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  /**
-   * Vérifie spécifiquement si le statut est passé à 'started'
-   */
   checkForStartedAppointments(): void {
     const userId = this.jwtService.getUserId();
     if (!userId) return;
@@ -1152,10 +1042,6 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  /**
-   * Joue un son de notification
-   */
   playNotificationSound(): void {
     try {
       const audio = new Audio('/assets/sounds/notification.mp3');
@@ -1165,4 +1051,186 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       console.log('Erreur son:', error);
     }
   }
+   onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    // Vérifier la taille (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      this.showNotification('Le fichier ne doit pas dépasser 10MB', 'error');
+      event.target.value = '';
+      return;
+    }
+  
+    // Vérifier le type de fichier
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      this.showNotification('Format non supporté. Utilisez PDF, JPG, PNG ou DOC', 'error');
+      event.target.value = '';
+      return;
+    }
+  
+    // Demander l'ID du rendez-vous associé
+    const appointmentIdInput = prompt(
+      'ID du rendez-vous associé (laissez vide pour document général) :\n\n' +
+      'Rendez-vous disponibles:\n' +
+      this.tableauClasse.map(a => `- ID ${a.id}: ${a.preferredDate}`).join('\n')
+    );
+    
+    const appointmentId = appointmentIdInput ? parseInt(appointmentIdInput) : 0;
+  
+    // Vérifier si l'ID du rendez-vous existe (si différent de 0)
+    if (appointmentId !== 0) {
+      const appointmentExists = this.tableauClasse.some(a => a.id === appointmentId);
+      if (!appointmentExists) {
+        this.showNotification('ID de rendez-vous invalide', 'error');
+        event.target.value = '';
+        return;
+      }
+    }
+  
+    this.isLoadingDocuments = true;
+    
+    this.documentService.uploadDocument(file, appointmentId).subscribe({
+      next: (response) => {
+        this.showNotification('Document uploadé avec succès', 'success');
+        this.loadMedicalDocuments(); // Recharger la liste
+        event.target.value = ''; // Réinitialiser l'input
+        this.isLoadingDocuments = false;
+      },
+      error: (error) => {
+        console.error('Erreur upload:', error);
+        this.showNotification('Erreur lors de l\'upload du document', 'error');
+        this.isLoadingDocuments = false;
+        event.target.value = '';
+      }
+    });
+  }
+  // Dans user-dashboard.component.ts
+  loadMedicalDocuments(): void {
+    const patientId = this.jwtService.getUserId();
+    if (!patientId) {
+      console.warn('Patient non connecté');
+      return;
+    }
+  
+    this.isLoadingDocuments = true;
+    
+    // Récupérer tous les rendez-vous du patient
+    this.appointementService.getAppointmentsByPatient(patientId).subscribe({
+      next: (rdvs: Appoitement[]) => {
+        const allDocuments: any[] = [];
+        
+        rdvs.forEach(rdv => {
+          if (rdv.medicalDocuments && rdv.medicalDocuments !== 'Aucun') {
+            // Utiliser la même méthode qui fonctionne
+            const docs = this.getDocumentsList(rdv.medicalDocuments);
+            docs.forEach((doc: any) => {
+              allDocuments.push({
+                ...doc,
+                appointmentId: rdv.id,
+                appointmentDate: rdv.preferredDate,
+                doctorName: rdv.doctor?.name || 'Médecin',
+                rdvStatus: rdv.status
+              });
+            });
+          }
+        });
+        
+        this.medicalDocuments = allDocuments;
+        this.isLoadingDocuments = false;
+        this.cdr.detectChanges();
+        
+        console.log(`📄 ${allDocuments.length} documents chargés depuis ${rdvs.length} rendez-vous`);
+      },
+      error: (error) => {
+        console.error('Erreur chargement documents:', error);
+        this.isLoadingDocuments = false;
+        this.showNotification('Erreur lors du chargement des documents', 'error');
+      }
+    });
+  }
+
+  getDocumentsList(patientDocuments: string): any[] {
+    if (!patientDocuments || patientDocuments === 'Aucun' || patientDocuments === 'Aucun document') {
+      return [];
+    }
+    try {
+      // Essayer de parser le JSON
+      const parsed = JSON.parse(patientDocuments);
+      let result = [];
+      
+      if (Array.isArray(parsed)) {
+        console.log(`Tableau de ${parsed.length} documents`);
+        result = parsed;
+      } else if (parsed && typeof parsed === 'object') {
+        result = [parsed];
+      } else {
+        result = [{ name: 'Document', url: String(parsed), content: String(parsed) }];
+      }
+      
+      return result;
+    } catch (e) {
+      console.error('Erreur parsing JSON:', e);
+      return [{
+        name: 'Document',
+        url: patientDocuments,
+        content: patientDocuments
+      }];
+    }
+  }
+  
+getDocumentsByAppointment(): Map<number, any[]> {
+  const map = new Map<number, any[]>();
+  
+  this.medicalDocuments.forEach(doc => {
+    const key = doc.appointmentId || 0;
+    if (!map.has(key)) {
+      map.set(key, []);
+    }
+    map.get(key)!.push(doc);
+  });
+  
+  return map;
+}
+
+
+
+
+deleteDocument(doc: any, appointmentId: number, event: Event): void {
+  event.stopPropagation();
+  
+  if (confirm(`Supprimer définitivement "${doc.fileName}" ?`)) {
+    this.documentService.deleteDocument(appointmentId, doc.id).subscribe({
+      next: () => {
+        this.medicalDocuments = this.medicalDocuments.filter(d => d.id !== doc.id);
+        this.patientDocuments = this.medicalDocuments;
+        this.totalDocumentsCount = this.medicalDocuments.length;
+        this.showNotification('Document supprimé avec succès', 'success');
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Erreur suppression:', error);
+        this.showNotification('Erreur lors de la suppression', 'error');
+      }
+    });
+  }
+}
+
+
+formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+
+getAppointmentById(id: number): any {
+  return this.tableauClasse.find(apt => apt.id === id);
+}
+
+  
 }

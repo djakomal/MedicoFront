@@ -324,7 +324,16 @@ tbody td {
   color: #6b7280;
   border-color: #d1d5db;
 }
-
+.btn-view {
+  background: #E8F5E9;
+  color: #1B5E20;
+  border-color: #A5D6A7;
+}
+.btn-view-documents {
+  background: #E8F5E9;
+  color: #1B5E20;
+  border-color: #A5D6A7;
+}
 /* ---------- Messages de statut ---------- */
 .status-message {
   font-size: 12px;

@@ -45,7 +45,7 @@
 
       <!-- Profil utilisateur -->
       <div class="user-profile">
-        <span class="profile-avatar">👤</span>
+        <span class="profile-avatar" style="color: #FB8C00; font-size: 20px;">👤</span>
         <span class="user-name">{{ userName }}</span>
       </div>
 
@@ -433,49 +433,54 @@
     <!-- ============================================================
          DOSSIER MÉDICAL
          ============================================================ -->
-    <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
-      <div class="welcome-section">
-        <div class="welcome-text">
-          <h1>Mon dossier médical</h1>
-          <p>Accédez à vos informations médicales en toute sécurité</p>
-          <button class="appointment-btn" (click)="downloadCompleteMedicalFile()">
-            Télécharger mon dossier complet
-          </button>
-        </div>
-      </div>
-
-      <div class="service-categories">
-        <div class="service-category">
-          <h3>Antécédents</h3>
-          <p>Historique médical complet</p>
-        </div>
-        <div class="service-category">
-          <h3>Analyses</h3>
-          <p>Résultats d'examens récents</p>
-        </div>
-        <div class="service-category">
-          <h3>Traitements</h3>
-          <p>Médicaments et prescriptions</p>
-        </div>
-        <div class="service-category">
-          <h3>Allergies</h3>
-          <p>Allergies et intolérances</p>
-        </div>
-      </div>
-
-      <div class="service-list">
-        <h3>Derniers documents médicaux</h3>
-        <div class="service-item" *ngFor="let file of medicalFiles">
-          <div class="service-icon">{{ file.icon }}</div>
-          <div class="service-details">
-            <h4>{{ file.title }}</h4>
-            <p><strong>Date:</strong> {{ file.date }}</p>
-            <p><strong>{{ file.type }}:</strong> {{ file.location }}</p>
-            <button class="service-btn" (click)="openMedicalFile(file.id)">Consulter</button>
+         <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
+          <div class="welcome-section">
+            <div class="welcome-text">
+              <h1>Mon dossier médical</h1>
+              <p>Accédez à vos documents médicaux en toute sécurité</p>
+              <div class="action-buttons">
+                <button class="appointment-btn" (click)="fileInput.click()">
+                   Ajouter un document
+                </button>
+                <input #fileInput type="file" style="display: none" (change)="onFileSelected($event)" 
+                       accept=".pdf,.jpg,.png,.jpeg,.doc,.docx">
+              </div>
+            </div>
+          </div>
+          <!-- Chargement -->
+          <div *ngIf="isLoadingDocuments" class="loading-spinner">
+            ⏳ Chargement de vos documents...
+          </div>
+        
+          <!-- Liste des documents -->
+          <div class="documents-container" *ngIf="!isLoadingDocuments">
+            <!-- Documents par rendez-vous -->
+            <div *ngFor="let entry of getDocumentsByAppointment() | keyvalue" class="document-section">
+              <h3 *ngIf="entry.key === 0">📄 Documents généraux</h3>
+              <h3 *ngIf="entry.key !== 0">📅 Rendez-vous du {{ getAppointmentById(entry.key)?.preferredDate | date:'dd/MM/yyyy' }}</h3>
+              
+              <div class="document-list">
+                <div *ngFor="let doc of entry.value" class="document-item" (click)="downloadDocument(doc)">
+                  <div class="document-icon">📄</div>
+                  <div class="document-info">
+                    <div class="document-name">{{ doc.name || doc.fileName || 'Document médical' }}</div>
+                    <div class="document-meta">
+                      <span>📅 {{ doc.uploadDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                      <span>{{ doc.name || doc.fileName || 'Document médical' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Message si aucun document -->
+            <div *ngIf="medicalDocuments.length === 0" class="empty-documents">
+              <div class="empty-icon">📭</div>
+              <p>Aucun document médical</p>
+              <button class="upload-btn" (click)="fileInput.click()">📤 Ajouter mon premier document</button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Popup fichiers médicaux -->
     <div class="popup-overlay" *ngIf="showMedicalFilePopup" (click)="closeMedicalFilePopup()">
