@@ -1,0 +1,72 @@
+<div class="col-lg-12">
+  <div class="card mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Prise de rendez vous </h6>
+    </div>
+    <div class="table-responsive p-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">NOM</th>
+            <th scope="col">PRENOM</th>
+            <th scope="col"> DATE HEURE</th>
+            <th scope="col">TYPE</th>
+            <th scope="col">SYMPTÔMES</th>
+            <th scope="col">PREMIER RENDEZ VOUS </th>
+            <th scope="col">MOMENTS</th>
+            <th scope="col">ALERGIE</th>
+            <th scope="col">MEDICAMENT PRIS</th>
+            <th scope="col">INFORMATION SUPPLEMENTAIRE</th>
+            <th scope="col">STATUS</th>
+            <th scope="col">ACTION</th>
+
+          </tr>
+        </thead>
+        <tbody *ngFor="let app of this.tableauClasse" class="table-group-divider">
+          <tr>
+
+            <td>{{app.id}}</td>
+            <td>{{app.firstname}}</td>
+            <td>{{app.lastname}}</td>
+            <td>{{app.preferredDate || app.preferredTime }}</td>
+            <td>{{app.appointmentType}}</td>
+            <td>{{app.symptoms}}</td>
+            <td>{{app.firstVisit}}</td>
+            <td >{{app.altAvailability}}</td>
+            <td>{{app.allergies}}</td>
+              <td>{{app.medications}}</td>
+            <td>{{app.additionalInfo}}</td>
+             <td>{{app.status || 'Non défini'}}</td>
+            <td>
+              <button
+                type="submit"
+                class="btn btn-success btn-circle btn-sm"
+                [disabled]="!canValidate(app)"
+                [title]="canValidate(app) ? 'Valider le rendez-vous' : 'Impossible de valider avant l\'heure ou si le rendez-vous est annulé.'"
+                (click)="validerRendezVous(app.id)">
+                Valider Rendez-Vous
+              </button>
+              <button
+                type="submit"
+                class="btn btn-danger btn-circle btn-sm"
+                [disabled]="!canReject(app)"
+                [title]="canReject(app) ? 'Rejeter le rendez-vous' : 'Impossible d\'annuler un rendez-vous validé ou déjà rejeté.'"
+                (click)="rejeterRendezVous(app.id)">
+                Rejeter Rendez-Vous
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary btn-circle btn-sm"
+                [disabled]="!canStart(app)"
+                [title]="canStart(app) ? 'Débuter le rendez-vous' : 'Impossible de démarrer avant l\'heure ou si le rendez-vous n\'est pas validé.'"
+                (click)="debuterRendezVous(app.id)">
+                Débuter Rendez-Vous
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

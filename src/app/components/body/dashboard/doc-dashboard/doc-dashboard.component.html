@@ -1,0 +1,264 @@
+<div class="container">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo">
+        <a class="navbar-brand" routerLink="/Dash">
+          <img src="assets/img/logo.png" alt="logo">
+      </a>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a [routerLink]="['/DocDash']" class="nav-item" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>Tableau de bord</span>
+      </a>
+    
+      <a [routerLink]="['MesRendezVous']" class="nav-item" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Rendez-vous</span>
+      </a>
+    
+      <a [routerLink]="['MesPatients']" class="nav-item" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/>
+        </svg>
+        <span>Patients</span>
+      </a>
+    
+      <!-- Conseils avec sous-menu -->
+      <div class="nav-group">
+        <button class="nav-item nav-toggle" (click)="toggleSubmenu()" [class.open]="isSubmenuOpen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Conseils</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="nav-sub" [class.open]="isSubmenuOpen">
+          <a [routerLink]="['getConseils']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Tous les conseils
+          </a>
+          <a [routerLink]="['MesConseils']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Créer un conseil
+          </a>
+          <a [routerLink]="['updateconseils']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Mise à jour
+          </a>
+        </div>
+      </div>
+    
+      <!-- Actualité avec sous-menu -->
+      <div class="nav-group">
+        <button class="nav-item nav-toggle" (click)="toggleSubmenus()" [class.open]="isSubmenuOpens">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/>
+            <path d="M18 14H6M15 18H6M6 10h12"/>
+          </svg>
+          <span>Actualités</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="nav-sub" [class.open]="isSubmenuOpens">
+          <a [routerLink]="['addpub']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Créer une actualité
+          </a>
+          <a [routerLink]="['getpub']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Liste des actualités
+          </a>
+          <a [routerLink]="['updatepub']" class="nav-sub-item" routerLinkActive="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Mise à jour
+          </a>
+        </div>
+      </div>
+    
+      <a [routerLink]="['MesHoraires']" class="nav-item" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>Horaires</span>
+      </a>
+    
+      <div class="nav-divider"></div>
+    
+      <a [routerLink]="['ProfileComponent']" class="nav-item" routerLinkActive="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Mon profil</span>
+      </a>
+    
+    </nav>  
+
+    <div class="user-info">
+      <div class="user-avatar">{{ userName.charAt(0) }}{{ userName.charAt(1) }}</div>
+      <div class="user-details">
+        <div class="user-name">Dr.{{userName}}</div>
+        <div class="user-role">{{doctortype}}</div>
+      </div>
+      <div class="dropdown-menu">
+        <button class="logout" (click)="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <!-- Contenu du Dashboard (visible uniquement sur la route /DocDash) -->
+    <div *ngIf="isDashboard" class="dashboard-container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Bonjour, Dr. {{userName}}</h1>
+        <p>Voici un aperçu de votre journée</p>
+      </div>
+
+      <!-- Message d'erreur -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Loader -->
+      <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Chargement des données...</p>
+      </div>
+      <!-- Cartes de statistiques -->
+      <div class="dashboard-cards" *ngIf="!loading">
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z" />
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombrePatientsActifs }}</div>
+            <div class="card-label">Rendez-vous</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendancePatientsActifs)">
+              {{ getTrendIcon(stats.tendancePatientsActifs) }}
+              {{ stats.tendancePatientsActifs > 0 ? '+' : '' }}{{ stats.tendancePatientsActifs }} ce mois
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z" />
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombreConseilsPublies }}</div>
+            <div class="card-label">Conseils créés</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
+              {{ getTrendIcon(stats.tendanceConseils) }}
+              {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z" />
+              </svg>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-number">{{ stats.nombrePubPublier }}</div>
+            <div class="card-label">Actualité créés</div>
+            <div class="card-trend" [ngClass]="getTrendClass(stats.tendanceConseils)">
+              {{ getTrendIcon(stats.tendanceConseils) }}
+              {{ stats.tendanceConseils > 0 ? '+' : '' }}{{ stats.tendanceConseils }} cette semaine
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendrier de la semaine -->
+      <div class="calendar-section" *ngIf="!loading">
+        <div class="calendar-header">
+          <h2>Rendez-vous de la semaine</h2>
+          <div class="calendar-nav">
+            <button>←</button>
+            <button>→</button>
+          </div>
+        </div>
+
+        <div class="calendar-days">
+          <div class="calendar-day" *ngFor="let day of weekDays" [class.active]="day.isToday">
+            <div class="day-name">{{ day.name }}</div>
+            <div class="day-number">{{ day.number }}</div>
+          </div>
+        </div>
+
+        <div class="appointment-slots">
+          <div *ngIf="AppoitementAujourdhui.length === 0" class="no-appointments">
+            Vous Avez {{stats.nombrePatientsActifs}} rendez-vous aujourd'hui.
+          </div>
+
+          <div class="appointment-slot" *ngFor="let app of AppoitementAujourdhui">
+            <div class="appointment-time">
+              🕐 {{ formatTime(app.preferredDate) }}
+            </div>
+            <div class="appointment-info">
+              {{ getPatientName(app) }} - {{ getAppointmentType(app) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Router Outlet pour les autres pages (caché quand isDashboard = true) -->
+    <div   classe="main" *ngIf="!isDashboard">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

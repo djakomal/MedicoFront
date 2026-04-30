@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace Patient</title>
+</head>
+
+<body>
+
+  <div *ngIf="showAlert" class="notification-alert" [ngClass]="'alert-' + alertType">
+    <div class="alert-content">
+      <span class="alert-icon">
+        <ng-container [ngSwitch]="alertType">
+          <span *ngSwitchCase="'success'">✓</span>
+          <span *ngSwitchCase="'error'">✕</span>
+          <span *ngSwitchCase="'info'">ℹ</span>
+        </ng-container>
+      </span>
+      <span class="alert-message">{{ alertMessage }}</span>
+      <button class="alert-close" (click)="hideNotification()">×</button>
+    </div>
+  </div>
+
+  <!-- Header avec Messagerie -->
+  <div class="header">
+    <div class="logo">
+
+    <a class="navbar-brand" routerLink="/Dash">
+        <img src="assets/img/logo.png" alt="logo">
+    </a>
+    </div>
+
+    <div class="user-actions">
+      <!-- Icône de messagerie -->
+      <div class="message-icon-container" (click)="toggleMessagesPanel()">
+        <div class="message-icon">
+          💬
+          <span class="message-badge" *ngIf="unreadMessagesCount > 0">
+            {{ unreadMessagesCount }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Profil utilisateur -->
+      <div class="user-profile">
+        <span class="profile-avatar" style="color: #FB8C00; font-size: 20px;">👤</span>
+        <span class="user-name">{{ userName }}</span>
+      </div>
+
+      <!-- Bouton déconnexion direct -->
+      <button class="logout-header-btn" (click)="openLogoutModal()">
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PANNEAU DES MESSAGES
+       ============================================================ -->
+  <div class="messages-panel" [class.show]="showMessagesPanel && !showMessageDetail">
+    <div class="messages-header">
+      <h3>Messages</h3>
+      <div class="messages-actions">
+        <button class="mark-all-read-btn" *ngIf="unreadMessagesCount > 0" (click)="markAllAsRead()"
+          title="Marquer tout comme lu">
+          ✓
+        </button>
+        <button class="close-panel-btn" (click)="toggleMessagesPanel()">×</button>
+      </div>
+    </div>
+
+    <!-- Liste des notifications -->
+
+    <div class="messages-list" *ngIf="appointmentNotifications.length > 0">
+      <div *ngFor="let appointmentNotification of appointmentNotifications"
+        class="message-item"
+        [class.unread]="!appointmentNotification.read"
+        [class.selected]="selectedMessage?.id === appointmentNotification.id"
+        (click)="openMessage(appointmentNotification)">
+    
+        <div class="message-icon-type">{{ getMessageIcon(appointmentNotification.type) }}</div>
+    
+        <div class="message-content">
+          <div class="message-header-row">
+            <span class="message-sender">{{ appointmentNotification.sender }}</span>
+            <span class="message-date">{{ appointmentNotification.date }}</span>
+          </div>
+          <div class="message-subject">{{ appointmentNotification.subject }}</div>
+          <div class="message-preview">{{ appointmentNotification.content | slice:0:60 }}...</div>
+    
+          <div class="message-zoom-link" *ngIf="appointmentNotification.zoomLink">
+            <a
+              [href]="appointmentNotification.zoomLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-zoom-join"
+              (click)="$event.stopPropagation()">
+              📹 Rejoindre la consultation Zoom
+            </a>
+          </div>
+        </div>
+    
+        <button class="delete-message-btn"
+          (click)="deleteMessage(appointmentNotification.id, $event)"
+          title="Supprimer">
+          🗑️
+        </button>
+      </div>
+    </div>
+
+    <div class="messages-empty" *ngIf="appointmentNotifications.length === 0">
+      <div class="empty-icon">📭</div>
+      <p>Aucun message</p>
+    </div>
+  </div>
+
+  <div class="message-detail-panel" [class.show]="showMessageDetail" *ngIf="selectedMessage">
+    <div class="message-detail-header">
+      <button class="back-btn" (click)="closeMessageDetail()">← Retour</button>
+      <h3>{{ selectedMessage.subject }}</h3>
+    </div>
+    <div class="message-detail-content">
+      <div class="message-meta">
+        <span class="message-sender">{{ selectedMessage.sender }}</span>
+        <span class="message-date">{{ selectedMessage.date }}</span>
+      </div>
+      <div class="message-body">
+        <p>{{ selectedMessage.content }}</p>
+      </div>
+  
+      <!-- CORRECTION: Bouton Zoom dans le détail du message -->
+      <a *ngIf="selectedMessage.zoomLink"
+         [href]="selectedMessage.zoomLink"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn-zoom-join btn-zoom-detail">
+        📹 Rejoindre la consultation Zoom
+      </a>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer les panneaux -->
+  <div class="messages-overlay" *ngIf="showMessagesPanel || showMessageDetail"
+    (click)="showMessagesPanel = false; showMessageDetail = false">
+  </div>
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
+  <div class="nav">
+    <ul class="nav-items">
+      <li>
+        <a href="#" [class.active]="isSectionActive('dashboard')"
+          (click)="showSection('dashboard', $event)">Tableau de bord</a>
+      </li>
+      <li>
+        <a href="#" [class.active]="isSectionActive('services')"
+          (click)="showSection('services', $event)">Services</a>
+      </li>
+      <li>
+        <a href="#" [class.active]="isSectionActive('appointments')"
+          (click)="showSection('appointments', $event)">Mes rendez-vous</a>
+      </li>
+      <li>
+        <a href="#" [class.active]="isSectionActive('advice')"
+          (click)="showSection('advice', $event)">Conseils</a>
+      </li>
+      <li>
+        <a href="#" [class.active]="isSectionActive('medical-file')"
+          (click)="showSection('medical-file', $event)">Dossier médical</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+
+    <div id="dashboard-content" [style.display]="isSectionActive('dashboard') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <h1>Bienvenue <strong>{{ userName }}</strong></h1>
+          <p>Bienvenue dans votre espace de santé personnel et sécurisé</p>
+          <button class="appointment-btn" (click)="showSection('forms-file', $event)">
+            Prendre un rendez-vous
+          </button>
+        </div>
+        <div class="welcome-chart">
+          <p class="chart-title">Résumé de mon activité</p>
+          <div class="chart-bars">
+            <div class="chart-bar-group" *ngFor="let stat of statsGraphe">
+              <div class="chart-bar-wrap">
+                <span class="chart-value">{{ stat.value }}</span>
+                <div class="chart-bar" [style.height.px]="stat.height" [style.background]="stat.color"></div>
+              </div>
+              <span class="chart-label">{{ stat.label }}</span>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-dot" style="background:#3F80F0"></span> Total
+            <span class="legend-dot" style="background:#12A05A; margin-left:12px"></span> Validés
+            <span class="legend-dot" style="background:#F59E0B; margin-left:12px"></span> En attente
+            <span class="legend-dot" style="background:#F43F5E; margin-left:12px"></span> Rejetés
+            <span class="legend-dot" style="background:#0FA7A0; margin-left:12px"></span> Vidéo
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-cards">
+        <!-- Card 1 : Prochain RDV -->
+        <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          </div>
+          <h3>Rendez-vous</h3>
+          <ng-container *ngIf="prochainRdv; else aucunRdv">
+            <p><strong>Prochain RDV :</strong> {{ formatAppointmentDate(prochainRdv.preferredDate) }}</p>
+            <p>{{ prochainRdv.preferredTime }}</p>
+            <p *ngIf="prochainRdv.reason">{{ prochainRdv.reason }}</p>
+            <span [ngClass]="getStatusClass(prochainRdv.status)">
+              {{ getStatusLabel(prochainRdv.status) }}
+            </span>
+          </ng-container>
+          <ng-template #aucunRdv>
+            <p>Aucun rendez-vous à venir</p>
+          </ng-template>
+        </div>
+
+        <!-- Card 2 : Résumé rendez-vous -->
+        <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/stats.svg" alt="Copier" height="20">
+          </div>
+          <h3>Mes rendez-vous</h3>
+          <p><strong style="font-size:26px; color:var(--blue-600)">{{ tableauClasse.length }}</strong> au total</p>
+          <p>{{ rdvValides }} validé(s)</p>
+          <p>{{ rdvEnAttente }} en attente</p>
+        </div>
+
+        <!-- Card 3 : Consultations -->
+        <div class="card">
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/computer.svg" alt="Copier" height="20">
+          </div>
+          <h3>Consultations</h3>
+          <p><strong>{{ rdvVideo }}</strong> téléconsultation(s)</p>
+          <p><strong>{{ rdvPresential }}</strong> en présentiel</p>
+          <p *ngIf="rdvTermines > 0">✔️ {{ rdvTermines }} terminé(s)</p>
+        </div>
+
+        <!-- Card 4 : Téléconsultation -->
+        <div class="card" (click)="showSection('appointments', $event)" style="cursor:pointer">
+          <div class="card-icon">
+            <img src="../../../../../assets/assets/play.svg" alt="Copier" height="20">
+          </div>
+          <h3>Téléconsultation</h3>
+          <p style="margin-top:8px; font-size:12px; opacity:.95">
+            Le médecin génère le lien Zoom au moment du rendez-vous. Vous pourrez le rejoindre depuis
+             vos notifications.
+          </p>
+          <button class="service-btn" style="margin-top:12px; font-size:12px; padding:7px 14px">
+            Voir mes rendez-vous
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SERVICES
+         ============================================================ -->
+    <div id="services-content" [style.display]="isSectionActive('services') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <h1>Nos services médicaux</h1>
+          <p>Découvrez l'ensemble des services proposés par notre plateforme</p>
+        </div>
+      </div>
+
+      <div class="service-categories">
+        <div class="service-category">
+          <h2>Consultations</h2>
+          <p>Consultations en présentiel ou en téléconsultation</p>
+        </div>
+        <div class="service-category">
+          <h2>Prévention</h2>
+          <p>Bilans de santé et dépistages préventifs</p>
+        </div>
+        <div class="service-category">
+          <h2>Soins spécialisés</h2>
+          <p>Accès à un réseau de spécialistes</p>
+        </div>
+      </div>
+
+      <div class="service-list">
+        <div class="service-item">
+          <div class="service-icon">👨‍⚕️</div>
+          <div class="service-details">
+            <h4>Consultation médicale</h4>
+            <p>Consultation avec un médecin généraliste pour tout problème de santé.</p>
+            <button class="service-btn" (click)="showSection('forms-file', $event)">Prendre rendez-vous</button>
+          </div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-icon">🖥️</div>
+          <div class="service-details">
+            <h4>Téléconsultation</h4>
+            <p>Consultation vidéo avec un professionnel de santé sans vous déplacer.</p>
+            <button class="service-btn">Démarrer une téléconsultation</button>
+          </div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-icon">💉</div>
+          <div class="service-details">
+            <h4>Vaccination</h4>
+            <p>Service de vaccination pour adultes et enfants.</p>
+            <button class="service-btn">Voir les disponibilités</button>
+          </div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-icon">🧠</div>
+          <div class="service-details">
+            <h4>Suivi psychologique</h4>
+            <p>Consultations avec des psychologues qualifiés.</p>
+            <button class="service-btn">En savoir plus</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MES RENDEZ-VOUS
+         ============================================================ -->
+    <div id="appointments-content" [style.display]="isSectionActive('appointments') ? 'block' : 'none'">
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <h1>Mes rendez-vous</h1>
+          <p>Consultez et gérez l'ensemble de vos rendez-vous médicaux</p>
+          <button class="appointment-btn" (click)="showSection('forms-file', $event)">
+            Nouveau rendez-vous
+          </button>
+        </div>
+      </div>
+
+      <div class="service-list" *ngFor="let app of tableauClasse">
+        <div class="service-item" [ngClass]="'appointment-' + app.status">
+          <div class="service-icon">
+            <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          </div>
+          <div class="service-details">
+            <h4>INFORMATIONS DU RENDEZ-VOUS</h4>
+
+            <!-- Informations personnelles -->
+            <div class="info-section">
+              <p><strong>Patient:</strong> {{ app.firstname }} {{ app.lastname }}</p>
+              <p><strong>Email:</strong> {{ app.email }}</p>
+              <p><strong>Téléphone:</strong> {{ app.phone }}</p>
+            </div>
+
+            <!-- Détails du rendez-vous -->
+            <div class="info-section">
+              <p><strong>Date:</strong> {{ app.preferredDate }}</p>
+              <p><strong>Heure:</strong> {{ app.preferredTime }}</p>
+              <p><strong>Type:</strong>
+                <span *ngIf="app.appointmentType === 'presential'">En personne</span>
+                <span *ngIf="app.appointmentType === 'video'">Vidéo</span>
+              </p>
+              <p><strong>Motif:</strong> {{ app.reason }}</p>
+              <p><strong>Symptômes:</strong> {{ app.symptoms }}</p>
+              <p *ngIf="app.additionalInfo">
+                <strong>Info additionnelle:</strong> {{ app.additionalInfo }}
+              </p>
+            </div>
+
+            <!-- Téléconsultation : le médecin démarre, le patient rejoint -->
+            <div *ngIf="app.appointmentType === 'video' && !(app.meetingUrl || app.zoomLink)" class="info-section">
+              <p *ngIf="app.status === 'pending'">⏳ En attente de validation du médecin.</p>
+              <p *ngIf="isStatusValidated(app.status) && app.status !== 'started'">
+                ⏳ Le médecin n'a pas encore démarré la téléconsultation. Le lien apparaîtra ici.
+              </p>
+              <p *ngIf="isStatusValidated(app.status) && app.status !== 'started' && !isAppointmentTimeReached(app)">
+                {{ getTimeUntilAppointment(app) }}
+              </p>
+              <p *ngIf="app.status === 'started'">⚠️ Téléconsultation démarrée, lien indisponible pour le moment.</p>
+              <p *ngIf="app.status === 'rejected'">❌ Rendez-vous rejeté.</p>
+            </div>
+
+            <!-- Section liens Zoom -->
+            <div *ngIf="app.meetingUrl || app.zoomLink" class="zoom-links-section">
+              <h4>Liens Zoom</h4>
+              <div class="zoom-link-container">
+                <div class="zoom-link-item">
+                  <strong>Lien de participation:</strong>
+                  <div class="link-row">
+                    <a [href]="app.meetingUrl || app.zoomLink" target="_blank" rel="noopener noreferrer" class="zoom-link">
+                      {{ app.meetingUrl || app.zoomLink }}
+                    </a>
+                    <button class="btn-copy-small" (click)="copyToClipboard(app.meetingUrl || app.zoomLink)">📋</button>
+                  </div>
+                </div>
+
+                <div class="zoom-actions-buttons">
+                  <button class="service-btn btn-primary" (click)="joinZoomMeeting(app)">
+                    🎥 Rejoindre maintenant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message si aucun rendez-vous -->
+      <div *ngIf="tableauClasse.length === 0" class="no-appointments">
+        <p>
+          <img src="../../../../../assets/assets/calendar.svg" alt="Copier" height="20">
+          Vous n'avez aucun rendez-vous pour le moment
+        </p>
+        <button class="service-btn" [routerLink]="['/appointment/new']">
+          ➕ Prendre un rendez-vous
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         CONSEILS
+         ============================================================ -->
+    <div id="advice-content" [style.display]="isSectionActive('advice') ? 'block' : 'none'">
+      <app-conseil></app-conseil>
+    </div>
+
+    <!-- ============================================================
+         DOSSIER MÉDICAL
+         ============================================================ -->
+         <div id="medical-file-content" [style.display]="isSectionActive('medical-file') ? 'block' : 'none'">
+          <div class="welcome-section">
+            <div class="welcome-text">
+              <h1>Mon dossier médical</h1>
+              <p>Accédez à vos documents médicaux en toute sécurité</p>
+              <div class="action-buttons">
+                <button class="appointment-btn" (click)="fileInput.click()">
+                   Ajouter un document
+                </button>
+                <input #fileInput type="file" style="display: none" (change)="onFileSelected($event)" 
+                       accept=".pdf,.jpg,.png,.jpeg,.doc,.docx">
+              </div>
+            </div>
+          </div>
+          <!-- Chargement -->
+          <div *ngIf="isLoadingDocuments" class="loading-spinner">
+            ⏳ Chargement de vos documents...
+          </div>
+        
+          <!-- Liste des documents -->
+          <div class="documents-container" *ngIf="!isLoadingDocuments">
+            <!-- Documents par rendez-vous -->
+            <div *ngFor="let entry of getDocumentsByAppointment() | keyvalue" class="document-section">
+              <h3 *ngIf="entry.key === 0">📄 Documents généraux</h3>
+              <h3 *ngIf="entry.key !== 0">📅 Rendez-vous du {{ getAppointmentById(entry.key)?.preferredDate | date:'dd/MM/yyyy' }}</h3>
+              
+              <div class="document-list">
+                <div *ngFor="let doc of entry.value" class="document-item" (click)="downloadDocument(doc)">
+                  <div class="document-icon">📄</div>
+                  <div class="document-info">
+                    <div class="document-name">{{ doc.name || doc.fileName || 'Document médical' }}</div>
+                    <div class="document-meta">
+                      <span>📅 {{ doc.uploadDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                      <span>{{ doc.name || doc.fileName || 'Document médical' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Message si aucun document -->
+            <div *ngIf="medicalDocuments.length === 0" class="empty-documents">
+              <div class="empty-icon">📭</div>
+              <p>Aucun document médical</p>
+              <button class="upload-btn" (click)="fileInput.click()">📤 Ajouter mon premier document</button>
+            </div>
+          </div>
+        </div>
+
+    <!-- Popup fichiers médicaux -->
+    <div class="popup-overlay" *ngIf="showMedicalFilePopup" (click)="closeMedicalFilePopup()">
+      <div class="popup-modal" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>{{ selectedMedicalFile?.title }}</h2>
+          <button class="popup-close" (click)="closeMedicalFilePopup()">&times;</button>
+        </div>
+        <div class="popup-content" [innerHTML]="selectedMedicalFile?.details"></div>
+        <div class="popup-footer">
+          <button class="service-btn"
+            (click)="downloadMedicalFile(selectedMedicalFile?.fileUrl, selectedMedicalFile?.title)"
+            style="margin-right: 10px">
+            Télécharger
+          </button>
+          <button class="service-btn" (click)="printMedicalFile()" style="margin-right: 10px">
+            Imprimer
+          </button>
+          <button class="popup-btn-close" (click)="closeMedicalFilePopup()">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FORMULAIRE DE RENDEZ-VOUS
+         ============================================================ -->
+    <div id="forms-file-content" [style.display]="isSectionActive('forms-file') ? 'block' : 'none'">
+      <div class="welcome-text">
+        <app-appoint></app-appoint>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         LISTE DE NOTIFICATIONS (messageList)
+         ============================================================ -->
+
+  </div>
+
+  <!-- ============================================================
+       MODAL DÉCONNEXION
+       ============================================================ -->
+  <div class="logout-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+    <div class="logout-modal" (click)="$event.stopPropagation()">
+      <div class="logout-modal-icon"></div>
+      <h2 class="logout-modal-title">Déconnexion</h2>
+      <p class="logout-modal-message">
+        Êtes-vous sûr de vouloir vous déconnecter de votre espace patient ?
+      </p>
+      <div class="logout-modal-actions">
+        <button class="logout-btn-cancel" (click)="closeLogoutModal()">Annuler</button>
+        <button class="logout-btn-confirm" (click)="logout()">Se déconnecter</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

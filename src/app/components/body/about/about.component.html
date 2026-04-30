@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>À Propos - Medico</title>
+   
+</head>
+
+<body>
+    <!-- Header Navigation -->
+    <!-- <header class="main_header">
+        <div class="header_content">
+            <app-header></app-header>
+        </div>
+    </header> -->
+
+    <!-- Hero Section -->
+    <!-- <section class="hero_section"> -->
+        <!-- <div class="hero_content"> -->
+            <!-- <div class="hero_text">
+                <h1>À Propos De Nous</h1>
+                <p>Votre santé est notre priorité</p>
+            </div> -->
+            <!-- <div class="hero_image">
+                <svg viewBox="0 0 300 300">
+                    <path d="M150,60 Q160,80 150,100 Q140,80 150,60" fill="none" stroke="#fff" stroke-width="4"/>
+                    <circle cx="150" cy="105" r="8" fill="#fff"/>
+                    <path d="M150,113 L150,180" stroke="#fff" stroke-width="4"/>
+                    <path d="M150,180 Q120,200 100,220" fill="none" stroke="#fff" stroke-width="4"/>
+                    <path d="M150,180 Q180,200 200,220" fill="none" stroke="#fff" stroke-width="4"/>
+                    <circle cx="100" cy="225" r="25" fill="#fff" opacity="0.3"/>
+                    <circle cx="100" cy="225" r="15" fill="#fff"/>
+                    <circle cx="200" cy="225" r="25" fill="#fff" opacity="0.3"/>
+                    <circle cx="200" cy="225" r="15" fill="#fff"/>
+                    <rect x="235" y="80" width="15" height="45" fill="#fff" rx="3"/>
+                    <rect x="220" y="95" width="45" height="15" fill="#fff" rx="3"/>
+                </svg>
+            </div> -->
+        <!-- </div> -->
+    <!-- </section> -->
+
+    <!-- About Section -->
+    <section class="about_section">
+        <div class="container">
+            <div class="about_grid">
+                <div class="about_image">
+                    <img src="../../../../assets/img/personnage_3.png" alt="Background Image" class="background_image" aria-placeholder="A propos de nous">
+                </div>
+                <div class="about_text">
+                    <h4>À propos de Nous</h4>
+                    <h2>Qui sommes-nous ?</h2>
+                    <p>Nous sommes une équipe de professionnels de santé dévoués, engagés à fournir des soins médicaux de qualité supérieure. Notre mission est d'offrir à chaque patient une expérience personnalisée et des traitements adaptés à leurs besoins spécifiques.</p>
+                    <p>Avec des années d'expertise et une approche centrée sur le patient, nous mettons tout en œuvre pour garantir votre bien-être et votre satisfaction.</p>
+                    <a class="btn_primary" href="Cont">En savoir plus</a>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="features_grid">
+                <div class="feature_card">
+                    <div class="feature_icon"> <img src="../../../../assets/fonts/urgence.png" alt="Urgences" onerror="this.innerHTML='🚨'"></div>
+                    <h5>Service d'Urgence</h5>
+                    <p>Disponible 24h/24 et 7j/7 pour répondre à vos besoins médicaux urgents</p>
+                </div>
+                <div class="feature_card">
+                    <div class="feature_icon">  <img src="../../../../assets/fonts/calendar-green.png" alt="Rendez-vous" onerror="this.innerHTML='📅'"></div>
+                    <h5>Prise de Rendez-vous</h5>
+                    <p>Réservez facilement vos consultations en ligne ou par téléphone</p>
+                </div>
+                <div class="feature_card">
+                    <div class="feature_icon">⭐</div>
+                    <h5>Équipe Compétente</h5>
+                    <p>Des professionnels qualifiés et expérimentés à votre service</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Vision Values Section -->
+    <section class="mvv_section">
+        <div class="mvv_container">
+            <div class="section_title">
+                <h2>Notre Engagement</h2>
+                <p>Découvrez ce qui guide nos actions au quotidien</p>
+            </div>
+
+            <!-- Mission -->
+            <div class="accordion_item active" [class.active]="activeIndex === 0">
+                <div class="accordion_header" (click)="toggleAccordion(0)">
+                    <h3 class="accordion_title mission">NOTRE MISSION</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        Offrir à chaque citoyen un accès simple, rapide et sûr à des services de santé de qualité, grâce à des outils numériques adaptés aux réalités africaines.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Vision -->
+            <div class="accordion_item" [class.active]="activeIndex === 1">
+                <div class="accordion_header" (click)="toggleAccordion(1)">
+                    <h3 class="accordion_title vision">NOTRE VISION</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        Devenir la plateforme de référence en Afrique pour la gestion intelligente de la santé, en connectant patients, professionnels et établissements de santé dans un écosystème digital sécurisé et innovant.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Values -->
+            <div class="accordion_item" [class.active]="activeIndex === 2">
+                <div class="accordion_header" (click)="toggleAccordion(2)">
+                    <h3 class="accordion_title values">NOS VALEURS</h3>
+                    <div class="accordion_icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="accordion_content">
+                    <p class="accordion_text">
+                        <strong>Excellence :</strong> Fournir des services de santé de la plus haute qualité<br><br>
+                        <strong>Innovation :</strong> Adopter les dernières technologies pour améliorer les soins<br><br>
+                        <strong>Accessibilité :</strong> Rendre les soins de santé disponibles pour tous<br><br>
+                        <strong>Intégrité :</strong> Agir avec transparence et éthique dans toutes nos actions
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats_section">
+        <div class="container">
+            <div class="stats_grid">
+                <div class="stat_item">
+                    <span class="stat_number">15+</span>
+                    <span class="stat_label">Années d'expérience</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number">50+</span>
+                    <span class="stat_label">Professionnels de santé</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number">10k+</span>
+                    <span class="stat_label">Patients satisfaits</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number">24/7</span>
+                    <span class="stat_label">Service disponible</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

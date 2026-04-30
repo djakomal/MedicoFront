@@ -1,0 +1,88 @@
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-content">
+    <div class="breadcrumb">
+      <a routerLink="/Dash">Accueil</a>
+      <span>›</span>
+      <span>Conseils</span>
+    </div>
+    <h1 class="hero-title">Conseils</h1>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="conseils-container">
+  <div class="content-layout">
+
+    <!-- Sidebar Catégories -->
+    <aside class="sidebar">
+      <h2 class="sidebar-title">Catégories</h2>
+      <div
+        class="category-item"
+        *ngFor="let cat of categories"
+        [class.active]="selectedCategorie === cat"
+        (click)="filterByCategorie(cat)">
+        <span class="category-name">{{ cat }}</span>
+        <div class="category-arrow">›</div>
+      </div>
+    </aside>
+
+    <!-- Articles -->
+    <div class="articles-section">
+
+      <!-- État chargement -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des conseils...</p>
+      </div>
+
+      <!-- État erreur -->
+      <div *ngIf="error" class="error-state">
+        <p>❌ {{ error }}</p>
+        <button (click)="loadConseils()">Réessayer</button>
+      </div>
+
+      <!-- Liste des articles -->
+      <div
+        class="article-card"
+        *ngFor="let conseil of conseils">
+
+        <div class="article-image">
+          <img
+            *ngIf="conseil.imageUrl"
+            [src]="conseil.imageUrl"
+            [alt]="conseil.titre"
+            onerror="this.style.display='none'">
+          <div class="article-overlay" *ngIf="conseil.categorie">
+            <span class="article-overlay-title">{{ conseil.categorie }}</span>
+          </div>
+        </div>
+
+        <div class="article-content">
+          <span class="article-category" *ngIf="conseil.categorie">
+            {{ conseil.categorie }}
+          </span>
+          <div class="article-meta">
+            <span>👤 {{ conseil.auteur }}</span>
+            <span>📅 {{ formatDate(conseil.datePublication) }}</span>
+          </div>
+          <h3 class="article-title">{{ conseil.titre }}</h3>
+          <p class="article-excerpt">
+            {{ conseil.contenu?.substring(0, 150) }}...
+          </p>
+          <a href="#" class="read-more">Lire plus →</a>
+        </div>
+
+      </div>
+
+      <!-- Aucun résultat -->
+      <div
+        *ngIf="!loading && !error && conseils?.length === 0"
+        class="empty-state">
+        <p>Aucun conseil disponible pour le moment.</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>

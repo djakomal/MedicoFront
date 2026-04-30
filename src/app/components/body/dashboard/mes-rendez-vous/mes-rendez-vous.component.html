@@ -1,0 +1,312 @@
+<div class="container">
+  <div class="header-section">
+    <h1>Gestion des Rendez-vous</h1>
+    <p>Gérez efficacement vos demandes de rendez-vous</p>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <h3>Total</h3>
+      <div class="number">{{ tableauClasse?.length || 0 }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>En attente</h3>
+      <div class="number">{{ getCountByStatus('pending') }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Validés</h3>
+      <div class="number">{{ getCountByStatus('validated') }}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Rejetés</h3>
+      <div class="number">{{ getCountByStatus('rejected') }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Liste des rendez-vous</h2>
+      <span class="badge-count">{{ tableauClasse?.length || 0 }} rendez-vous</span>
+    </div>
+
+    <div class="table-container">
+      <table *ngIf="tableauClasse && tableauClasse.length > 0">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">NOM PRENOM </th>
+            <th scope="col"> DATE</th>
+            <th scope="col">TYPE</th>
+            <th scope="col">SYMPTÔMES</th>
+            <th scope="col">Premier</th>
+            <th scope="col">Heure Debut</th>
+            <th scope="col">ALERGIE</th>
+            <th scope="col">MEDICAMENT PRIS</th>
+            <th scope="col">Info</th>
+            <th scope="col">DOCUMENTS</th>
+            <th scope="col">STATUS</th>
+            <th scope="col">ACTION</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of tableauClasse">
+            <td class="id-cell">{{ app.id }}</td>
+            <td class="name-cell">{{ app.firstname }} {{ app.lastname }}</td>
+            <td class="date-cell">{{ app.preferredDate }}</td>
+            <td >
+              <span 
+                [ngClass]="{
+                  'type-video': app.appointmentType === 'video',
+                  'type-presential': app.appointmentType === 'presential'
+                }">
+                <span *ngIf="app.appointmentType === 'video'"> Téléconsultation</span>
+                <span *ngIf="app.appointmentType === 'presential'">En présentiel</span>
+                <span *ngIf="app.appointmentType !== 'video' && app.appointmentType !== 'presential'">
+                  {{ app.appointmentType }}
+                </span>
+              </span>
+            </td>
+            <td class="description-cell">{{ app.symptoms }}</td>
+            <td>{{ app.firstVisit }}</td>
+            <td>{{ app.preferredTime }}</td>
+            <td>{{ app.allergies }}</td>
+            <td>{{ app.medications }}</td>
+            <td>{{ app.additionalInfo }}</td>
+            <!-- Remplacer la partie DOCUMENTS dans le tableau -->
+            <td class="documents-cell">
+              <div *ngIf="hasMedicalDocuments(app)" class="document-preview">
+                <div class="doc-icon" (click)="voirDocumentsPatient(app)">
+                </div>
+                <button class="btn-document-view" (click)="voirDocumentsPatient(app)" title="Voir les documents">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  {{ getDocumentsCount(app) }} doc(s)
+                </button>
+              </div>
+              <span *ngIf="!hasMedicalDocuments(app)" class="no-documents">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Aucun
+              </span>
+            </td>
+            <td>
+              <div class="status-container">
+                <span class="status-badge" [ngClass]="{
+                    'status-pending': app.status === 'pending',
+                    'status-validated': app.status === 'validated',
+                    'status-rejected': app.status === 'rejected',
+                    'status-started': app.status === 'started' && !isEndTimePassed(app),
+                    'status-completed': app.status === 'completed' || isEndTimePassed(app)
+                  }">
+                  {{ getAppointmentStatusMessage(app) }}
+                </span>
+
+                <!-- Timer pour les rendez-vous en attente -->
+                <div *ngIf="app.status === 'validated' && !isStartTimeReached(app) && !isEndTimePassed(app)"
+                  class="timer-info">
+                  ⏱ Début dans {{ getTimeUntilStart(app) }}
+                </div>
+
+                <!-- Timer pour les rendez-vous en cours -->
+                <div *ngIf="app.status === 'started' && !isEndTimePassed(app)" class="timer-info in-progress">
+                  ⏱ Fin dans {{ getTimeUntilEnd(app) }}
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="action-buttons">
+                <!-- PENDING - Valider/Rejeter (tous types) -->
+                <ng-container *ngIf="app.status === 'pending'">
+                  <button class="btn btn-success" [disabled]="isEndTimePassed(app)"
+                    [class.disabled]="isEndTimePassed(app)"
+                    [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de valider' : 'Valider le rendez-vous'"
+                    (click)="!isEndTimePassed(app) && openConfirmModal('validate', app.id, app)">
+                    ✓ Valider
+                  </button>
+            
+                  <button class="btn btn-danger" [disabled]="isEndTimePassed(app)"
+                    [class.disabled]="isEndTimePassed(app)"
+                    [title]="isEndTimePassed(app) ? 'Délai dépassé - Plus possible de rejeter' : 'Rejeter le rendez-vous'"
+                    (click)="!isEndTimePassed(app) && openRejectModal(app.id, app)">
+                    ✕ Rejeter
+                  </button>
+                </ng-container>
+            
+                <!-- VALIDATED - Actions selon le type -->
+                <ng-container *ngIf="app.status === 'validated'">
+                  <!-- Cas présentiel : pas de bouton Débuter -->
+                  <div  class="btn btn-success" *ngIf="app.appointmentType === 'presential'">
+                    ✓  Valider
+                  </div>
+            
+                  <ng-container *ngIf="app.appointmentType === 'video'">
+                    <button class="btn btn-primary"
+                      [disabled]="isStartButtonDisabled(app)" [class.disabled]="isStartButtonDisabled(app)"
+                      [attr.title]="getStartButtonTooltip(app)"
+                      (click)="!isStartButtonDisabled(app) && openConfirmModal('start', app.id, app)">
+                      {{ (isStartTimeReached(app) && !isEndTimePassed(app)) ? '▶ Débuter' : ' En attente' }}
+                    </button>
+                  </ng-container>
+                </ng-container>
+            
+                <!-- STARTED - Actions pour vidéo uniquement -->
+                <ng-container *ngIf="app.status === 'started' && !isEndTimePassed(app) && app.appointmentType === 'video'">
+                  <button class="btn btn-zoom" (click)="joinAsHost(app)">
+                    🎥 Rejoindre (hôte)
+                  </button>
+            
+                  <button *ngIf="hasZoomLink(app)" class="btn btn-copy-link" (click)="copyPatientLink(app)">
+                     Lien patient
+                  </button>
+                </ng-container>
+            
+                <!-- Message pour présentiel en cours -->
+                <div *ngIf="app.status === 'validated' && app.appointmentType === 'presential' && isEndTimePassed(app)"
+                  class="status-message expired">
+                  ⏰ Rendez-vous présentiel terminé
+                </div>
+            
+                <!-- Message pour vidéo expiré -->
+                <div *ngIf="app.status === 'validated' && app.appointmentType === 'video' && isEndTimePassed(app) && !isStartTimeReached(app)"
+                  class="status-message expired">
+                  ⏰ Rendez-vous non commencé - Délai dépassé
+                </div>
+            
+                <!-- REJECTED -->
+                <div *ngIf="app.status === 'rejected'" class="status-message rejected">
+                     Rendez-vous rejeté
+                </div>
+            
+                <!-- COMPLETED -->
+                <div *ngIf="app.status === 'completed' || (app.status === 'started' && isEndTimePassed(app))"
+                  class="status-message completed">
+                   Rendez-vous terminé
+                </div>
+            
+                <!-- SUPPRIMER — toujours actif -->
+                <button class="btn btn-delete" (click)="openConfirmModal('delete', app.id, app)">
+                  🗑 Supprimer
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="!tableauClasse || tableauClasse.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <h3>Aucun rendez-vous</h3>
+        <p>Les demandes de rendez-vous apparaîtront ici</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmation -->
+  <div class="modal-backdrop" *ngIf="showConfirmModal" (click)="closeConfirmModal()"></div>
+  <div class="confirmation-modal" *ngIf="showConfirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ getModalTitle() }}</h2>
+        <button class="modal-close" (click)="closeConfirmModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ getModalMessage() }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeConfirmModal()">Annuler</button>
+        <button [ngClass]="getModalActionButtonClass()" (click)="confirmAction()">{{ getModalActionButtonText()
+          }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de rejet avec motif -->
+<div class="modal-backdrop" *ngIf="showRejectModal" (click)="closeRejectModal()"></div>
+<div class="rejection-modal" *ngIf="showRejectModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Motif du rejet</h2>
+      <button class="modal-close" (click)="closeRejectModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Veuillez saisir le motif du rejet du rendez-vous de <strong>{{ pendingAppointment?.firstname }} {{
+          pendingAppointment?.lastname }}</strong></p>
+      <textarea [(ngModel)]="rejectReason"
+        placeholder="Exemple: Médecin indisponible, patient ne s'est pas présenté, etc." class="reject-textarea"
+        rows="4"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeRejectModal()">Annuler</button>
+      <button class="btn-reject" (click)="confirmReject()">Confirmer le rejet</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal d'affichage des documents -->
+<div class="modal-backdrop" *ngIf="showDocumentsModal" (click)="closeDocumentsModal()"></div>
+<div class="documents-modal" *ngIf="showDocumentsModal">
+  <div class="documents-modal-content">
+    <div class="documents-modal-header">
+      <h3>
+        <span class="patient-icon">👤</span>
+        Documents médicaux - {{ selectedPatientName }}
+      </h3>
+      <button class="modal-close" (click)="closeDocumentsModal()">×</button>
+    </div>
+    
+    <div class="documents-modal-body">
+      <!-- Chargement -->
+      <div *ngIf="isLoadingDocuments" class="loading-docs">
+        <div class="spinner"></div>
+        <p>Chargement des documents...</p>
+      </div>
+      
+      <!-- Liste des documents -->
+      <div *ngIf="!isLoadingDocuments" class="documents-list">
+        <div *ngFor="let doc of selectedPatientDocuments; let i = index" 
+             class="document-card" 
+             (click)="openDocument(doc)">
+          <div class="document-card-icon">
+            {{ getDocumentIcon(doc) }}
+          </div>
+          <div class="document-card-info">
+            <div class="document-card-name">{{ getDocumentName(doc, i) }}</div>
+            <div class="document-card-type">{{ getDocumentType(doc) }}</div>
+          </div>
+          <div class="document-card-action">
+            <button class="btn-open-doc" title="Ouvrir le document">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Message si aucun document -->
+        <div *ngIf="selectedPatientDocuments.length === 0" class="no-documents-message">
+          <div class="empty-icon">📭</div>
+          <p>Aucun document médical pour ce patient</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="documents-modal-footer">
+      <button class="btn-close" (click)="closeDocumentsModal()"></button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+html, body { 
+  height: 100%; 
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+/* ─── Étire tous les composants Angular racine ─── */
+app-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ─── Composant dashboard principal ─── */
+app-doc-dash {          /* ← adaptez le nom à votre sélecteur */
+  display: flex;
+  width: 100%;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ─── Composant conseil ─── */
+app-conseil .content-layout,
+app-conseil .sidebar,
+app-conseil .articles-section {
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  app-conseil .content-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  app-conseil .sidebar {
+    position: static !important;
+    width: 100% !important;
+  }
+}

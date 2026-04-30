@@ -1,0 +1,33 @@
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">USERNAME</th>
+        <th scope="col">EMAIL</th>
+        <th scope="col">PASSWORD</th>
+        <th scope="col">FIRSTNAME</th>
+        <th scope="col">LASTTNAME</th>
+        <th scope="col">ROLE</th>
+        <th scope="col">GENDER</th>
+        <th scope="col">ACTION</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let app of this.tableauClasse" class="table-group-divider">
+      <tr>
+  
+        <td>{{app.id}}</td>
+        <td>{{app.username}}</td>
+        <td>{{app.email}}</td>
+        <td>{{app.password}}</td>
+        <td>{{app.firstName}}</td>
+        <td>{{app.lastName}}</td>
+        <td>{{app.role}}</td>
+        <td>{{app.gender}}</td>
+        <td>
+        <a href="#" (click)="update(app.id)" class="btn btn-success btn-circle btn-sm">Modifier</a>
+        <button type="submit" class="btn btn-danger btn-circle btn-sm" (click)="deleteUser(app.id)">Supprimer </button>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>

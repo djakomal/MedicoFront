@@ -1,0 +1,85 @@
+<div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="mb-0">Créer une nouvelle réunion Zoom</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="meetingForm" (ngSubmit)="onSubmit()">
+              
+              <div *ngIf="errorMessage" class="alert alert-danger">
+                {{ errorMessage }}
+              </div>
+  
+              <!-- Sujet -->
+              <div class="mb-3">
+                <label for="topic" class="form-label">Sujet de la réunion *</label>
+                <input type="text" 
+                       id="topic" 
+                       class="form-control"
+                       formControlName="topic"
+                       placeholder="Ex: Réunion d'équipe hebdomadaire">
+                <div *ngIf="formControls['topic'].invalid && formControls['topic'].touched" 
+                     class="text-danger small">
+                  Le sujet est requis (minimum 3 caractères)
+                </div>
+              </div>
+  
+              <!-- Date/Heure -->
+              <div class="mb-3">
+                <label for="startTime" class="form-label">Date et heure *</label>
+                <input type="datetime-local" 
+                       id="startTime" 
+                       class="form-control"
+                       formControlName="startTime">
+                <div *ngIf="formControls['startTime'].invalid && formControls['startTime'].touched" 
+                     class="text-danger small">
+                  La date et l'heure sont requises
+                </div>
+              </div>
+  
+              <!-- Durée -->
+              <div class="mb-3">
+                <label for="duration" class="form-label">Durée (minutes) *</label>
+                <input type="number" 
+                       id="duration" 
+                       class="form-control"
+                       formControlName="duration"
+                       min="1"
+                       max="1440">
+                <div class="form-text">
+                  Durée en minutes (max: 24 heures)
+                </div>
+              </div>
+  
+              <!-- Fuseau horaire -->
+              <div class="mb-3">
+                <label for="timezone" class="form-label">Fuseau horaire *</label>
+                <select id="timezone" 
+                        class="form-select"
+                        formControlName="timezone">
+                  <option *ngFor="let tz of timezones" [value]="tz">{{ tz }}</option>
+                </select>
+              </div>
+  
+              <!-- Boutons -->
+              <div class="d-flex justify-content-between mt-4">
+                <button type="button" 
+                        class="btn btn-secondary"
+                        (click)="router.navigate(['/meetings'])">
+                  Annuler
+                </button>
+                <button type="submit" 
+                        class="btn btn-primary"
+                        [disabled]="meetingForm.invalid || isLoading">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                  {{ isLoading ? 'Création...' : 'Créer la réunion' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

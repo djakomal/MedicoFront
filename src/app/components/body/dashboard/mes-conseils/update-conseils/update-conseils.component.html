@@ -1,0 +1,218 @@
+<header class="main_header">
+    <div class="header_content">
+      <h2>✏️ Modifier un conseil</h2>
+    </div>
+  </header>
+  
+  <div class="form-container">
+  
+    <div class="form-title-row">
+      <h2>Modifier le conseil</h2>
+      <button class="btn-back" type="button" (click)="onCancel()">← Retour</button>
+    </div>
+    <p class="form-subtitle">Modifiez les informations de votre conseil médical</p>
+  
+    <!-- Chargement initial -->
+    <div *ngIf="loadingData" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement du conseil…</p>
+    </div>
+  
+    <ng-container *ngIf="!loadingData">
+  
+      <!-- Alertes -->
+      <div *ngIf="success" class="alert alert-success">✅ {{ success }}</div>
+      <div *ngIf="error"   class="alert alert-error">⚠️ {{ error }}</div>
+  
+      <!-- Progress Steps -->
+      <div class="progress-steps">
+        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+          <div class="step-circle">
+            <span *ngIf="currentStep <= 1">1</span>
+            <span *ngIf="currentStep > 1">✓</span>
+          </div>
+          <div class="step-label">Informations de base</div>
+        </div>
+        <div class="progress-line">
+          <div class="progress-fill" [class.filled]="currentStep > 1"></div>
+        </div>
+        <div class="step" [class.active]="currentStep === 2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Contenu & publication</div>
+        </div>
+      </div>
+  
+      <form [formGroup]="conseilForm" (ngSubmit)="onSubmit()">
+  
+        <!-- ══ ÉTAPE 1 ══ -->
+        <div class="form-step" *ngIf="currentStep === 1">
+  
+          <!-- Titre -->
+          <div class="form-group">
+            <label for="titre">Titre du conseil *</label>
+            <input type="text" id="titre" formControlName="titre"
+              placeholder="Ex : Comment prévenir les maladies cardiovasculaires"
+              [class.is-invalid]="submitted && f['titre'].errors" />
+            <div class="invalid-feedback" *ngIf="submitted && f['titre'].errors">
+              <span *ngIf="f['titre'].errors['required']">Le titre est requis.</span>
+              <span *ngIf="f['titre'].errors['minlength']">Minimum 5 caractères.</span>
+            </div>
+          </div>
+  
+          <!-- Auteur -->
+          <div class="form-group">
+            <label for="auteur">Nom de l'auteur *</label>
+            <input type="text" id="auteur" formControlName="auteur"
+              placeholder="Ex : Dr. Marie Dupont"
+              [class.is-invalid]="submitted && f['auteur'].errors" />
+            <div class="invalid-feedback" *ngIf="submitted && f['auteur'].errors">
+              L'auteur est requis.
+            </div>
+          </div>
+  
+          <!-- Catégorie -->
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <div class="custom-select" [class.is-invalid]="submitted && f['categorie'].errors">
+              <div class="custom-select-trigger" (click)="toggleDropdown()" [class.open]="dropdownOpen">
+                <span>
+                  {{ conseilForm.value.categorie ? getLabelFromValue(conseilForm.value.categorie) : 'Sélectionner une catégorie' }}
+                </span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="custom-select-options" *ngIf="dropdownOpen">
+                <div class="custom-option"
+                  *ngFor="let cat of categories"
+                  (click)="selectCategory(cat.value)"
+                  [class.selected]="conseilForm.value.categorie === cat.value">
+                  {{ cat.label }}
+                </div>
+              </div>
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f['categorie'].errors">
+              La catégorie est requise.
+            </div>
+          </div>
+  
+          <!-- Description courte -->
+          <div class="form-group">
+            <label for="desc">Description courte *</label>
+            <textarea id="desc" formControlName="contenu" rows="3"
+              placeholder="Un résumé rapide du conseil…"
+              [class.is-invalid]="submitted && f['contenu'].errors"></textarea>
+            <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
+              <span *ngIf="f['contenu'].errors?.['required']">Le contenu est requis.</span>
+              <span *ngIf="f['contenu'].errors?.['minlength']">Minimum 50 caractères.</span>
+            </div>
+          </div>
+  
+          <!-- Image URL -->
+          <div class="form-group">
+            <label for="imageUrl">URL de l'image <span class="optional">(optionnel)</span></label>
+            <input type="url" id="imageUrl" formControlName="imageUrl"
+              placeholder="https://exemple.com/image.jpg" />
+            <div class="image-preview" *ngIf="conseilForm.value.imageUrl">
+              <img [src]="conseilForm.value.imageUrl" alt="Aperçu"
+                (error)="conseilForm.patchValue({imageUrl: ''})" />
+            </div>
+          </div>
+  
+          <!-- Actions step 1 -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+            <button type="button" class="btn btn-primary" (click)="nextStep()">Suivant →</button>
+          </div>
+        </div>
+  
+        <!-- ══ ÉTAPE 2 ══ -->
+        <div class="form-step" *ngIf="currentStep === 2">
+  
+          <!-- Contenu détaillé -->
+          <div class="form-group">
+            <label for="contenuFull">Contenu du conseil *</label>
+            <textarea id="contenuFull" formControlName="contenu" rows="10"
+              placeholder="Rédigez le contenu détaillé de votre conseil (minimum 50 caractères)"
+              [class.is-invalid]="submitted && f['contenu'].errors"></textarea>
+            <div class="char-count"
+              [style.color]="(conseilForm.value.contenu?.length || 0) >= 50 ? '#28a745' : '#999'">
+              {{ conseilForm.value.contenu?.length || 0 }} / 50 caractères minimum
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f['contenu'].errors">
+              <span *ngIf="f['contenu'].errors['required']">Le contenu est requis.</span>
+              <span *ngIf="f['contenu'].errors['minlength']">Minimum 50 caractères.</span>
+            </div>
+          </div>
+  
+          <!-- Tags -->
+          <div class="form-group">
+            <label>Tags <span class="optional">(mots-clés)</span></label>
+            <div class="tags-container" formArrayName="tags">
+              <div class="tag-pill" *ngFor="let tag of tags.controls; let i = index">
+                <input type="text" [formControlName]="i" placeholder="Tag"
+                  style="background:transparent;border:none;color:white;outline:none;width:auto;padding:0;" />
+                <button type="button" (click)="removeTag(i)">✕</button>
+              </div>
+            </div>
+            <button type="button" class="btn-add-tag" (click)="addTag()">+ Ajouter un tag</button>
+          </div>
+  
+          <!-- Publier -->
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="publie" />
+              <span>Publier immédiatement</span>
+            </label>
+          </div>
+  
+          <!-- Résumé -->
+          <div class="summary-section">
+            <h3>📋 Résumé des modifications</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">Titre</div>
+                <div class="summary-value">{{ conseilForm.value.titre || '—' }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Auteur</div>
+                <div class="summary-value">{{ conseilForm.value.auteur || '—' }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Catégorie</div>
+                <div class="summary-value">{{ getLabelFromValue(conseilForm.value.categorie) || '—' }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Tags</div>
+                <div class="summary-value">{{ tags.length > 0 ? tags.length + ' tag(s)' : 'Aucun' }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Publication</div>
+                <div class="summary-value">
+                  <span class="badge" [class.badge-green]="conseilForm.value.publie" [class.badge-gray]="!conseilForm.value.publie">
+                    {{ conseilForm.value.publie ? 'Immédiate' : 'Brouillon' }}
+                  </span>
+                </div>
+              </div>
+              <div class="summary-item" *ngIf="conseilForm.value.imageUrl">
+                <div class="summary-label">Image</div>
+                <div class="summary-value">
+                  <img [src]="conseilForm.value.imageUrl" alt="Aperçu" class="summary-img" />
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Actions step 2 -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="prevStep()">← Précédent</button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="!loading">💾 Enregistrer les modifications</span>
+              <span *ngIf="loading">⏳ Mise à jour en cours…</span>
+            </button>
+          </div>
+  
+        </div>
+      </form>
+    </ng-container>
+  </div>
